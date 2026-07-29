@@ -1,0 +1,82 @@
+App:
+  Properties:
+    StartScreen: =Dashboard
+    Formulas: |-
+      =// Paleta — Limpo & Profissional
+      ColorBg = RGBA(247, 248, 250, 1);
+      ColorCard = RGBA(255, 255, 255, 1);
+      ColorPrimary = RGBA(21, 101, 129, 1);
+      ColorPrimaryDark = RGBA(14, 74, 95, 1);
+      ColorSuccess = RGBA(46, 160, 88, 1);
+      ColorAlert = RGBA(214, 69, 44, 1);
+      ColorTextPrimary = RGBA(40, 44, 48, 1);
+      ColorTextSecondary = RGBA(120, 126, 133, 1);
+      ColorBorder = RGBA(226, 229, 233, 1);
+
+      // Funções auxiliares de estoque
+      ItemSaldoTotal(sku: Text): Number =
+        Sum(Filter(colSaldos, SKU = sku), Quantidade);
+
+      ItemEstoqueMinimo(sku: Text): Number =
+        LookUp(colItens, SKU = sku).EstoqueMinimo;
+
+      ItemEstoqueBaixo(sku: Text): Boolean =
+        ItemSaldoTotal(sku) < ItemEstoqueMinimo(sku);
+
+      SaldoNoDeposito(sku: Text, deposito: Text): Number =
+        Sum(Filter(colSaldos, SKU = sku && Deposito = deposito), Quantidade);
+
+      DepositoSaldoTotal(deposito: Text): Number =
+        Sum(Filter(colSaldos, Deposito = deposito), Quantidade);
+
+      ProximoIdMovimentacao(): Number =
+        Max(colMovimentacoes, ID) + 1;
+    OnStart: |-
+      =ClearCollect(
+        colDepositos,
+        {Nome: "Estoque no Cassange", Responsavel: "Carlos Mendes"},
+        {Nome: "Estoque mínimo Cab", Responsavel: "Ana Ferreira"}
+      );
+      ClearCollect(
+        colItens,
+        {SKU: "MAT-001", Nome: "Cimento CP-II 50kg", Categoria: "Construção", UnidadeMedida: "SC", EstoqueMinimo: 50},
+        {SKU: "MAT-002", Nome: "Vergalhão 10mm", Categoria: "Construção", UnidadeMedida: "BR", EstoqueMinimo: 100},
+        {SKU: "MAT-003", Nome: "Luva de Segurança", Categoria: "EPI", UnidadeMedida: "PAR", EstoqueMinimo: 30},
+        {SKU: "MAT-004", Nome: "Óleo Hidráulico 20L", Categoria: "Manutenção", UnidadeMedida: "GL", EstoqueMinimo: 10},
+        {SKU: "MAT-005", Nome: "Parafuso Sextavado 1/2", Categoria: "Ferragens", UnidadeMedida: "CX", EstoqueMinimo: 20},
+        {SKU: "MAT-006", Nome: "Capacete de Segurança", Categoria: "EPI", UnidadeMedida: "UN", EstoqueMinimo: 15}
+      );
+      ClearCollect(
+        colSaldos,
+        {SKU: "MAT-001", Deposito: "Estoque no Cassange", Quantidade: 120},
+        {SKU: "MAT-001", Deposito: "Estoque mínimo Cab", Quantidade: 20},
+        {SKU: "MAT-002", Deposito: "Estoque no Cassange", Quantidade: 300},
+        {SKU: "MAT-002", Deposito: "Estoque mínimo Cab", Quantidade: 40},
+        {SKU: "MAT-003", Deposito: "Estoque no Cassange", Quantidade: 10},
+        {SKU: "MAT-003", Deposito: "Estoque mínimo Cab", Quantidade: 15},
+        {SKU: "MAT-004", Deposito: "Estoque no Cassange", Quantidade: 25},
+        {SKU: "MAT-004", Deposito: "Estoque mínimo Cab", Quantidade: 2},
+        {SKU: "MAT-005", Deposito: "Estoque no Cassange", Quantidade: 60},
+        {SKU: "MAT-005", Deposito: "Estoque mínimo Cab", Quantidade: 5},
+        {SKU: "MAT-006", Deposito: "Estoque no Cassange", Quantidade: 8},
+        {SKU: "MAT-006", Deposito: "Estoque mínimo Cab", Quantidade: 3}
+      );
+      ClearCollect(
+        colFornecedores,
+        {Nome: "Construtora Fornecedora Sul", Contato: "Roberto Silva", Telefone: "(11) 98765-4321"},
+        {Nome: "EPI Distribuidora Nacional", Contato: "Fernanda Costa", Telefone: "(11) 91234-5678"}
+      );
+      ClearCollect(
+        colSetores,
+        {Nome: "Manutenção"},
+        {Nome: "Produção"},
+        {Nome: "Segurança do Trabalho"}
+      );
+      ClearCollect(
+        colMovimentacoes,
+        {ID: 1, Tipo: "Entrada", SKU: "MAT-001", ItemNome: "Cimento CP-II 50kg", DepositoOrigem: "", DepositoDestino: "Estoque no Cassange", Quantidade: 100, Motivo: "Compra mensal", Solicitante: "", Fornecedor: "Construtora Fornecedora Sul", Usuario: "Carlos Mendes", DataHora: DateTime(2026,7,1,9,0,0)},
+        {ID: 2, Tipo: "Saída", SKU: "MAT-002", ItemNome: "Vergalhão 10mm", DepositoOrigem: "Estoque no Cassange", DepositoDestino: "", Quantidade: 20, Motivo: "Obra setor 3", Solicitante: "Produção", Fornecedor: "", Usuario: "Carlos Mendes", DataHora: DateTime(2026,7,5,14,30,0)},
+        {ID: 3, Tipo: "Transferência", SKU: "MAT-003", ItemNome: "Luva de Segurança", DepositoOrigem: "Estoque no Cassange", DepositoDestino: "Estoque mínimo Cab", Quantidade: 10, Motivo: "Reposição", Solicitante: "", Fornecedor: "", Usuario: "Ana Ferreira", DataHora: DateTime(2026,7,10,11,0,0)}
+      );
+      Set(varUsuarioAtual, User().FullName);
+      Set(varUltimaGuia, Blank())

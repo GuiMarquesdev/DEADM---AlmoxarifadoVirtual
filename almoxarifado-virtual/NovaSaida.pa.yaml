@@ -1,0 +1,171 @@
+Screens:
+  NovaSaida:
+    Properties:
+      Fill: =ColorBg
+    Children:
+      - NovaSaida_Root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+            Height: =Parent.Height
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            Fill: =ColorBg
+          Children:
+            - NovaSaida_TopBar:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  Width: =Parent.Width
+                  Height: =64
+                  FillPortions: =0
+                  PaddingLeft: =24
+                  LayoutGap: =16
+                  Fill: =ColorPrimaryDark
+                Children:
+                  - NovaSaida_btnVoltar:
+                      Control: Button
+                      Properties:
+                        Text: ="< Voltar"
+                        Appearance: ='ButtonCanvas.Appearance'.Transparent
+                        FontColor: =RGBA(255,255,255,1)
+                        Width: =90
+                        Height: =40
+                        FillPortions: =0
+                        OnSelect: =Navigate(Dashboard, ScreenTransition.None)
+                  - NovaSaida_lblAppTitle:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Nova Saída de Material"
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Color: =RGBA(255,255,255,1)
+                        AutoHeight: =true
+            - NovaSaida_FormCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  Width: =520
+                  FillPortions: =0
+                  PaddingLeft: =32
+                  PaddingRight: =32
+                  PaddingTop: =32
+                  PaddingBottom: =32
+                Children:
+                  - NovaSaida_lblItem:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Item"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_cboItem:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colItens
+                        InputTextPlaceholder: ="Selecione o item"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaSaida_lblDeposito:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Depósito de origem"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_cboDeposito:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colDepositos
+                        InputTextPlaceholder: ="Selecione o depósito"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaSaida_lblSaldoAtual:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          =If(IsBlank(NovaSaida_cboItem.Selected) || IsBlank(NovaSaida_cboDeposito.Selected), "", "Saldo disponível neste depósito: " & Text(SaldoNoDeposito(NovaSaida_cboItem.Selected.SKU, NovaSaida_cboDeposito.Selected.Nome)))
+                        Size: =13
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_lblSetor:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Setor solicitante"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_cboSetor:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colSetores
+                        InputTextPlaceholder: ="Selecione o setor"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaSaida_lblMotivo:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Motivo da retirada"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_txtMotivo:
+                      Control: ModernTextInput
+                      Properties:
+                        Placeholder: |-
+                          ="Ex.: Manutenção preventiva, obra setor 3..."
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaSaida_lblQuantidade:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Quantidade"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaSaida_txtQuantidade:
+                      Control: ModernNumberInput
+                      Properties:
+                        HintText: ="0"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaSaida_btnConfirmar:
+                      Control: Button
+                      Properties:
+                        Text: ="Registrar Saída e Gerar Guia"
+                        BasePaletteColor: =ColorAlert
+                        Width: =456
+                        Height: =48
+                        FillPortions: =0
+                        OnSelect: |-
+                          =With(
+                            {saldoAtual: If(IsBlank(NovaSaida_cboItem.Selected) || IsBlank(NovaSaida_cboDeposito.Selected), 0, SaldoNoDeposito(NovaSaida_cboItem.Selected.SKU, NovaSaida_cboDeposito.Selected.Nome))},
+                            If(
+                              IsBlank(NovaSaida_cboItem.Selected) || IsBlank(NovaSaida_cboDeposito.Selected) || IsBlank(NovaSaida_cboSetor.Selected) || Value(NovaSaida_txtQuantidade.Value) <= 0,
+                              Notify("Preencha item, depósito, setor solicitante e uma quantidade válida.", NotificationType.Error),
+                              If(
+                                Value(NovaSaida_txtQuantidade.Value) > saldoAtual,
+                                Notify("Saldo insuficiente neste depósito. Saldo atual: " & Text(saldoAtual), NotificationType.Error),
+                                Patch(colSaldos, LookUp(colSaldos, SKU = NovaSaida_cboItem.Selected.SKU && Deposito = NovaSaida_cboDeposito.Selected.Nome), {Quantidade: saldoAtual - Value(NovaSaida_txtQuantidade.Value)});
+                                Set(varNovoId, ProximoIdMovimentacao());
+                                Collect(colMovimentacoes, {ID: varNovoId, Tipo: "Saída", SKU: NovaSaida_cboItem.Selected.SKU, ItemNome: NovaSaida_cboItem.Selected.Nome, DepositoOrigem: NovaSaida_cboDeposito.Selected.Nome, DepositoDestino: "", Quantidade: Value(NovaSaida_txtQuantidade.Value), Motivo: NovaSaida_txtMotivo.Value, Solicitante: NovaSaida_cboSetor.Selected.Nome, Fornecedor: "", Usuario: varUsuarioAtual, DataHora: Now()});
+                                Set(varUltimaGuia, LookUp(colMovimentacoes, ID = varNovoId));
+                                Navigate(GuiaPedido, ScreenTransition.None)
+                              )
+                            )
+                          )

@@ -1,0 +1,177 @@
+Screens:
+  GuiaPedido:
+    Properties:
+      Fill: =ColorBg
+    Children:
+      - GuiaPedido_Root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutAlignItems: =LayoutAlignItems.Center
+            Width: =Parent.Width
+            Height: =Parent.Height
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            Fill: =ColorBg
+          Children:
+            - GuiaPedido_TopBar:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  Width: =Parent.Width
+                  Height: =64
+                  FillPortions: =0
+                  PaddingLeft: =24
+                  Fill: =ColorPrimaryDark
+                Children:
+                  - GuiaPedido_lblAppTitle:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Guia de Pedido"
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Color: =RGBA(255,255,255,1)
+                        AutoHeight: =true
+            - GuiaPedido_Paper:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =12
+                  Width: =600
+                  FillPortions: =0
+                  PaddingLeft: =48
+                  PaddingRight: =48
+                  PaddingTop: =40
+                  PaddingBottom: =40
+                  Fill: =ColorCard
+                  DropShadow: =DropShadow.Regular
+                Children:
+                  - GuiaPedido_lblTitulo:
+                      Control: ModernText
+                      Properties:
+                        Text: ="GUIA DE RETIRADA DE MATERIAL"
+                        FontWeight: =FontWeight.Bold
+                        Size: =20
+                        Align: =Align.Center
+                        Color: =ColorTextPrimary
+                        Width: =Parent.Width
+                        AutoHeight: =true
+                  - GuiaPedido_lblSubtitulo:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Almoxarifado Virtual · Nº " & Text(varUltimaGuia.ID)
+                        Size: =13
+                        Align: =Align.Center
+                        Color: =ColorTextSecondary
+                        Width: =Parent.Width
+                        AutoHeight: =true
+                  - GuiaPedido_divider1:
+                      Control: Rectangle
+                      Properties:
+                        Fill: =ColorBorder
+                        Width: =Parent.Width
+                        Height: =1
+                        FillPortions: =0
+                  - GuiaPedido_lblData:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Data/Hora: " & Text(varUltimaGuia.DataHora, "dd/mm/yyyy hh:mm")
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblItem:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Item: " & varUltimaGuia.ItemNome & " (SKU " & varUltimaGuia.SKU & ")"
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblQuantidade:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Quantidade retirada: " & Text(varUltimaGuia.Quantidade)
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblDeposito:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Depósito de origem: " & varUltimaGuia.DepositoOrigem
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblSetor:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Setor solicitante: " & varUltimaGuia.Solicitante
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblMotivo:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Motivo: " & varUltimaGuia.Motivo
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_lblUsuario:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Expedido por: " & varUltimaGuia.Usuario
+                        Size: =15
+                        Color: =ColorTextPrimary
+                        AutoHeight: =true
+                  - GuiaPedido_divider2:
+                      Control: Rectangle
+                      Properties:
+                        Fill: =ColorBorder
+                        Width: =Parent.Width
+                        Height: =1
+                        FillPortions: =0
+                  - GuiaPedido_lblAssinaturaSpacer:
+                      Control: ModernText
+                      Properties:
+                        Text: =" "
+                        Height: =24
+                        AutoHeight: =false
+                  - GuiaPedido_linhaAssinatura:
+                      Control: Rectangle
+                      Properties:
+                        Fill: =ColorTextPrimary
+                        Width: =320
+                        Height: =1
+                        FillPortions: =0
+                  - GuiaPedido_lblAssinaturaLabel:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Assinatura de quem recebeu o material"
+                        Size: =13
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - GuiaPedido_lblNomeLegivel:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          ="Nome legível: ______________________________"
+                        Size: =13
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+            - GuiaPedido_btnVoltarDashboard:
+                Control: Button
+                Properties:
+                  Text: ="Voltar ao Dashboard"
+                  BasePaletteColor: =ColorPrimary
+                  Width: =240
+                  Height: =44
+                  FillPortions: =0
+                  OnSelect: =Navigate(Dashboard, ScreenTransition.None)

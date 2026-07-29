@@ -1,0 +1,146 @@
+Screens:
+  NovaEntrada:
+    Properties:
+      Fill: =ColorBg
+    Children:
+      - NovaEntrada_Root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+            Height: =Parent.Height
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            Fill: =ColorBg
+          Children:
+            - NovaEntrada_TopBar:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  Width: =Parent.Width
+                  Height: =64
+                  FillPortions: =0
+                  PaddingLeft: =24
+                  LayoutGap: =16
+                  Fill: =ColorPrimaryDark
+                Children:
+                  - NovaEntrada_btnVoltar:
+                      Control: Button
+                      Properties:
+                        Text: ="< Voltar"
+                        Appearance: ='ButtonCanvas.Appearance'.Transparent
+                        FontColor: =RGBA(255,255,255,1)
+                        Width: =90
+                        Height: =40
+                        FillPortions: =0
+                        OnSelect: =Navigate(Dashboard, ScreenTransition.None)
+                  - NovaEntrada_lblAppTitle:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Nova Entrada de Material"
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Color: =RGBA(255,255,255,1)
+                        AutoHeight: =true
+            - NovaEntrada_FormCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  Width: =520
+                  FillPortions: =0
+                  PaddingLeft: =32
+                  PaddingRight: =32
+                  PaddingTop: =32
+                  PaddingBottom: =32
+                Children:
+                  - NovaEntrada_lblItem:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Item"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaEntrada_cboItem:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colItens
+                        InputTextPlaceholder: ="Selecione o item"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaEntrada_lblDeposito:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Depósito de destino"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaEntrada_cboDeposito:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colDepositos
+                        InputTextPlaceholder: ="Selecione o depósito"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaEntrada_lblFornecedor:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Fornecedor"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaEntrada_cboFornecedor:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colFornecedores
+                        InputTextPlaceholder: ="Selecione o fornecedor"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaEntrada_lblQuantidade:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Quantidade"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - NovaEntrada_txtQuantidade:
+                      Control: ModernNumberInput
+                      Properties:
+                        HintText: ="0"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - NovaEntrada_btnConfirmar:
+                      Control: Button
+                      Properties:
+                        Text: ="Registrar Entrada"
+                        BasePaletteColor: =ColorPrimary
+                        Width: =456
+                        Height: =48
+                        FillPortions: =0
+                        OnSelect: |-
+                          =If(
+                            IsBlank(NovaEntrada_cboItem.Selected) || IsBlank(NovaEntrada_cboDeposito.Selected) || IsBlank(NovaEntrada_cboFornecedor.Selected) || Value(NovaEntrada_txtQuantidade.Value) <= 0,
+                            Notify("Preencha item, depósito, fornecedor e uma quantidade válida.", NotificationType.Error),
+                            With(
+                              {existente: LookUp(colSaldos, SKU = NovaEntrada_cboItem.Selected.SKU && Deposito = NovaEntrada_cboDeposito.Selected.Nome)},
+                              If(
+                                IsBlank(existente),
+                                Collect(colSaldos, {SKU: NovaEntrada_cboItem.Selected.SKU, Deposito: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Value(NovaEntrada_txtQuantidade.Value)}),
+                                Patch(colSaldos, existente, {Quantidade: existente.Quantidade + Value(NovaEntrada_txtQuantidade.Value)})
+                              )
+                            );
+                            Collect(colMovimentacoes, {ID: ProximoIdMovimentacao(), Tipo: "Entrada", SKU: NovaEntrada_cboItem.Selected.SKU, ItemNome: NovaEntrada_cboItem.Selected.Nome, DepositoOrigem: "", DepositoDestino: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Value(NovaEntrada_txtQuantidade.Value), Motivo: "Compra de fornecedor", Solicitante: "", Fornecedor: NovaEntrada_cboFornecedor.Selected.Nome, Usuario: varUsuarioAtual, DataHora: Now()});
+                            Notify("Entrada registrada com sucesso.", NotificationType.Success);
+                            Navigate(Dashboard, ScreenTransition.None)
+                          )

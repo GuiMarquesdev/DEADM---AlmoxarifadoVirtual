@@ -1,0 +1,182 @@
+Screens:
+  Transferencia:
+    Properties:
+      Fill: =ColorBg
+    Children:
+      - Transferencia_Root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+            Height: =Parent.Height
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            Fill: =ColorBg
+          Children:
+            - Transferencia_TopBar:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  Width: =Parent.Width
+                  Height: =64
+                  FillPortions: =0
+                  PaddingLeft: =24
+                  LayoutGap: =16
+                  Fill: =ColorPrimaryDark
+                Children:
+                  - Transferencia_btnVoltar:
+                      Control: Button
+                      Properties:
+                        Text: ="< Voltar"
+                        Appearance: ='ButtonCanvas.Appearance'.Transparent
+                        FontColor: =RGBA(255,255,255,1)
+                        Width: =90
+                        Height: =40
+                        FillPortions: =0
+                        OnSelect: =Navigate(Dashboard, ScreenTransition.None)
+                  - Transferencia_lblAppTitle:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Transferência entre Depósitos"
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Color: =RGBA(255,255,255,1)
+                        AutoHeight: =true
+            - Transferencia_FormCard:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  Width: =520
+                  FillPortions: =0
+                  PaddingLeft: =32
+                  PaddingRight: =32
+                  PaddingTop: =32
+                  PaddingBottom: =32
+                Children:
+                  - Transferencia_lblItem:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Item"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_cboItem:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colItens
+                        InputTextPlaceholder: ="Selecione o item"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - Transferencia_lblOrigem:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Depósito de origem"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_cboOrigem:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colDepositos
+                        InputTextPlaceholder: ="Selecione a origem"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - Transferencia_lblSaldoOrigem:
+                      Control: ModernText
+                      Properties:
+                        Text: |-
+                          =If(IsBlank(Transferencia_cboItem.Selected) || IsBlank(Transferencia_cboOrigem.Selected), "", "Saldo disponível na origem: " & Text(SaldoNoDeposito(Transferencia_cboItem.Selected.SKU, Transferencia_cboOrigem.Selected.Nome)))
+                        Size: =13
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_lblDestino:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Depósito de destino"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_cboDestino:
+                      Control: ModernCombobox
+                      Properties:
+                        Items: =colDepositos
+                        InputTextPlaceholder: ="Selecione o destino"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - Transferencia_lblMotivo:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Motivo da transferência"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_txtMotivo:
+                      Control: ModernTextInput
+                      Properties:
+                        Placeholder: |-
+                          ="Ex.: Reposição, reorganização de estoque..."
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - Transferencia_lblQuantidade:
+                      Control: ModernText
+                      Properties:
+                        Text: ="Quantidade"
+                        Size: =14
+                        FontWeight: =FontWeight.Semibold
+                        Color: =ColorTextSecondary
+                        AutoHeight: =true
+                  - Transferencia_txtQuantidade:
+                      Control: ModernNumberInput
+                      Properties:
+                        HintText: ="0"
+                        Width: =456
+                        Height: =44
+                        FillPortions: =0
+                  - Transferencia_btnConfirmar:
+                      Control: Button
+                      Properties:
+                        Text: ="Confirmar Transferência"
+                        BasePaletteColor: =ColorPrimaryDark
+                        Width: =456
+                        Height: =48
+                        FillPortions: =0
+                        OnSelect: |-
+                          =With(
+                            {saldoOrigem: If(IsBlank(Transferencia_cboItem.Selected) || IsBlank(Transferencia_cboOrigem.Selected), 0, SaldoNoDeposito(Transferencia_cboItem.Selected.SKU, Transferencia_cboOrigem.Selected.Nome))},
+                            If(
+                              IsBlank(Transferencia_cboItem.Selected) || IsBlank(Transferencia_cboOrigem.Selected) || IsBlank(Transferencia_cboDestino.Selected) || Value(Transferencia_txtQuantidade.Value) <= 0,
+                              Notify("Preencha item, depósito de origem, depósito de destino e uma quantidade válida.", NotificationType.Error),
+                              If(
+                                Transferencia_cboOrigem.Selected.Nome = Transferencia_cboDestino.Selected.Nome,
+                                Notify("O depósito de origem e destino devem ser diferentes.", NotificationType.Error),
+                                If(
+                                  Value(Transferencia_txtQuantidade.Value) > saldoOrigem,
+                                  Notify("Saldo insuficiente no depósito de origem. Saldo atual: " & Text(saldoOrigem), NotificationType.Error),
+                                  Patch(colSaldos, LookUp(colSaldos, SKU = Transferencia_cboItem.Selected.SKU && Deposito = Transferencia_cboOrigem.Selected.Nome), {Quantidade: saldoOrigem - Value(Transferencia_txtQuantidade.Value)});
+                                  With(
+                                    {existenteDestino: LookUp(colSaldos, SKU = Transferencia_cboItem.Selected.SKU && Deposito = Transferencia_cboDestino.Selected.Nome)},
+                                    If(
+                                      IsBlank(existenteDestino),
+                                      Collect(colSaldos, {SKU: Transferencia_cboItem.Selected.SKU, Deposito: Transferencia_cboDestino.Selected.Nome, Quantidade: Value(Transferencia_txtQuantidade.Value)}),
+                                      Patch(colSaldos, existenteDestino, {Quantidade: existenteDestino.Quantidade + Value(Transferencia_txtQuantidade.Value)})
+                                    )
+                                  );
+                                  Collect(colMovimentacoes, {ID: ProximoIdMovimentacao(), Tipo: "Transferência", SKU: Transferencia_cboItem.Selected.SKU, ItemNome: Transferencia_cboItem.Selected.Nome, DepositoOrigem: Transferencia_cboOrigem.Selected.Nome, DepositoDestino: Transferencia_cboDestino.Selected.Nome, Quantidade: Value(Transferencia_txtQuantidade.Value), Motivo: Transferencia_txtMotivo.Value, Solicitante: "", Fornecedor: "", Usuario: varUsuarioAtual, DataHora: Now()});
+                                  Notify("Transferência registrada com sucesso.", NotificationType.Success);
+                                  Navigate(Dashboard, ScreenTransition.None)
+                                )
+                              )
+                            )
+                          )
