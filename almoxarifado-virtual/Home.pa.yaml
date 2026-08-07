@@ -3,204 +3,353 @@ Screens:
     Properties:
       Fill: =ColorBg
       OnVisible: |-
-        =// Ainda não existe uma coleção de solicitações no app; placeholder até criar colSolicitacoes.
-        Set(varBuscaHome, "");
-        Set(varTotalItensEstoque, Sum(colSaldos, Quantidade));
-        Set(varSolicitacoesPendentes, 0);
+        =Set(varTotalItensEstoque, Sum(colSaldos, Quantidade));
+        Set(varTotalItensBaixoEstoque, CountRows(Filter(colItens, ItemEstoqueBaixo(SKU))));
         Set(varMovimentacoesHoje, CountRows(Filter(colMovimentacoes, DateValue(DataHora) = Today())))
     Children:
-      - Home_Root:
+      - Home_CardsRow2:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
-            Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
+            Height: =123
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            LayoutWrap: =true
+            Width: =1329
+            X: =15
+            Y: =349
           Children:
-            - Home_Hero:
+            - Home_cardInventario_Group:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =28
-                  PaddingBottom: =28
-                  Fill: =ColorPrimaryDark
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
                 Children:
-                  - Home_lblHeroTitle:
-                      Control: ModernText
+                  - Home_iconInventario:
+                      Control: Icon
                       Properties:
-                        Text: ="🏭 Almoxarifado Virtual"
-                        FontWeight: =FontWeight.Bold
-                        Size: =28
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-                  - Home_lblHeroSubtitle:
-                      Control: ModernText
+                        Height: =28
+                        Icon: ="Cart"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardInventario:
+                      Control: ModernCard
                       Properties:
-                        Text: ="Controle de estoque, movimentações e solicitações"
-                        Size: =14
-                        Color: =RGBA(255,255,255,0.85)
-                        AutoHeight: =true
-            - Home_Content:
+                        BorderRadius: =8
+                        Fill: =RGBA(255, 247, 158, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(Depositos, ScreenTransition.None)
+                        Subtitle: ="Ver saldos por depósito"
+                        Title: ="Inventário"
+            - Home_cardSolicitacoes_Group:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =24
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
                 Children:
-                  - Home_SearchRow:
-                      Control: GroupContainer
-                      Variant: AutoLayout
+                  - Home_iconSolicitacoes:
+                      Control: Icon
                       Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Home_txtBuscaHome:
-                            Control: ModernTextInput
-                            Properties:
-                              Placeholder: ="Pesquisar item, código ou localização..."
-                              Default: =varBuscaHome
-                              Width: =500
-                              Height: =44
-                              FillPortions: =1
-                              OnChange: =Set(varBuscaHome, Self.Value)
-                        - Home_btnPesquisarHome:
-                            Control: Button
-                            Properties:
-                              Text: ="Pesquisar"
-                              BasePaletteColor: =ColorPrimary
-                              Width: =160
-                              Height: =44
-                              FillPortions: =0
-                              OnSelect: |-
-                                =Set(varBuscaCatalogo, varBuscaHome);
-                                Navigate(Catalogo, ScreenTransition.None)
-                  - Home_CardsRow1:
-                      Control: GroupContainer
-                      Variant: AutoLayout
+                        Height: =28
+                        Icon: ="Sync"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardSolicitacoes:
+                      Control: ModernCard
                       Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Home_cardEntrada:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="📥 Entrada de Materiais"
-                              Subtitle: ="Registrar chegada de itens no estoque"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(220,252,231,1)
-                              OnSelect: =Navigate(NovaEntrada, ScreenTransition.None)
-                        - Home_cardSaida:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="📤 Saída de Materiais"
-                              Subtitle: ="Registrar retirada de itens do estoque"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(254,226,226,1)
-                              OnSelect: =Navigate(NovaSaida, ScreenTransition.None)
-                        - Home_cardConsulta:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="📦 Consulta de Estoque"
-                              Subtitle: ="Buscar itens, SKUs e saldos"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(219,234,254,1)
-                              OnSelect: =Navigate(Catalogo, ScreenTransition.None)
-                  - Home_CardsRow2:
-                      Control: GroupContainer
-                      Variant: AutoLayout
+                        BorderRadius: =8
+                        Fill: =RGBA(215, 192, 240, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(Transferencia, ScreenTransition.None)
+                        Subtitle: ="Mover saldo entre depósitos"
+                        Title: ="Transferência"
+            - Home_cardRelatorios_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
+                Children:
+                  - Home_iconRelatorios:
+                      Control: Icon
                       Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Home_cardInventario:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="📋 Inventário"
-                              Subtitle: ="Ver saldos por depósito"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(254,249,195,1)
-                              OnSelect: =Navigate(Depositos, ScreenTransition.None)
-                        - Home_cardSolicitacoes:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="🛒 Solicitações"
-                              Subtitle: ="Emitir guia de retirada de material"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(243,232,255,1)
-                              OnSelect: =Navigate(GuiaPedido, ScreenTransition.None)
-                        - Home_cardRelatorios:
-                            Control: ModernCard
-                            Properties:
-                              Title: ="📊 Relatórios"
-                              Subtitle: ="Histórico completo de movimentações"
-                              Width: =260
-                              Height: =120
-                              FillPortions: =1
-                              Fill: =RGBA(241,245,249,1)
-                              OnSelect: =Navigate(Historico, ScreenTransition.None)
-                  - Home_StatsRow:
-                      Control: GroupContainer
-                      Variant: AutoLayout
+                        Height: =28
+                        Icon: ="Database"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardRelatorios:
+                      Control: ModernCard
                       Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Home_cardItensEstoque:
-                            Control: ModernCard
-                            Properties:
-                              Title: =Text(varTotalItensEstoque)
-                              Subtitle: ="Itens em Estoque"
-                              Width: =220
-                              Height: =100
-                              FillPortions: =1
-                              Fill: =ColorCard
-                        - Home_cardSolicitacoesPendentes:
-                            Control: ModernCard
-                            Properties:
-                              Title: =Text(varSolicitacoesPendentes)
-                              Subtitle: ="Solicitações Pendentes"
-                              Width: =220
-                              Height: =100
-                              FillPortions: =1
-                              Fill: =ColorCard
-                        - Home_cardMovimentacoesHoje:
-                            Control: ModernCard
-                            Properties:
-                              Title: =Text(varMovimentacoesHoje)
-                              Subtitle: ="Movimentações Hoje"
-                              Width: =220
-                              Height: =100
-                              FillPortions: =1
-                              Fill: =ColorCard
+                        BorderRadius: =8
+                        Fill: =RGBA(203, 102, 102, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(Historico, ScreenTransition.None)
+                        Subtitle: ="Histórico completo de movimentações"
+                        Title: ="Relatórios"
+            - Home_cardCadastros_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
+                Children:
+                  - Home_iconCadastros:
+                      Control: Icon
+                      Properties:
+                        Height: =28
+                        Icon: ="DocumentBulletList"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardCadastros:
+                      Control: ModernCard
+                      Properties:
+                        BorderRadius: =8
+                        Fill: =RGBA(255, 224, 178, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(Cadastros, ScreenTransition.None)
+                        Subtitle: ="Itens, setores e catálogo"
+                        Title: ="Cadastros"
+      - Home_StatsRow:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =127
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            LayoutWrap: =true
+            Width: =1329
+            X: =15
+            Y: =203
+          Children:
+            - Home_cardItensEstoque:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =220
+                  Subtitle: ="Itens em Estoque"
+                  Title: =Text(varTotalItensEstoque)
+                  Width: =220
+            - Home_cardMovimentacoesHoje:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =220
+                  Subtitle: ="Movimentações Hoje"
+                  Title: =Text(varMovimentacoesHoje)
+                  Width: =220
+            - Home_cardEstoqueBaixo:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =220
+                  OnSelect: =Navigate(EstoqueBaixo, ScreenTransition.None)
+                  Subtitle: ="Itens com Estoque Baixo"
+                  Title: =Text(varTotalItensBaixoEstoque)
+                  Width: =220
+      - Home_CardsRow1:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Height: =124
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            LayoutWrap: =true
+            Width: =1329
+            X: =15
+            Y: =490
+          Children:
+            - Home_cardEntrada_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
+                Children:
+                  - Home_iconEntrada:
+                      Control: Icon
+                      Properties:
+                        Height: =28
+                        Icon: ="ArrowRight"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        IconStyle: ='Icon.IconStyle'.Outline
+                        Width: =28
+                  - Home_cardEntrada:
+                      Control: ModernCard
+                      Properties:
+                        AlignInContainer: =AlignInContainer.End
+                        BorderRadius: =8
+                        Fill: =RGBA(189, 255, 212, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(NovaEntrada, ScreenTransition.None)
+                        Subtitle: ="Registrar chegada de itens no estoque"
+                        Title: ="Entrada de Materiais"
+            - Home_cardSaida_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  Width: =260
+                Children:
+                  - Home_iconSaida:
+                      Control: Icon
+                      Properties:
+                        Height: =28
+                        Icon: ="ArrowExit"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardSaida:
+                      Control: ModernCard
+                      Properties:
+                        BorderRadius: =8
+                        Fill: =RGBA(255, 209, 209, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(NovaSaida, ScreenTransition.None)
+                        Subtitle: ="Registrar retirada de itens do estoque"
+                        Title: ="Saída de Materiais"
+            - Home_cardConsulta_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(0, 69, 120, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
+                Children:
+                  - Home_iconConsulta:
+                      Control: Icon
+                      Properties:
+                        Height: =28
+                        Icon: ="Search"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardConsulta:
+                      Control: ModernCard
+                      Properties:
+                        BorderRadius: =8
+                        Fill: =RGBA(191, 218, 255, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(Catalogo, ScreenTransition.None)
+                        Subtitle: ="Buscar itens, códigos e saldos"
+                        Title: ="Consulta de Estoque"
+      - Home_Hero:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =ColorPrimaryDark
+            Height: =121
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutGap: =8
+            PaddingBottom: =28
+            PaddingLeft: =32
+            PaddingRight: =32
+            PaddingTop: =28
+            Width: =Parent.Width
+          Children:
+            - Home_lblHeroTitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Height: =300
+                  Size: =28
+                  Text: |-
+                    ="🏭 Almoxarifado Virtual"
+                  Width: =500
+            - Home_lblHeroSubtitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,0.85)
+                  Size: =14
+                  Text: ="Controle de estoque, movimentações e solicitações"
+                  Width: =500

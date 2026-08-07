@@ -10,6 +10,7 @@
   "enabledPlugins": {
     "document-skills@anthropic-agent-skills": true
   },
+  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
       "Bash(pac *)",

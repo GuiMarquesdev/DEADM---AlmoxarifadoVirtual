@@ -4,140 +4,199 @@ Screens:
       Fill: =ColorBg
       OnVisible: |-
         =Set(varBuscaCatalogo, "");
-        Set(varCategoriaFiltro, "Todas")
+        Set(varCategoriaFiltro, "Todas");
+        Set(varConfirmandoExclusaoItem, false)
     Children:
-      - Catalogo_Root:
+      - Catalogo_NavBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
+            Fill: =ColorPrimaryDark
+            Height: =70
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+            LayoutWrap: =true
+            PaddingLeft: =24
+            PaddingRight: =24
             Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
           Children:
-            - Catalogo_NavBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - Catalogo_lblAppTitle:
+                Control: ModernText
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  PaddingRight: =24
-                  Fill: =ColorPrimaryDark
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Almoxarifado Virtual"
+            - Catalogo_btnVoltar:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =RGBA(255,255,255,1)
+                  Height: =40
+                  OnSelect: =Navigate(Home, ScreenTransition.None)
+                  Text: ="< Voltar"
+                  Width: =90
+      - Catalogo_galItens:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =510
+            Items: |-
+              =Sort(
+                Filter(colItens,
+                  (varCategoriaFiltro = "Todas" || Categoria.Value = varCategoriaFiltro) &&
+                  (varBuscaCatalogo = "" || varBuscaCatalogo in Nome || varBuscaCatalogo in SKU)
+                ),
+                Nome
+              )
+            TemplateSize: =92
+            Width: =1320
+            X: =25
+            Y: =258
+          Children:
+            - Catalogo_cardItem:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =67
+                  Image: =Blank()
+                  OnSelect: |-
+                    =Set(varItemSelecionado, ThisItem);
+                    Navigate(DetalheItem, ScreenTransition.None)
+                  Subtitle: ="Código " & ThisItem.SKU & " · " & ThisItem.Categoria.Value & " · Saldo total " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida
+                  Title: =ThisItem.Nome
+                  Width: =1230
+                  Y: =18
+            - Catalogo_badgeStatus:
+                Control: Badge
+                Properties:
+                  Content: =If(ItemEstoqueBaixo(ThisItem.SKU), "Baixo", "OK")
+                  Height: =28
+                  ThemeColor: =If(ItemEstoqueBaixo(ThisItem.SKU), 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
+                  Width: =70
+                  X: =1082
+                  Y: =37
+            - Catalogo_btnExcluirItem:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =44
+                  Icon: ="Delete"
+                  OnSelect: |-
+                    =Set(varItemParaExcluir, ThisItem);
+                    Set(varConfirmandoExclusaoItem, true)
+                  Text: =""
+                  Width: =44
+                  X: =1170
+                  Y: =29
+      - Catalogo_cboCategoria:
+          Control: ModernCombobox
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            DefaultSelectedItems: |-
+              =Table({Value: "Todas"})
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            ItemDisplayText: =ThisItem.Value
+            Items: |-
+              =Table({Value: "Todas"}, {Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
+            OnChange: =Set(varCategoriaFiltro, Self.Selected.Value)
+            Width: =220
+            X: =357
+            Y: =183
+      - Catalogo_txtBusca:
+          Control: ModernTextInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Default: =varBuscaCatalogo
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varBuscaCatalogo, Self.Text)
+            Placeholder: ="Buscar por nome ou código..."
+            X: =25
+            Y: =183
+      - Catalogo_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Catálogo de Itens"
+            Width: =408
+            X: =25
+            Y: =104
+      - Catalogo_OverlayExcluir:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varConfirmandoExclusaoItem
+            Width: =1366
+          Children:
+            - Catalogo_boxConfirmarExclusao:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =230
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =440
+                  X: =463
+                  Y: =280
                 Children:
-                  - Catalogo_lblAppTitle:
+                  - Catalogo_lblTituloExcluir:
                       Control: ModernText
                       Properties:
-                        Text: ="Almoxarifado Virtual"
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
                         FontWeight: =FontWeight.Bold
                         Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-                  - Catalogo_navTabs:
-                      Control: ModernTabList
-                      Properties:
-                        Items: |-
-                          =Table({Value: "Dashboard"}, {Value: "Catálogo"}, {Value: "Depósitos"}, {Value: "Histórico"}, {Value: "Cadastros"})
-                        Default: '={Value: "Catálogo"}'
-                        Width: =520
-                        Height: =40
-                        FillPortions: =0
-                        OnChange: |-
-                          =Switch(Self.Selected.Value,
-                            "Dashboard", Navigate(Dashboard, ScreenTransition.None),
-                            "Depósitos", Navigate(Depositos, ScreenTransition.None),
-                            "Histórico", Navigate(Historico, ScreenTransition.None),
-                            "Cadastros", Navigate(Cadastros, ScreenTransition.None)
-                          )
-            - Catalogo_Content:
-                Control: GroupContainer
-                Variant: AutoLayout
-                Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =20
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - Catalogo_lblHeader:
+                        Text: ="Excluir item do catálogo?"
+                        Width: =392
+                        X: =24
+                        Y: =20
+                  - Catalogo_lblMensagemExcluir:
                       Control: ModernText
                       Properties:
-                        Text: ="Catálogo de Itens"
-                        FontWeight: =FontWeight.Bold
-                        Size: =28
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - Catalogo_FiltroRow:
-                      Control: GroupContainer
-                      Variant: AutoLayout
+                        Color: =ColorTextSecondary
+                        Height: =90
+                        Size: =14
+                        Text: ="Isso vai excluir permanentemente o item """ & varItemParaExcluir.Nome & """ e todos os registros de saldo dele em todos os depósitos. Essa ação não pode ser desfeita."
+                        Width: =392
+                        X: =24
+                        Y: =56
+                  - Catalogo_btnCancelarExclusao:
+                      Control: Button
                       Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Catalogo_txtBusca:
-                            Control: ModernTextInput
-                            Properties:
-                              Placeholder: ="Buscar por nome ou SKU..."
-                              Default: =varBuscaCatalogo
-                              Width: =320
-                              Height: =44
-                              FillPortions: =0
-                              OnChange: =Set(varBuscaCatalogo, Self.Value)
-                        - Catalogo_cboCategoria:
-                            Control: ModernCombobox
-                            Properties:
-                              Items: |-
-                                =Table({Value: "Todas"}, {Value: "Construção"}, {Value: "EPI"}, {Value: "Manutenção"}, {Value: "Ferragens"})
-                              DefaultSelectedItems: |-
-                                =Table({Value: "Todas"})
-                              Width: =220
-                              Height: =44
-                              FillPortions: =0
-                              OnChange: =Set(varCategoriaFiltro, Self.Selected.Value)
-                  - Catalogo_galItens:
-                      Control: Gallery
-                      Variant: Vertical
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varConfirmandoExclusaoItem, false)
+                        Text: ="Cancelar"
+                        Width: =190
+                        X: =24
+                        Y: =170
+                  - Catalogo_btnConfirmarExclusao:
+                      Control: Button
                       Properties:
-                        Items: |-
-                          =Sort(
-                            Filter(colItens,
-                              (varCategoriaFiltro = "Todas" || Categoria = varCategoriaFiltro) &&
-                              (varBuscaCatalogo = "" || Nome in varBuscaCatalogo || SKU in varBuscaCatalogo)
-                            ),
-                            Nome
-                          )
-                        TemplateSize: =92
-                        Width: =Parent.Width
-                        Height: =CountRows(Self.AllItems) * 92
-                        FillPortions: =0
-                      Children:
-                        - Catalogo_cardItem:
-                            Control: ModernCard
-                            Properties:
-                              Title: =ThisItem.Nome
-                              Subtitle: |-
-                                ="SKU " & ThisItem.SKU & " · " & ThisItem.Categoria & " · Saldo total " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida
-                              Width: =Parent.Width
-                              Height: =80
-                              Fill: =ColorCard
-                              OnSelect: |-
-                                =Set(varItemSelecionado, ThisItem);
-                                Navigate(DetalheItem, ScreenTransition.None)
-                        - Catalogo_badgeStatus:
-                            Control: Badge
-                            Properties:
-                              Content: =If(ItemEstoqueBaixo(ThisItem.SKU), "Baixo", "OK")
-                              X: =Parent.Width - 90
-                              Y: =26
-                              Width: =70
-                              Height: =28
+                        BasePaletteColor: =ColorAlert
+                        Height: =44
+                        OnSelect: |-
+                          =RemoveIf(Saldos, SKU = varItemParaExcluir.SKU);
+                          RemoveIf(Itens, SKU = varItemParaExcluir.SKU);
+                          Set(varConfirmandoExclusaoItem, false);
+                          Notify("Item e todos os saldos foram excluídos.", NotificationType.Success)
+                        Text: ="Excluir mesmo assim"
+                        Width: =190
+                        X: =226
+                        Y: =170

@@ -4,90 +4,129 @@ Screens:
       Fill: =ColorBg
       OnVisible: |-
         =Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome));
-        Set(varItensDeposito, AddColumns(varSaldosDeposito, "Nome", LookUp(colItens, SKU = SKU).Nome, "Categoria", LookUp(colItens, SKU = SKU).Categoria))
+        Set(varItensDeposito, ForAll(varSaldosDeposito,
+          With({saldoSKU: SKU, saldoQuantidade: Quantidade},
+            {SKU: saldoSKU, Quantidade: saldoQuantidade, Nome: LookUp(colItens, SKU = saldoSKU).Nome, Categoria: LookUp(colItens, SKU = saldoSKU).Categoria, Status: If(saldoQuantidade < LookUp(colItens, SKU = saldoSKU).EstoqueMinimo, "Baixo", "OK")}
+          )
+        ))
     Children:
-      - DetalheDeposito_Root:
+      - DetalheDeposito_tblItens:
+          Control: Table
+          Properties:
+            Height: =383
+            Items: =varItensDeposito
+            Width: =1302
+            X: =35
+            Y: =322
+          Children:
+            - SKU1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Código"
+                  FieldName: ="SKU"
+                  FieldType: ="s"
+                  Order: =1
+            - Nome1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Nome"
+                  FieldName: ="Nome"
+                  FieldType: ="s"
+                  Order: =2
+            - Categoria1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Categoria"
+                  FieldName: ="Categoria"
+                  FieldType: ="![Value:s]"
+                  Order: =3
+            - Quantidade1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Quantidade"
+                  FieldName: ="Quantidade"
+                  FieldType: ="n"
+                  Order: =4
+            - Status1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Status"
+                  FieldName: ="Status"
+                  FieldType: ="s"
+                  Order: =5
+      - DetalheDeposito_lblItensHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Semibold
+            Size: =20
+            Text: ="Itens armazenados"
+            Width: =273
+            X: =35
+            Y: =268
+      - DetalheDeposito_lblMeta:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            Height: =55
+            Size: =14
+            Text: |-
+              ="Responsável: " & varDepositoSelecionado.Responsavel & " · Saldo total: " & Text(DepositoSaldoTotal(varDepositoSelecionado.Nome)) & " unidades"
+            Width: =273
+            X: =35
+            Y: =173
+      - DetalheDeposito_lblNome:
+          Control: ModernText
+          Properties:
+            AccessibleLabel: =
+            Color: =RGBA(0, 0, 0, 1)
+            FontWeight: =FontWeight.Bold
+            Height: =79
+            Size: =26
+            Text: ="Estoque no Cassange"
+            Width: =351
+            X: =35
+            Y: =94
+      - DetalheDeposito_TopBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
+            Fill: =ColorPrimaryDark
+            Height: =73
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            PaddingLeft: =24
             Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
           Children:
-            - DetalheDeposito_TopBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - DetalheDeposito_lblAppTitle:
+                Control: ModernText
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  LayoutGap: =16
-                  Fill: =ColorPrimaryDark
-                Children:
-                  - DetalheDeposito_btnVoltar:
-                      Control: Button
-                      Properties:
-                        Text: ="< Voltar"
-                        Appearance: ='ButtonCanvas.Appearance'.Transparent
-                        FontColor: =RGBA(255,255,255,1)
-                        Width: =90
-                        Height: =40
-                        FillPortions: =0
-                        OnSelect: =Navigate(Depositos, ScreenTransition.None)
-                  - DetalheDeposito_lblAppTitle:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Detalhe do Depósito"
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-            - DetalheDeposito_Content:
-                Control: GroupContainer
-                Variant: AutoLayout
-                Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =20
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - DetalheDeposito_lblNome:
-                      Control: ModernText
-                      Properties:
-                        Text: =varDepositoSelecionado.Nome
-                        FontWeight: =FontWeight.Bold
-                        Size: =26
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - DetalheDeposito_lblMeta:
-                      Control: ModernText
-                      Properties:
-                        Text: |-
-                          ="Responsável: " & varDepositoSelecionado.Responsavel & " · Saldo total: " & Text(DepositoSaldoTotal(varDepositoSelecionado.Nome)) & " unidades"
-                        Size: =14
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - DetalheDeposito_lblItensHeader:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Itens armazenados"
-                        FontWeight: =FontWeight.Semibold
-                        Size: =20
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - DetalheDeposito_tblItens:
-                      Control: Table
-                      Properties:
-                        Items: =varItensDeposito
-                        Width: =Parent.Width
-                        Height: =CountRows(varItensDeposito) * 48 + 48
-                        FillPortions: =0
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Detalhe do Depósito"
+      - DetalheDeposito_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            Icon: ="ArrowLeft"
+            OnSelect: =Navigate(Depositos, ScreenTransition.None)
+            Text: =" Voltar"
+            Width: =156
+            X: =1180
+            Y: =16

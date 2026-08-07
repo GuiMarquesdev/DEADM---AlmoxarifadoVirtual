@@ -1,0 +1,27 @@
+Screens:
+  AcessoRestrito:
+    Properties:
+      Fill: =ColorBg
+    Children:
+      - AcessoRestrito_lblTitulo:
+          Control: ModernText
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =24
+            Text: ="Acesso não disponível neste dispositivo"
+            Width: =700
+            X: =333
+            Y: =288
+      - AcessoRestrito_lblMensagem:
+          Control: ModernText
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            Text: ="O Almoxarifado Virtual foi desenvolvido para uso em computadores. Acesse por um navegador em uma tela de desktop ou notebook."
+            Width: =600
+            X: =383
+            Y: =350

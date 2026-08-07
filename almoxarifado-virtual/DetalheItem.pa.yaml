@@ -2,122 +2,122 @@ Screens:
   DetalheItem:
     Properties:
       Fill: =ColorBg
-      OnVisible: |-
-        =Set(varSaldosItem, Filter(colSaldos, SKU = varItemSelecionado.SKU));
-        Set(varHistoricoItem, Sort(Filter(colMovimentacoes, SKU = varItemSelecionado.SKU), DataHora, SortOrder.Descending))
+      OnVisible: =Set(varSaldosItem, Filter(colSaldos, SKU = varItemSelecionado.SKU))
     Children:
-      - DetalheItem_Root:
+      - DetalheItem_lblNome:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Height: =120
+            Size: =26
+            Text: =varItemSelecionado.Nome
+            Width: =260
+            X: =35
+            Y: =105
+      - DetalheItem_lblMeta:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            Height: =34
+            Size: =14
+            Text: ="Código " & varItemSelecionado.SKU & " · " & varItemSelecionado.Categoria.Value & " · Unidade " & varItemSelecionado.UnidadeMedida
+            Width: =289
+            X: =35
+            Y: =230
+      - DetalheItem_CardNivel:
+          Control: ModernCard
+          Properties:
+            BorderRadius: =8
+            Fill: =ColorCard
+            HeaderImage: =Blank()
+            Height: =78
+            Image: =Blank()
+            Subtitle: |-
+              ="Estoque mínimo: " & Text(varItemSelecionado.EstoqueMinimo) & " " & varItemSelecionado.UnidadeMedida
+            Title: |-
+              ="Saldo total: " & Text(ItemSaldoTotal(varItemSelecionado.SKU)) & " " & varItemSelecionado.UnidadeMedida
+            Width: =334
+            X: =50
+            Y: =275
+      - DetalheItem_lblSaldosHeader:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Semibold
+            Height: =38
+            Size: =20
+            Text: ="Saldo por depósito"
+            Width: =198
+            X: =35
+            Y: =399
+      - DetalheItem_btnHistorico:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Secondary
+            Height: =40
+            Icon: ="ArrowRight"
+            OnSelect: =Navigate(DetalheItemHistorico, ScreenTransition.None)
+            Text: ="Ver histórico de movimentações "
+            Width: =260
+            X: =1077
+            Y: =369
+      - DetalheItem_TopBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
+            Fill: =ColorPrimaryDark
+            Height: =71
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            PaddingLeft: =24
             Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
           Children:
-            - DetalheItem_TopBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - DetalheItem_lblAppTitle:
+                Control: ModernText
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  LayoutGap: =16
-                  Fill: =ColorPrimaryDark
-                Children:
-                  - DetalheItem_btnVoltar:
-                      Control: Button
-                      Properties:
-                        Text: ="< Voltar"
-                        Appearance: ='ButtonCanvas.Appearance'.Transparent
-                        FontColor: =RGBA(255,255,255,1)
-                        Width: =90
-                        Height: =40
-                        FillPortions: =0
-                        OnSelect: =Navigate(Catalogo, ScreenTransition.None)
-                  - DetalheItem_lblAppTitle:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Detalhe do Item"
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-            - DetalheItem_Content:
-                Control: GroupContainer
-                Variant: AutoLayout
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Detalhe do Item"
+      - DetalheItem_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            Icon: ="ArrowLeft"
+            OnSelect: =Navigate(Catalogo, ScreenTransition.None)
+            Text: =" Voltar"
+            Width: =164
+            X: =1173
+            Y: =15
+      - DetalheItem_tblSaldos:
+          Control: Table
+          Properties:
+            Height: =300
+            Items: =varSaldosItem
+            Width: =1302
+            X: =35
+            Y: =439
+          Children:
+            - Deposito1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =20
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - DetalheItem_lblNome:
-                      Control: ModernText
-                      Properties:
-                        Text: =varItemSelecionado.Nome
-                        FontWeight: =FontWeight.Bold
-                        Size: =26
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - DetalheItem_lblMeta:
-                      Control: ModernText
-                      Properties:
-                        Text: ="SKU " & varItemSelecionado.SKU & " · " & varItemSelecionado.Categoria & " · Unidade " & varItemSelecionado.UnidadeMedida
-                        Size: =14
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - DetalheItem_CardNivel:
-                      Control: ModernCard
-                      Properties:
-                        Title: |-
-                          ="Saldo total: " & Text(ItemSaldoTotal(varItemSelecionado.SKU)) & " " & varItemSelecionado.UnidadeMedida
-                        Subtitle: |-
-                          ="Estoque mínimo: " & Text(varItemSelecionado.EstoqueMinimo) & " " & varItemSelecionado.UnidadeMedida
-                        Width: =420
-                        Height: =120
-                        Fill: =ColorCard
-                  - DetalheItem_prgNivel:
-                      Control: Progress
-                      Properties:
-                        Value: =Min(1, ItemSaldoTotal(varItemSelecionado.SKU) / (varItemSelecionado.EstoqueMinimo * 2))
-                        Width: =420
-                        Height: =12
-                  - DetalheItem_lblSaldosHeader:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Saldo por depósito"
-                        FontWeight: =FontWeight.Semibold
-                        Size: =20
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - DetalheItem_tblSaldos:
-                      Control: Table
-                      Properties:
-                        Items: =varSaldosItem
-                        Width: =Parent.Width
-                        Height: =CountRows(varSaldosItem) * 48 + 48
-                        FillPortions: =0
-                  - DetalheItem_lblHistoricoHeader:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Histórico de movimentações"
-                        FontWeight: =FontWeight.Semibold
-                        Size: =20
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - DetalheItem_tblHistorico:
-                      Control: Table
-                      Properties:
-                        Items: =varHistoricoItem
-                        Width: =Parent.Width
-                        Height: =CountRows(varHistoricoItem) * 48 + 48
-                        FillPortions: =0
+                  FieldDisplayName: ="Deposito"
+                  FieldName: ="Deposito"
+                  FieldType: ="s"
+                  Order: =1
+            - Quantidade2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Quantidade"
+                  FieldName: ="Quantidade"
+                  FieldType: ="n"
+                  Order: =2

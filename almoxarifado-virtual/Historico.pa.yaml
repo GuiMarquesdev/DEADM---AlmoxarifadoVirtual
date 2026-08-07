@@ -5,142 +5,233 @@ Screens:
       OnVisible: |-
         =Set(varTipoFiltro, "Todos");
         Set(varDepositoFiltro, "Todos");
-        Set(varUsuarioFiltro, "")
+        Set(varUsuarioFiltro, "");
+        Set(varItemFiltro, "");
+        Set(varDataInicioFiltro, Blank());
+        Set(varDataFimFiltro, Blank())
     Children:
-      - Historico_Root:
+      - Historico_NavBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
+            Fill: =ColorPrimaryDark
+            Height: =83
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+            LayoutWrap: =true
+            PaddingLeft: =24
+            PaddingRight: =24
             Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
           Children:
-            - Historico_NavBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - Historico_lblAppTitle:
+                Control: ModernText
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  PaddingRight: =24
-                  Fill: =ColorPrimaryDark
-                Children:
-                  - Historico_lblAppTitle:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Almoxarifado Virtual"
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-                  - Historico_navTabs:
-                      Control: ModernTabList
-                      Properties:
-                        Items: |-
-                          =Table({Value: "Dashboard"}, {Value: "Catálogo"}, {Value: "Depósitos"}, {Value: "Histórico"}, {Value: "Cadastros"})
-                        Default: '={Value: "Histórico"}'
-                        Width: =520
-                        Height: =40
-                        FillPortions: =0
-                        OnChange: |-
-                          =Switch(Self.Selected.Value,
-                            "Dashboard", Navigate(Dashboard, ScreenTransition.None),
-                            "Catálogo", Navigate(Catalogo, ScreenTransition.None),
-                            "Depósitos", Navigate(Depositos, ScreenTransition.None),
-                            "Cadastros", Navigate(Cadastros, ScreenTransition.None)
-                          )
-            - Historico_Content:
-                Control: GroupContainer
-                Variant: AutoLayout
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Almoxarifado Virtual"
+      - Historico_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =90
+            X: =1252
+            Y: =21
+      - Historico_tblHistorico:
+          Control: Table
+          Properties:
+            Height: =480
+            Items: |-
+              =Sort(
+                Filter(colMovimentacoes,
+                  (varTipoFiltro = "Todos" || Tipo = varTipoFiltro) &&
+                  (varDepositoFiltro = "Todos" || DepositoOrigem = varDepositoFiltro || DepositoDestino = varDepositoFiltro) &&
+                  (varUsuarioFiltro = "" || varUsuarioFiltro in Usuario) &&
+                  (varItemFiltro = "" || varItemFiltro in ItemNome || varItemFiltro in SKU) &&
+                  (IsBlank(varDataInicioFiltro) || DataHora >= varDataInicioFiltro) &&
+                  (IsBlank(varDataFimFiltro) || DataHora <= DateAdd(varDataFimFiltro, 1, TimeUnit.Days))
+                ),
+                DataHora,
+                SortOrder.Descending
+              )
+            Width: =1317
+            X: =25
+            Y: =288
+          Children:
+            - DataHora2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =20
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - Historico_lblHeader:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Histórico de Movimentações"
-                        FontWeight: =FontWeight.Bold
-                        Size: =28
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - Historico_FiltroRow:
-                      Control: GroupContainer
-                      Variant: AutoLayout
-                      Properties:
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                      Children:
-                        - Historico_cboTipo:
-                            Control: ModernCombobox
-                            Properties:
-                              Items: |-
-                                =Table({Value: "Todos"}, {Value: "Entrada"}, {Value: "Saída"}, {Value: "Transferência"})
-                              DefaultSelectedItems: |-
-                                =Table({Value: "Todos"})
-                              Width: =200
-                              Height: =44
-                              FillPortions: =0
-                              OnChange: =Set(varTipoFiltro, Self.Selected.Value)
-                        - Historico_cboDepositoFiltro:
-                            Control: ModernCombobox
-                            Properties:
-                              Items: =colDepositos
-                              InputTextPlaceholder: ="Filtrar por depósito (todos por padrão)"
-                              Width: =260
-                              Height: =44
-                              FillPortions: =0
-                              OnChange: =Set(varDepositoFiltro, If(IsBlank(Self.Selected), "Todos", Self.Selected.Nome))
-                        - Historico_txtUsuario:
-                            Control: ModernTextInput
-                            Properties:
-                              Placeholder: ="Filtrar por usuário..."
-                              Width: =240
-                              Height: =44
-                              FillPortions: =0
-                              OnChange: =Set(varUsuarioFiltro, Self.Value)
-                        - Historico_btnLimparFiltros:
-                            Control: Button
-                            Properties:
-                              Text: ="Limpar filtros"
-                              Appearance: ='ButtonCanvas.Appearance'.Secondary
-                              Width: =150
-                              Height: =44
-                              FillPortions: =0
-                              OnSelect: |-
-                                =Set(varTipoFiltro, "Todos");
-                                Set(varDepositoFiltro, "Todos");
-                                Set(varUsuarioFiltro, "");
-                                Reset(Historico_cboTipo);
-                                Reset(Historico_cboDepositoFiltro);
-                                Reset(Historico_txtUsuario)
-                  - Historico_tblHistorico:
-                      Control: Table
-                      Properties:
-                        Items: |-
-                          =Sort(
-                            Filter(colMovimentacoes,
-                              (varTipoFiltro = "Todos" || Tipo = varTipoFiltro) &&
-                              (varDepositoFiltro = "Todos" || DepositoOrigem = varDepositoFiltro || DepositoDestino = varDepositoFiltro) &&
-                              (varUsuarioFiltro = "" || Usuario in varUsuarioFiltro)
-                            ),
-                            DataHora,
-                            SortOrder.Descending
-                          )
-                        Width: =Parent.Width
-                        Height: =520
-                        FillPortions: =0
+                  FieldDisplayName: ="DataHora"
+                  FieldName: ="DataHora"
+                  FieldType: ="d"
+                  Order: =1
+            - Tipo2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Tipo"
+                  FieldName: ="Tipo"
+                  FieldType: ="s"
+                  Order: =2
+            - ItemNome1:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="ItemNome"
+                  FieldName: ="ItemNome"
+                  FieldType: ="s"
+                  Order: =3
+            - SKU2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Código"
+                  FieldName: ="SKU"
+                  FieldType: ="s"
+                  Order: =4
+            - Quantidade4:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Quantidade"
+                  FieldName: ="Quantidade"
+                  FieldType: ="n"
+                  Order: =5
+            - DepositoOrigem2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="DepositoOrigem"
+                  FieldName: ="DepositoOrigem"
+                  FieldType: ="s"
+                  Order: =6
+            - DepositoDestino2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="DepositoDestino"
+                  FieldName: ="DepositoDestino"
+                  FieldType: ="s"
+                  Order: =7
+            - Usuario2:
+                Control: TableDataField
+                Variant: textualColumn
+                IsLocked: true
+                Properties:
+                  FieldDisplayName: ="Usuario"
+                  FieldName: ="Usuario"
+                  FieldType: ="s"
+                  Order: =8
+      - Historico_btnLimparFiltros:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Secondary
+            Height: =44
+            OnSelect: |-
+              =Set(varTipoFiltro, "Todos");
+              Set(varDepositoFiltro, "Todos");
+              Set(varUsuarioFiltro, "");
+              Set(varItemFiltro, "");
+              Set(varDataInicioFiltro, Blank());
+              Set(varDataFimFiltro, Blank());
+              Reset(Historico_cboTipo);
+              Reset(Historico_cboDepositoFiltro);
+              Reset(Historico_txtUsuario);
+              Reset(Historico_txtItemFiltro);
+              Reset(Historico_dtDataInicio);
+              Reset(Historico_dtDataFim)
+            Text: ="Limpar filtros"
+            Width: =150
+            X: =1192
+            Y: =228
+      - Historico_txtUsuario:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varUsuarioFiltro, Self.Text)
+            Placeholder: ="Filtrar por usuário..."
+            Width: =240
+            X: =25
+            Y: =152
+      - Historico_cboDepositoFiltro:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Filtrar por depósito (todos por padrão)"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colDepositos
+            OnChange: =Set(varDepositoFiltro, If(IsBlank(Self.Selected), "Todos", Self.Selected.Nome))
+            Width: =260
+            X: =614
+            Y: =152
+      - Historico_cboTipo:
+          Control: ModernCombobox
+          Properties:
+            DefaultSelectedItems: |-
+              =Table({Value: "Todos"})
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            ItemDisplayText: =ThisItem.Value
+            Items: |-
+              =Table({Value: "Todos"}, {Value: "Entrada"}, {Value: "Saída"}, {Value: "Transferência"})
+            OnChange: =Set(varTipoFiltro, Self.Selected.Value)
+            Width: =200
+            X: =301
+            Y: =152
+      - Historico_dtDataInicio:
+          Control: ModernDatePicker
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varDataInicioFiltro, Self.SelectedDate)
+            Placeholder: ="Data início"
+            Width: =180
+            X: =301
+            Y: =216
+      - Historico_dtDataFim:
+          Control: ModernDatePicker
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varDataFimFiltro, Self.SelectedDate)
+            Placeholder: ="Data fim"
+            Width: =180
+            X: =614
+            Y: =216
+      - Historico_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Histórico de Movimentações"
+            Width: =404
+            X: =25
+            Y: =92
+      - Historico_txtItemFiltro:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varItemFiltro, Self.Text)
+            Placeholder: ="Filtrar por item ou código..."
+            Width: =240
+            X: =25
+            Y: =216

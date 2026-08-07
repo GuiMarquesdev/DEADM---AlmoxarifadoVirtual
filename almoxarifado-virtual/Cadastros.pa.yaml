@@ -2,217 +2,230 @@ Screens:
   Cadastros:
     Properties:
       Fill: =ColorBg
-      OnVisible: =Set(varAbaCadastro, "Fornecedores")
+      OnVisible: =Set(varAbaCadastro, "Itens")
     Children:
-      - Cadastros_Root:
+      - Cadastros_NavBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
-            Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
+            Fill: =ColorPrimaryDark
+            Height: =71
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+            LayoutWrap: =true
+            PaddingLeft: =24
+            PaddingRight: =24
+            Width: =1366
+      - Cadastros_txtSKUItem:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Código"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =140
+            X: =36
+            Y: =218
+      - Cadastros_cboCategoriaItem:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Categoria"
+            ItemDisplayText: =ThisItem.Value
+            Items: |-
+              =Table({Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
+            Visible: =varAbaCadastro = "Itens"
+            Width: =160
+            X: =420
+            Y: =218
+      - Cadastros_tabsAux:
+          Control: ModernTabList
+          Properties:
+            Default: |-
+              ={Value: "Itens"}
+            Height: =40
+            Items: |-
+              =Table({Value: "Itens"}, {Value: "Setores"})
+            OnChange: =Set(varAbaCadastro, Self.Selected.Value)
+            Width: =320
+            X: =36
+            Y: =309
+      - Cadastros_txtEstoqueMinimoItem:
+          Control: ModernNumberInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="Estoque mín."
+            Visible: =varAbaCadastro = "Itens"
+            Width: =110
+            X: =744
+            Y: =218
+      - Cadastros_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Cadastros Auxiliares"
+            X: =36
+            Y: =96
+      - Cadastros_btnAdicionarItem:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =44
+            OnSelect: |-
+              =If(
+                Trim(Cadastros_txtSKUItem.Text) = "" || Trim(Cadastros_txtNomeItem.Text) = "",
+                Notify("Informe o código e o nome do item.", NotificationType.Error),
+                If(
+                  !IsBlank(LookUp(Itens, SKU = Trim(Cadastros_txtSKUItem.Text))),
+                  Notify("Já existe um item com esse código.", NotificationType.Error),
+                  Patch(Itens, Defaults(Itens), {SKU: Trim(Cadastros_txtSKUItem.Text), Nome: Trim(Cadastros_txtNomeItem.Text), Categoria: Cadastros_cboCategoriaItem.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeItem.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoItem.Value, 0)});
+                  Reset(Cadastros_txtSKUItem);
+                  Reset(Cadastros_txtNomeItem);
+                  Reset(Cadastros_cboCategoriaItem);
+                  Reset(Cadastros_txtUnidadeItem);
+                  Reset(Cadastros_txtEstoqueMinimoItem);
+                  Notify("Item cadastrado com sucesso.", NotificationType.Success)
+                )
+              )
+            Text: ="Adicionar"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =140
+            X: =866
+            Y: =218
+      - Cadastros_txtUnidadeItem:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: |-
+              ="Unidade (ex.: Caixa)"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =140
+            X: =592
+            Y: =218
+      - Cadastros_lblAppTitle:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =RGBA(255,255,255,1)
+            FontWeight: =FontWeight.Bold
+            Size: =18
+            Text: ="Almoxarifado Virtual"
+            Width: =162
+            X: =24
+            Y: =5
+      - Cadastros_txtNomeItem:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Nome do item"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =220
+            X: =188
+            Y: =218
+      - Cadastros_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =90
+            X: =1252
+            Y: =15
+      - Cadastros_galItensCadastro:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =419
+            Items: =colItens
+            TemplateSize: =60
+            Visible: =varAbaCadastro = "Itens"
+            Width: =1330
+            X: =36
+            Y: =349
           Children:
-            - Cadastros_NavBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - Cadastros_cardItemCadastro:
+                Control: ModernCard
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  PaddingRight: =24
-                  Fill: =ColorPrimaryDark
-                Children:
-                  - Cadastros_lblAppTitle:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Almoxarifado Virtual"
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-                  - Cadastros_navTabs:
-                      Control: ModernTabList
-                      Properties:
-                        Items: |-
-                          =Table({Value: "Dashboard"}, {Value: "Catálogo"}, {Value: "Depósitos"}, {Value: "Histórico"}, {Value: "Cadastros"})
-                        Default: '={Value: "Cadastros"}'
-                        Width: =520
-                        Height: =40
-                        FillPortions: =0
-                        OnChange: |-
-                          =Switch(Self.Selected.Value,
-                            "Dashboard", Navigate(Dashboard, ScreenTransition.None),
-                            "Catálogo", Navigate(Catalogo, ScreenTransition.None),
-                            "Depósitos", Navigate(Depositos, ScreenTransition.None),
-                            "Histórico", Navigate(Historico, ScreenTransition.None)
-                          )
-            - Cadastros_Content:
-                Control: GroupContainer
-                Variant: AutoLayout
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =57
+                  Image: =Blank()
+                  Subtitle: |-
+                    ="Código " & ThisItem.SKU & " · " & ThisItem.Categoria.Value & " · Mínimo: " & Text(ThisItem.EstoqueMinimo) & " " & ThisItem.UnidadeMedida
+                  Title: =ThisItem.Nome
+                  Width: =1301
+      - Cadastros_btnAdicionarSetor:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =44
+            OnSelect: |-
+              =If(
+                Trim(Cadastros_txtNomeSetor.Text) = "",
+                Notify("Informe o nome do setor.", NotificationType.Error),
+                Patch(Setores, Defaults(Setores), {Title: Trim(Cadastros_txtNomeSetor.Text)});
+                Reset(Cadastros_txtNomeSetor);
+                Notify("Setor cadastrado com sucesso.", NotificationType.Success)
+              )
+            Text: ="Adicionar"
+            Visible: =varAbaCadastro = "Setores"
+            Width: =140
+            X: =308
+            Y: =218
+      - Cadastros_galSetores:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =419
+            Items: =colSetores
+            TemplateSize: =56
+            Visible: =varAbaCadastro = "Setores"
+            Width: =1330
+            X: =36
+            Y: =349
+          Children:
+            - Cadastros_cardSetor:
+                Control: ModernCard
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =20
-                  Width: =Parent.Width
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - Cadastros_lblHeader:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Cadastros Auxiliares"
-                        FontWeight: =FontWeight.Bold
-                        Size: =28
-                        Color: =ColorTextPrimary
-                        AutoHeight: =true
-                  - Cadastros_tabsAux:
-                      Control: ModernTabList
-                      Properties:
-                        Items: |-
-                          =Table({Value: "Fornecedores"}, {Value: "Setores"})
-                        Default: '={Value: "Fornecedores"}'
-                        Width: =320
-                        Height: =40
-                        FillPortions: =0
-                        OnChange: =Set(varAbaCadastro, Self.Selected.Value)
-                  - Cadastros_SecaoFornecedores:
-                      Control: GroupContainer
-                      Variant: AutoLayout
-                      Properties:
-                        LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                        Visible: =varAbaCadastro = "Fornecedores"
-                      Children:
-                        - Cadastros_FormFornecedor:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =12
-                              Width: =Parent.Width
-                              FillPortions: =0
-                            Children:
-                              - Cadastros_txtNomeFornecedor:
-                                  Control: ModernTextInput
-                                  Properties:
-                                    Placeholder: ="Nome do fornecedor"
-                                    Width: =260
-                                    Height: =44
-                                    FillPortions: =0
-                              - Cadastros_txtContatoFornecedor:
-                                  Control: ModernTextInput
-                                  Properties:
-                                    Placeholder: ="Contato"
-                                    Width: =200
-                                    Height: =44
-                                    FillPortions: =0
-                              - Cadastros_txtTelefoneFornecedor:
-                                  Control: ModernTextInput
-                                  Properties:
-                                    Placeholder: ="Telefone"
-                                    Width: =180
-                                    Height: =44
-                                    FillPortions: =0
-                              - Cadastros_btnAdicionarFornecedor:
-                                  Control: Button
-                                  Properties:
-                                    Text: ="Adicionar"
-                                    BasePaletteColor: =ColorPrimary
-                                    Width: =140
-                                    Height: =44
-                                    FillPortions: =0
-                                    OnSelect: |-
-                                      =If(
-                                        Cadastros_txtNomeFornecedor.Value = "",
-                                        Notify("Informe o nome do fornecedor.", NotificationType.Error),
-                                        Collect(colFornecedores, {Nome: Cadastros_txtNomeFornecedor.Value, Contato: Cadastros_txtContatoFornecedor.Value, Telefone: Cadastros_txtTelefoneFornecedor.Value});
-                                        Reset(Cadastros_txtNomeFornecedor);
-                                        Reset(Cadastros_txtContatoFornecedor);
-                                        Reset(Cadastros_txtTelefoneFornecedor)
-                                      )
-                        - Cadastros_galFornecedores:
-                            Control: Gallery
-                            Variant: Vertical
-                            Properties:
-                              Items: =colFornecedores
-                              TemplateSize: =72
-                              Width: =Parent.Width
-                              Height: =CountRows(Self.AllItems) * 72
-                              FillPortions: =0
-                            Children:
-                              - Cadastros_cardFornecedor:
-                                  Control: ModernCard
-                                  Properties:
-                                    Title: =ThisItem.Nome
-                                    Subtitle: =ThisItem.Contato & " · " & ThisItem.Telefone
-                                    Width: =Parent.Width
-                                    Height: =60
-                                    Fill: =ColorCard
-                  - Cadastros_SecaoSetores:
-                      Control: GroupContainer
-                      Variant: AutoLayout
-                      Properties:
-                        LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =16
-                        Width: =Parent.Width
-                        FillPortions: =0
-                        Visible: =varAbaCadastro = "Setores"
-                      Children:
-                        - Cadastros_FormSetor:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =12
-                              Width: =Parent.Width
-                              FillPortions: =0
-                            Children:
-                              - Cadastros_txtNomeSetor:
-                                  Control: ModernTextInput
-                                  Properties:
-                                    Placeholder: ="Nome do setor/solicitante"
-                                    Width: =320
-                                    Height: =44
-                                    FillPortions: =0
-                              - Cadastros_btnAdicionarSetor:
-                                  Control: Button
-                                  Properties:
-                                    Text: ="Adicionar"
-                                    BasePaletteColor: =ColorPrimary
-                                    Width: =140
-                                    Height: =44
-                                    FillPortions: =0
-                                    OnSelect: |-
-                                      =If(
-                                        Cadastros_txtNomeSetor.Value = "",
-                                        Notify("Informe o nome do setor.", NotificationType.Error),
-                                        Collect(colSetores, {Nome: Cadastros_txtNomeSetor.Value});
-                                        Reset(Cadastros_txtNomeSetor)
-                                      )
-                        - Cadastros_galSetores:
-                            Control: Gallery
-                            Variant: Vertical
-                            Properties:
-                              Items: =colSetores
-                              TemplateSize: =56
-                              Width: =Parent.Width
-                              Height: =CountRows(Self.AllItems) * 56
-                              FillPortions: =0
-                            Children:
-                              - Cadastros_cardSetor:
-                                  Control: ModernCard
-                                  Properties:
-                                    Title: =ThisItem.Nome
-                                    Width: =Parent.Width
-                                    Height: =44
-                                    Fill: =ColorCard
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =56
+                  Image: =Blank()
+                  Title: =ThisItem.Nome
+                  Width: =1282
+            - Cadastros_btnExcluirSetor:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =44
+                  Icon: ="Delete"
+                  OnSelect: |-
+                    =RemoveIf(Setores, ID = ThisItem.ID);
+                    Notify("Setor removido.", NotificationType.Success)
+                  Text: =""
+                  Width: =44
+                  X: =1227
+                  Y: =6
+      - Cadastros_txtNomeSetor:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Nome do setor/solicitante"
+            Visible: =varAbaCadastro = "Setores"
+            Width: =260
+            X: =36
+            Y: =218

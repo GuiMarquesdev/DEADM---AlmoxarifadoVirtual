@@ -2,145 +2,260 @@ Screens:
   NovaEntrada:
     Properties:
       Fill: =ColorBg
+      OnVisible: =Clear(colItensLancamentoEntrada)
     Children:
-      - NovaEntrada_Root:
+      - NovaEntrada_lblItem:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =RGBA(0, 0, 0, 1)
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Item"
+            X: =40
+            Y: =112
+      - NovaEntrada_TopBar:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            LayoutDirection: =LayoutDirection.Vertical
+            Fill: =ColorPrimaryDark
+            Height: =76
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            PaddingLeft: =24
             Width: =Parent.Width
-            Height: =Parent.Height
-            LayoutOverflowY: =LayoutOverflow.Scroll
-            Fill: =ColorBg
           Children:
-            - NovaEntrada_TopBar:
-                Control: GroupContainer
-                Variant: AutoLayout
+            - NovaEntrada_btnVoltar:
+                Control: Button
                 Properties:
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  Width: =Parent.Width
-                  Height: =64
-                  FillPortions: =0
-                  PaddingLeft: =24
-                  LayoutGap: =16
-                  Fill: =ColorPrimaryDark
-                Children:
-                  - NovaEntrada_btnVoltar:
-                      Control: Button
-                      Properties:
-                        Text: ="< Voltar"
-                        Appearance: ='ButtonCanvas.Appearance'.Transparent
-                        FontColor: =RGBA(255,255,255,1)
-                        Width: =90
-                        Height: =40
-                        FillPortions: =0
-                        OnSelect: =Navigate(Dashboard, ScreenTransition.None)
-                  - NovaEntrada_lblAppTitle:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Nova Entrada de Material"
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Color: =RGBA(255,255,255,1)
-                        AutoHeight: =true
-            - NovaEntrada_FormCard:
-                Control: GroupContainer
-                Variant: AutoLayout
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =RGBA(255,255,255,1)
+                  Height: =40
+                  OnSelect: =Navigate(Home, ScreenTransition.None)
+                  Text: ="< Voltar"
+                  Width: =90
+            - NovaEntrada_lblAppTitle:
+                Control: ModernText
                 Properties:
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =16
-                  Width: =520
-                  FillPortions: =0
-                  PaddingLeft: =32
-                  PaddingRight: =32
-                  PaddingTop: =32
-                  PaddingBottom: =32
-                Children:
-                  - NovaEntrada_lblItem:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Item"
-                        Size: =14
-                        FontWeight: =FontWeight.Semibold
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - NovaEntrada_cboItem:
-                      Control: ModernCombobox
-                      Properties:
-                        Items: =colItens
-                        InputTextPlaceholder: ="Selecione o item"
-                        Width: =456
-                        Height: =44
-                        FillPortions: =0
-                  - NovaEntrada_lblDeposito:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Depósito de destino"
-                        Size: =14
-                        FontWeight: =FontWeight.Semibold
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - NovaEntrada_cboDeposito:
-                      Control: ModernCombobox
-                      Properties:
-                        Items: =colDepositos
-                        InputTextPlaceholder: ="Selecione o depósito"
-                        Width: =456
-                        Height: =44
-                        FillPortions: =0
-                  - NovaEntrada_lblFornecedor:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Fornecedor"
-                        Size: =14
-                        FontWeight: =FontWeight.Semibold
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - NovaEntrada_cboFornecedor:
-                      Control: ModernCombobox
-                      Properties:
-                        Items: =colFornecedores
-                        InputTextPlaceholder: ="Selecione o fornecedor"
-                        Width: =456
-                        Height: =44
-                        FillPortions: =0
-                  - NovaEntrada_lblQuantidade:
-                      Control: ModernText
-                      Properties:
-                        Text: ="Quantidade"
-                        Size: =14
-                        FontWeight: =FontWeight.Semibold
-                        Color: =ColorTextSecondary
-                        AutoHeight: =true
-                  - NovaEntrada_txtQuantidade:
-                      Control: ModernNumberInput
-                      Properties:
-                        HintText: ="0"
-                        Width: =456
-                        Height: =44
-                        FillPortions: =0
-                  - NovaEntrada_btnConfirmar:
-                      Control: Button
-                      Properties:
-                        Text: ="Registrar Entrada"
-                        BasePaletteColor: =ColorPrimary
-                        Width: =456
-                        Height: =48
-                        FillPortions: =0
-                        OnSelect: |-
-                          =If(
-                            IsBlank(NovaEntrada_cboItem.Selected) || IsBlank(NovaEntrada_cboDeposito.Selected) || IsBlank(NovaEntrada_cboFornecedor.Selected) || Value(NovaEntrada_txtQuantidade.Value) <= 0,
-                            Notify("Preencha item, depósito, fornecedor e uma quantidade válida.", NotificationType.Error),
-                            With(
-                              {existente: LookUp(colSaldos, SKU = NovaEntrada_cboItem.Selected.SKU && Deposito = NovaEntrada_cboDeposito.Selected.Nome)},
-                              If(
-                                IsBlank(existente),
-                                Collect(colSaldos, {SKU: NovaEntrada_cboItem.Selected.SKU, Deposito: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Value(NovaEntrada_txtQuantidade.Value)}),
-                                Patch(colSaldos, existente, {Quantidade: existente.Quantidade + Value(NovaEntrada_txtQuantidade.Value)})
-                              )
-                            );
-                            Collect(colMovimentacoes, {ID: ProximoIdMovimentacao(), Tipo: "Entrada", SKU: NovaEntrada_cboItem.Selected.SKU, ItemNome: NovaEntrada_cboItem.Selected.Nome, DepositoOrigem: "", DepositoDestino: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Value(NovaEntrada_txtQuantidade.Value), Motivo: "Compra de fornecedor", Solicitante: "", Fornecedor: NovaEntrada_cboFornecedor.Selected.Nome, Usuario: varUsuarioAtual, DataHora: Now()});
-                            Notify("Entrada registrada com sucesso.", NotificationType.Success);
-                            Navigate(Dashboard, ScreenTransition.None)
-                          )
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Nova Entrada de Material"
+      - NovaEntrada_btnConfirmar:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =48
+            OnSelect: |-
+              =If(
+                CountRows(colItensLancamentoEntrada) = 0,
+                Notify("Adicione pelo menos um item à lista antes de confirmar.", NotificationType.Error),
+                If(
+                  IsBlank(NovaEntrada_cboDeposito.Selected) || Trim(NovaEntrada_txtFornecedor.Text) = "",
+                  Notify("Selecione o depósito e digite o fornecedor.", NotificationType.Error),
+                  ForAll(
+                    colItensLancamentoEntrada As Linha,
+                    If(
+                      IsBlank(LookUp(Itens, SKU = Linha.SKU)),
+                      Patch(Itens, Defaults(Itens), {SKU: Linha.SKU, Nome: Linha.Nome, UnidadeMedida: Linha.UnidadeMedida, EstoqueMinimo: Linha.EstoqueMinimo})
+                    );
+                    With(
+                      {existente: LookUp(Saldos, SKU = Linha.SKU && Deposito = NovaEntrada_cboDeposito.Selected.Nome)},
+                      If(
+                        IsBlank(existente),
+                        Patch(Saldos, Defaults(Saldos), {SKU: Linha.SKU, Deposito: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Linha.Quantidade}),
+                        Patch(Saldos, existente, {Quantidade: existente.Quantidade + Linha.Quantidade})
+                      )
+                    );
+                    Patch(Movimentacoes, Defaults(Movimentacoes), {Tipo: {Value: "Entrada"}, SKU: Linha.SKU, ItemNome: Linha.Nome, DepositoOrigem: "", DepositoDestino: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Linha.Quantidade, PrecoCusto: Linha.PrecoCusto, Motivo: "Compra de fornecedor", Solicitante: "", Fornecedor: Trim(NovaEntrada_txtFornecedor.Text), Usuario: varUsuarioAtual, DataHora: Now()})
+                  );
+                  Clear(colItensLancamentoEntrada);
+                  Notify("Entrada registrada com sucesso.", NotificationType.Success);
+                  Navigate(Home, ScreenTransition.None)
+                )
+              )
+            Text: ="Registrar Entrada"
+            Width: =456
+            X: =40
+            Y: =811
+      - NovaEntrada_lblFornecedor:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Fornecedor"
+            X: =40
+            Y: =632
+      - NovaEntrada_lblDeposito:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Depósito de destino"
+            X: =40
+            Y: =520
+      - NovaEntrada_galItensLista:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =569
+            Items: =colItensLancamentoEntrada
+            TemplateSize: =49
+            Width: =707
+            X: =601
+            Y: =142
+          Children:
+            - NovaEntrada_lblItemLista:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Text: =ThisItem.Nome & " — " & Text(ThisItem.Quantidade) & " " & ThisItem.UnidadeMedida & " · R$ " & Text(ThisItem.PrecoCusto, "0.00") & "/un"
+                  Width: =620
+                  Y: =8
+            - NovaEntrada_btnRemoverItemLista:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =36
+                  Icon: ="Delete"
+                  OnSelect: =RemoveIf(colItensLancamentoEntrada, SKU = ThisItem.SKU)
+                  Text: =""
+                  Width: =36
+                  X: =647
+                  Y: =8
+      - NovaEntrada_lblItensLista:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Itens desta entrada (" & CountRows(colItensLancamentoEntrada) & ")"
+            Width: =162
+            X: =601
+            Y: =112
+      - NovaEntrada_btnAdicionarItem:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Secondary
+            Height: =44
+            OnSelect: |-
+              =If(
+                Trim(NovaEntrada_txtItem.Text) = "" || NovaEntrada_txtQuantidade.Value <= 0,
+                Notify("Digite o nome do item e uma quantidade válida.", NotificationType.Error),
+                If(
+                  CountRows(Filter(colItensLancamentoEntrada, Nome = Trim(NovaEntrada_txtItem.Text))) > 0,
+                  Notify("Esse item já está na lista.", NotificationType.Error),
+                  Collect(colItensLancamentoEntrada, {SKU: Trim(NovaEntrada_txtItem.Text), Nome: Trim(NovaEntrada_txtItem.Text), UnidadeMedida: "un", Quantidade: NovaEntrada_txtQuantidade.Value, EstoqueMinimo: Coalesce(NovaEntrada_txtEstoqueMinimo.Value, 0), PrecoCusto: Coalesce(NovaEntrada_txtPrecoCusto.Value, 0)});
+                  Reset(NovaEntrada_txtItem);
+                  Reset(NovaEntrada_txtQuantidade);
+                  Reset(NovaEntrada_txtEstoqueMinimo);
+                  Reset(NovaEntrada_txtPrecoCusto)
+                )
+              )
+            Text: ="+ Adicionar item à lista"
+            Width: =456
+            X: =40
+            Y: =476
+      - NovaEntrada_txtQuantidade:
+          Control: ModernNumberInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="0"
+            Width: =456
+            X: =40
+            Y: =236
+      - NovaEntrada_lblQuantidade:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Quantidade"
+            X: =40
+            Y: =206
+      - NovaEntrada_txtItem:
+          Control: ModernTextInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Digite o nome do item"
+            Width: =456
+            X: =40
+            Y: =142
+      - NovaEntrada_txtFornecedor:
+          Control: ModernTextInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Digite o nome do fornecedor"
+            Width: =456
+            X: =40
+            Y: =676
+      - NovaEntrada_txtEstoqueMinimo:
+          Control: ModernNumberInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="0"
+            Width: =456
+            X: =40
+            Y: =326
+      - NovaEntrada_lblEstoqueMinimo:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Estoque mínimo (só se o item ainda não existir no catálogo)"
+            Width: =456
+            X: =40
+            Y: =296
+      - NovaEntrada_lblPrecoCusto:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="Preço de custo (unitário)"
+            Width: =456
+            X: =40
+            Y: =386
+      - NovaEntrada_txtPrecoCusto:
+          Control: ModernNumberInput
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="0,00"
+            Width: =456
+            X: =40
+            Y: =416
+      - NovaEntrada_cboDeposito:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Selecione o depósito"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colDepositos
+            Width: =456
+            X: =40
+            Y: =566

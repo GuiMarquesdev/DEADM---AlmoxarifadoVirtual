@@ -1,0 +1,94 @@
+Screens:
+  EstoqueBaixo:
+    Properties:
+      Fill: =ColorBg
+      OnVisible: =Set(varItensBaixoEstoque, Filter(colItens, ItemEstoqueBaixo(SKU)))
+    Children:
+      - EstoqueBaixo_TopBar:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =ColorPrimaryDark
+            Height: =71
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            PaddingLeft: =24
+            Width: =Parent.Width
+          Children:
+            - EstoqueBaixo_lblAppTitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Estoque Baixo"
+      - EstoqueBaixo_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            Icon: ="ArrowLeft"
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: =" Voltar"
+            Width: =164
+            X: =1170
+            Y: =15
+      - EstoqueBaixo_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Itens com estoque abaixo do mínimo"
+            Width: =900
+            X: =35
+            Y: =95
+      - EstoqueBaixo_lblSubheader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            Size: =14
+            Text: ="(" & CountRows(varItensBaixoEstoque) & ") itens precisam de reposição"
+            Width: =700
+            X: =35
+            Y: =140
+      - EstoqueBaixo_galAlertas:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =520
+            Items: =varItensBaixoEstoque
+            TemplateSize: =88
+            Width: =1302
+            X: =35
+            Y: =180
+          Children:
+            - EstoqueBaixo_cardAlerta:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  DropShadow: =DropShadow.Semibold
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =76
+                  Image: =Blank()
+                  OnSelect: |-
+                    =Set(varItemSelecionado, ThisItem);
+                    Navigate(DetalheItem, ScreenTransition.None)
+                  Subtitle: ="Código " & ThisItem.SKU & " · Saldo " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida & " (mínimo " & Text(ThisItem.EstoqueMinimo) & ")"
+                  Title: =ThisItem.Nome
+                  Width: =1220
+            - EstoqueBaixo_badgeAlerta:
+                Control: Badge
+                Properties:
+                  Content: ="Baixo"
+                  Height: =28
+                  ThemeColor: ='BadgeCanvas.ThemeColor'.Danger
+                  Width: =70
+                  X: =1122
+                  Y: =24
