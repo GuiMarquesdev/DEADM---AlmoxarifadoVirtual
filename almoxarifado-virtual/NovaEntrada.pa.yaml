@@ -47,7 +47,7 @@ Screens:
           Control: Button
           Properties:
             BasePaletteColor: =ColorPrimary
-            Height: =48
+            Height: =46
             OnSelect: |-
               =If(
                 CountRows(colItensLancamentoEntrada) = 0,
@@ -65,8 +65,8 @@ Screens:
                       {existente: LookUp(Saldos, SKU = Linha.SKU && Deposito = NovaEntrada_cboDeposito.Selected.Nome)},
                       If(
                         IsBlank(existente),
-                        Patch(Saldos, Defaults(Saldos), {SKU: Linha.SKU, Deposito: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Linha.Quantidade}),
-                        Patch(Saldos, existente, {Quantidade: existente.Quantidade + Linha.Quantidade})
+                        Patch(Saldos, Defaults(Saldos), {SKU: Linha.SKU, Deposito: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Linha.Quantidade, DataValidade: Linha.DataValidade}),
+                        Patch(Saldos, existente, {Quantidade: existente.Quantidade + Linha.Quantidade, DataValidade: If(IsBlank(existente.DataValidade), Linha.DataValidade, If(IsBlank(Linha.DataValidade), existente.DataValidade, If(Linha.DataValidade < existente.DataValidade, Linha.DataValidade, existente.DataValidade)))})
                       )
                     );
                     Patch(Movimentacoes, Defaults(Movimentacoes), {Tipo: {Value: "Entrada"}, SKU: Linha.SKU, ItemNome: Linha.Nome, DepositoOrigem: "", DepositoDestino: NovaEntrada_cboDeposito.Selected.Nome, Quantidade: Linha.Quantidade, PrecoCusto: Linha.PrecoCusto, Motivo: "Compra de fornecedor", Solicitante: "", Fornecedor: Trim(NovaEntrada_txtFornecedor.Text), Usuario: varUsuarioAtual, DataHora: Now()})
@@ -77,9 +77,9 @@ Screens:
                 )
               )
             Text: ="Registrar Entrada"
-            Width: =456
-            X: =40
-            Y: =811
+            Width: =294
+            X: =536
+            Y: =206
       - NovaEntrada_lblFornecedor:
           Control: ModernText
           Properties:
@@ -105,11 +105,11 @@ Screens:
           Variant: Vertical
           Properties:
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =569
+            Height: =605
             Items: =colItensLancamentoEntrada
             TemplateSize: =49
-            Width: =707
-            X: =601
+            Width: =460
+            X: =878
             Y: =142
           Children:
             - NovaEntrada_lblItemLista:
@@ -117,8 +117,9 @@ Screens:
                 Properties:
                   Color: =ColorTextPrimary
                   Height: =36
-                  Text: =ThisItem.Nome & " — " & Text(ThisItem.Quantidade) & " " & ThisItem.UnidadeMedida & " · R$ " & Text(ThisItem.PrecoCusto, "0.00") & "/un"
-                  Width: =620
+                  Text: |-
+                    =ThisItem.Nome & " — " & Text(ThisItem.Quantidade) & " " & ThisItem.UnidadeMedida & " · R$ " & Text(ThisItem.PrecoCusto, "0.00") & "/un" & If(!IsBlank(ThisItem.DataValidade), " · Val: " & Text(ThisItem.DataValidade, "dd/mm/yyyy"), "")
+                  Width: =450
                   Y: =8
             - NovaEntrada_btnRemoverItemLista:
                 Control: Button
@@ -141,7 +142,7 @@ Screens:
             Size: =14
             Text: ="Itens desta entrada (" & CountRows(colItensLancamentoEntrada) & ")"
             Width: =162
-            X: =601
+            X: =878
             Y: =112
       - NovaEntrada_btnAdicionarItem:
           Control: Button
@@ -149,17 +150,21 @@ Screens:
             Appearance: ='ButtonCanvas.Appearance'.Secondary
             Height: =44
             OnSelect: |-
-              =If(
-                Trim(NovaEntrada_txtItem.Text) = "" || NovaEntrada_txtQuantidade.Value <= 0,
-                Notify("Digite o nome do item e uma quantidade válida.", NotificationType.Error),
+              =With(
+                {nomeItem: If(!IsBlank(NovaEntrada_cboItem.Selected), NovaEntrada_cboItem.Selected.Nome, Trim(NovaEntrada_cboItem.SearchText))},
                 If(
-                  CountRows(Filter(colItensLancamentoEntrada, Nome = Trim(NovaEntrada_txtItem.Text))) > 0,
-                  Notify("Esse item já está na lista.", NotificationType.Error),
-                  Collect(colItensLancamentoEntrada, {SKU: Trim(NovaEntrada_txtItem.Text), Nome: Trim(NovaEntrada_txtItem.Text), UnidadeMedida: "un", Quantidade: NovaEntrada_txtQuantidade.Value, EstoqueMinimo: Coalesce(NovaEntrada_txtEstoqueMinimo.Value, 0), PrecoCusto: Coalesce(NovaEntrada_txtPrecoCusto.Value, 0)});
-                  Reset(NovaEntrada_txtItem);
-                  Reset(NovaEntrada_txtQuantidade);
-                  Reset(NovaEntrada_txtEstoqueMinimo);
-                  Reset(NovaEntrada_txtPrecoCusto)
+                  nomeItem = "" || NovaEntrada_txtQuantidade.Value <= 0,
+                  Notify("Selecione ou digite o nome do item e uma quantidade válida.", NotificationType.Error),
+                  If(
+                    CountRows(Filter(colItensLancamentoEntrada, Nome = nomeItem)) > 0,
+                    Notify("Esse item já está na lista.", NotificationType.Error),
+                    Collect(colItensLancamentoEntrada, {SKU: If(!IsBlank(NovaEntrada_cboItem.Selected), NovaEntrada_cboItem.Selected.SKU, nomeItem), Nome: nomeItem, UnidadeMedida: If(!IsBlank(NovaEntrada_cboItem.Selected), NovaEntrada_cboItem.Selected.UnidadeMedida, "un"), Quantidade: NovaEntrada_txtQuantidade.Value, EstoqueMinimo: Coalesce(NovaEntrada_txtEstoqueMinimo.Value, 0), PrecoCusto: Coalesce(NovaEntrada_txtPrecoCusto.Value, 0), DataValidade: NovaEntrada_dtDataValidade.SelectedDate});
+                    Reset(NovaEntrada_cboItem);
+                    Reset(NovaEntrada_txtQuantidade);
+                    Reset(NovaEntrada_txtEstoqueMinimo);
+                    Reset(NovaEntrada_txtPrecoCusto);
+                    Reset(NovaEntrada_dtDataValidade)
+                  )
                 )
               )
             Text: ="+ Adicionar item à lista"
@@ -186,13 +191,14 @@ Screens:
             Text: ="Quantidade"
             X: =40
             Y: =206
-      - NovaEntrada_txtItem:
-          Control: ModernTextInput
+      - NovaEntrada_cboItem:
+          Control: ModernCombobox
           Properties:
-            Color: =RGBA(0, 0, 0, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
-            Placeholder: ="Digite o nome do item"
+            InputTextPlaceholder: ="Digite ou selecione um item"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colItens
             Width: =456
             X: =40
             Y: =142
@@ -259,3 +265,24 @@ Screens:
             Width: =456
             X: =40
             Y: =566
+      - NovaEntrada_lblDataValidade:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =14
+            Text: ="Data de validade (opcional)"
+            Width: =197
+            X: =536
+            Y: =112
+      - NovaEntrada_dtDataValidade:
+          Control: ModernDatePicker
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Selecione a data"
+            Width: =294
+            X: =536
+            Y: =142

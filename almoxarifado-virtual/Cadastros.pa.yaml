@@ -2,7 +2,9 @@ Screens:
   Cadastros:
     Properties:
       Fill: =ColorBg
-      OnVisible: =Set(varAbaCadastro, "Itens")
+      OnVisible: |-
+        =Set(varAbaCadastro, "Itens");
+        Set(varMostrarEdicaoItem, false)
     Children:
       - Cadastros_NavBar:
           Control: GroupContainer
@@ -27,51 +29,6 @@ Screens:
             Width: =140
             X: =36
             Y: =218
-      - Cadastros_cboCategoriaItem:
-          Control: ModernCombobox
-          Properties:
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =44
-            InputTextPlaceholder: ="Categoria"
-            ItemDisplayText: =ThisItem.Value
-            Items: |-
-              =Table({Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
-            Visible: =varAbaCadastro = "Itens"
-            Width: =160
-            X: =420
-            Y: =218
-      - Cadastros_tabsAux:
-          Control: ModernTabList
-          Properties:
-            Default: |-
-              ={Value: "Itens"}
-            Height: =40
-            Items: |-
-              =Table({Value: "Itens"}, {Value: "Setores"})
-            OnChange: =Set(varAbaCadastro, Self.Selected.Value)
-            Width: =320
-            X: =36
-            Y: =309
-      - Cadastros_txtEstoqueMinimoItem:
-          Control: ModernNumberInput
-          Properties:
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =44
-            HintText: ="Estoque mín."
-            Visible: =varAbaCadastro = "Itens"
-            Width: =110
-            X: =744
-            Y: =218
-      - Cadastros_lblHeader:
-          Control: ModernText
-          Properties:
-            AutoHeight: =true
-            Color: =ColorTextPrimary
-            FontWeight: =FontWeight.Bold
-            Size: =28
-            Text: ="Cadastros Auxiliares"
-            X: =36
-            Y: =96
       - Cadastros_btnAdicionarItem:
           Control: Button
           Properties:
@@ -98,6 +55,61 @@ Screens:
             Width: =140
             X: =866
             Y: =218
+      - Cadastros_cboCategoriaItem:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Categoria"
+            ItemDisplayText: =ThisItem.Value
+            Items: |-
+              =Table({Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
+            Visible: =varAbaCadastro = "Itens"
+            Width: =160
+            X: =420
+            Y: =218
+      - Cadastros_txtEstoqueMinimoItem:
+          Control: ModernNumberInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="Estoque mín."
+            Visible: =varAbaCadastro = "Itens"
+            Width: =110
+            X: =744
+            Y: =218
+      - Cadastros_txtNomeSetor:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Nome do setor/solicitante"
+            Visible: =varAbaCadastro = "Setores"
+            Width: =260
+            X: =36
+            Y: =218
+      - Cadastros_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Cadastros Auxiliares"
+            X: =36
+            Y: =96
+      - Cadastros_tabsAux:
+          Control: ModernTabList
+          Properties:
+            Default: |-
+              ={Value: "Itens"}
+            Height: =40
+            Items: |-
+              =Table({Value: "Itens"}, {Value: "Setores"})
+            OnChange: =Set(varAbaCadastro, Self.Selected.Value)
+            Width: =320
+            X: =36
+            Y: =309
       - Cadastros_txtUnidadeItem:
           Control: ModernTextInput
           Properties:
@@ -164,7 +176,21 @@ Screens:
                   Subtitle: |-
                     ="Código " & ThisItem.SKU & " · " & ThisItem.Categoria.Value & " · Mínimo: " & Text(ThisItem.EstoqueMinimo) & " " & ThisItem.UnidadeMedida
                   Title: =ThisItem.Nome
-                  Width: =1301
+                  Width: =1257
+            - Cadastros_btnEditarItem:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorPrimary
+                  Height: =44
+                  Icon: ="Edit"
+                  OnSelect: |-
+                    =Set(varItemEditando, ThisItem);
+                    Set(varMostrarEdicaoItem, true)
+                  Text: =""
+                  Width: =44
+                  X: =1199
+                  Y: =6
       - Cadastros_btnAdicionarSetor:
           Control: Button
           Properties:
@@ -219,13 +245,119 @@ Screens:
                   Width: =44
                   X: =1227
                   Y: =6
-      - Cadastros_txtNomeSetor:
-          Control: ModernTextInput
+      - Cadastros_OverlayEditarItem:
+          Control: GroupContainer
+          Variant: ManualLayout
           Properties:
-            Fill: =RGBA(255, 255, 255, 1)
-            Height: =44
-            Placeholder: ="Nome do setor/solicitante"
-            Visible: =varAbaCadastro = "Setores"
-            Width: =260
-            X: =36
-            Y: =218
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varMostrarEdicaoItem
+            Width: =1366
+          Children:
+            - Cadastros_boxEditarItem:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =RGBA(230, 230, 230, 1)
+                  Height: =470
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =165
+                Children:
+                  - Cadastros_lblTituloEditarItem:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Editar item · " & varItemEditando.SKU
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - Cadastros_txtNomeEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varItemEditando.Nome
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: ="Nome do item"
+                        Width: =412
+                        X: =24
+                        Y: =64
+                  - Cadastros_cboCategoriaEditar:
+                      Control: ModernCombobox
+                      Properties:
+                        DefaultSelectedItems: =Table(varItemEditando.Categoria)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        InputTextPlaceholder: ="Categoria"
+                        ItemDisplayText: =ThisItem.Value
+                        Items: |-
+                          =Table({Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
+                        Width: =412
+                        X: =24
+                        Y: =118
+                  - Cadastros_txtUnidadeEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varItemEditando.UnidadeMedida
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: |-
+                          ="Unidade (ex.: Caixa)"
+                        Width: =412
+                        X: =24
+                        Y: =172
+                  - Cadastros_txtEstoqueMinimoEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varItemEditando.EstoqueMinimo
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        HintText: ="Estoque mínimo"
+                        Width: =412
+                        X: =24
+                        Y: =226
+                  - Cadastros_txtPrecoContratoEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varItemEditando.PrecoContrato
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        HintText: ="Preço de contrato"
+                        Width: =412
+                        X: =24
+                        Y: =280
+                  - Cadastros_btnCancelarEdicaoItem:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varMostrarEdicaoItem, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =400
+                  - Cadastros_btnSalvarEdicaoItem:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorPrimary
+                        Height: =44
+                        OnSelect: |-
+                          =If(
+                            Trim(Cadastros_txtNomeEditar.Text) = "",
+                            Notify("Informe o nome do item.", NotificationType.Error),
+                            Patch(Itens, LookUp(Itens, SKU = varItemEditando.SKU), {Nome: Trim(Cadastros_txtNomeEditar.Text), Categoria: Cadastros_cboCategoriaEditar.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeEditar.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoEditar.Value, 0), PrecoContrato: Coalesce(Cadastros_txtPrecoContratoEditar.Value, 0)});
+                            Set(varMostrarEdicaoItem, false);
+                            Notify("Item atualizado com sucesso.", NotificationType.Success)
+                          )
+                        Text: ="Salvar alterações"
+                        Width: =198
+                        X: =238
+                        Y: =400

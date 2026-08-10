@@ -45,6 +45,22 @@ App:
 
       DepositoSaldoTotal(deposito: Text): Number =
         Sum(Filter(colSaldos, Deposito = deposito), Quantidade);
+
+      // Funções auxiliares de vencimento
+      StatusValidade(dataValidade: Date): Text =
+        If(
+          IsBlank(dataValidade), "",
+          dataValidade < Today(), "Vencido",
+          dataValidade <= DateAdd(Today(), 30, TimeUnit.Days), "Vence em breve",
+          "OK"
+        );
+
+      SaldoVencendoOuVencido(dataValidade: Date): Boolean =
+        !IsBlank(dataValidade) && dataValidade <= DateAdd(Today(), 30, TimeUnit.Days);
+
+      // Funções auxiliares financeiras
+      ValorContratoItem(sku: Text): Number =
+        Coalesce(LookUp(colItens, SKU = sku).PrecoContrato, 0);
     OnStart: =Set(varUsuarioAtual, User().FullName)
     StartScreen: =If(App.Width < 900, AcessoRestrito, Home)
-    Theme: =PowerAppsTheme
+    Theme: =Blank()

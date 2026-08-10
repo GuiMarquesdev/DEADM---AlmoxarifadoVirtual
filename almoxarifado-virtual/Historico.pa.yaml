@@ -8,7 +8,8 @@ Screens:
         Set(varUsuarioFiltro, "");
         Set(varItemFiltro, "");
         Set(varDataInicioFiltro, Blank());
-        Set(varDataFimFiltro, Blank())
+        Set(varDataFimFiltro, Blank());
+        Set(varConfirmandoResetHistorico, false)
     Children:
       - Historico_NavBar:
           Control: GroupContainer
@@ -156,8 +157,87 @@ Screens:
               Reset(Historico_dtDataFim)
             Text: ="Limpar filtros"
             Width: =150
-            X: =1192
-            Y: =228
+            X: =1180
+            Y: =220
+      - Historico_btnResetarHistorico:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorAlert
+            Height: =44
+            Icon: ="Delete"
+            OnSelect: =Set(varConfirmandoResetHistorico, true)
+            Text: ="Resetar histórico"
+            Width: =170
+            X: =1002
+            Y: =220
+      - Historico_OverlayResetHistorico:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varConfirmandoResetHistorico
+            Width: =1366
+          Children:
+            - Historico_boxConfirmarResetHistorico:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =260
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =260
+                Children:
+                  - Historico_lblTituloResetHistorico:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Apagar todo o histórico de movimentações?"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - Historico_lblMensagemResetHistorico:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =120
+                        Size: =14
+                        Text: ="Isso vai excluir permanentemente todos os " & CountRows(colMovimentacoes) & " registros de Entrada, Saída e Transferência já feitos. Essa ação não pode ser desfeita e essa tela ficará vazia."
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - Historico_btnCancelarResetHistorico:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varConfirmandoResetHistorico, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =200
+                  - Historico_btnConfirmarResetHistorico:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorAlert
+                        Height: =44
+                        OnSelect: |-
+                          =RemoveIf(Movimentacoes, true);
+                          Set(varConfirmandoResetHistorico, false);
+                          Notify("Histórico de movimentações apagado.", NotificationType.Success)
+                        Text: ="Apagar tudo"
+                        Width: =198
+                        X: =238
+                        Y: =200
       - Historico_txtUsuario:
           Control: ModernTextInput
           Properties:

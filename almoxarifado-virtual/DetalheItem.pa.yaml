@@ -7,7 +7,7 @@ Screens:
       - DetalheItem_lblNome:
           Control: ModernText
           Properties:
-            Color: =ColorTextPrimary
+            Color: =RGBA(0, 0, 0, 1)
             FontWeight: =FontWeight.Bold
             Height: =120
             Size: =26

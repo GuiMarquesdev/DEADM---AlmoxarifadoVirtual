@@ -4,66 +4,8 @@ Screens:
       Fill: =ColorBg
       OnVisible: |-
         =Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome));
-        Set(varItensDeposito, ForAll(varSaldosDeposito,
-          With({saldoSKU: SKU, saldoQuantidade: Quantidade},
-            {SKU: saldoSKU, Quantidade: saldoQuantidade, Nome: LookUp(colItens, SKU = saldoSKU).Nome, Categoria: LookUp(colItens, SKU = saldoSKU).Categoria, Status: If(saldoQuantidade < LookUp(colItens, SKU = saldoSKU).EstoqueMinimo, "Baixo", "OK")}
-          )
-        ))
+        Set(varConfirmandoQuantidade, false)
     Children:
-      - DetalheDeposito_tblItens:
-          Control: Table
-          Properties:
-            Height: =383
-            Items: =varItensDeposito
-            Width: =1302
-            X: =35
-            Y: =322
-          Children:
-            - SKU1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Código"
-                  FieldName: ="SKU"
-                  FieldType: ="s"
-                  Order: =1
-            - Nome1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Nome"
-                  FieldName: ="Nome"
-                  FieldType: ="s"
-                  Order: =2
-            - Categoria1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Categoria"
-                  FieldName: ="Categoria"
-                  FieldType: ="![Value:s]"
-                  Order: =3
-            - Quantidade1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Quantidade"
-                  FieldName: ="Quantidade"
-                  FieldType: ="n"
-                  Order: =4
-            - Status1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Status"
-                  FieldName: ="Status"
-                  FieldType: ="s"
-                  Order: =5
       - DetalheDeposito_lblItensHeader:
           Control: ModernText
           Properties:
@@ -83,9 +25,9 @@ Screens:
             Size: =14
             Text: |-
               ="Responsável: " & varDepositoSelecionado.Responsavel & " · Saldo total: " & Text(DepositoSaldoTotal(varDepositoSelecionado.Nome)) & " unidades"
-            Width: =273
-            X: =35
-            Y: =173
+            Width: =376
+            X: =20
+            Y: =153
       - DetalheDeposito_lblNome:
           Control: ModernText
           Properties:
@@ -130,3 +72,151 @@ Screens:
             Width: =156
             X: =1180
             Y: =16
+      - DetalheDeposito_galItens:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =440
+            Items: =varSaldosDeposito
+            TemplateSize: =64
+            Width: =1335
+            X: =20
+            Y: =306
+          Children:
+            - DetalheDeposito_cardItem:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =56
+                  Image: =Blank()
+                  Subtitle: ="Código " & ThisItem.SKU & " · " & LookUp(colItens, SKU = ThisItem.SKU).Categoria.Value
+                  Title: =LookUp(colItens, SKU = ThisItem.SKU).Nome
+                  Width: =680
+                  Y: =4
+            - DetalheDeposito_txtQuantidadeItem:
+                Control: ModernNumberInput
+                Properties:
+                  Default: =ThisItem.Quantidade
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =44
+                  HintText: ="Quantidade"
+                  Min: =0
+                  OnChange: |-
+                    =If(
+                      Self.Value <> ThisItem.Quantidade,
+                      Set(varItemQuantEditando, ThisItem);
+                      Set(varNomeItemEditando, LookUp(colItens, SKU = ThisItem.SKU).Nome);
+                      Set(varUnidadeItemEditando, LookUp(colItens, SKU = ThisItem.SKU).UnidadeMedida);
+                      Set(varQuantidadeAnterior, ThisItem.Quantidade);
+                      Set(varQuantidadeNova, Self.Value);
+                      Set(varConfirmandoQuantidade, true)
+                    )
+                  Width: =140
+                  X: =700
+                  Y: =10
+            - DetalheDeposito_badgeStatusItem:
+                Control: Badge
+                Properties:
+                  Content: =If(ThisItem.Quantidade < LookUp(colItens, SKU = ThisItem.SKU).EstoqueMinimo, "Baixo", "OK")
+                  Height: =28
+                  ThemeColor: =If(ThisItem.Quantidade < LookUp(colItens, SKU = ThisItem.SKU).EstoqueMinimo, 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
+                  Width: =80
+                  X: =860
+                  Y: =14
+            - DetalheDeposito_dtValidadeItem:
+                Control: ModernDatePicker
+                Properties:
+                  DefaultDate: =ThisItem.DataValidade
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =44
+                  OnChange: |-
+                    =Patch(Saldos, ThisItem, {DataValidade: Self.SelectedDate});
+                    Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome));
+                    Notify("Data de validade atualizada.", NotificationType.Success)
+                  Placeholder: ="Validade"
+                  Width: =140
+                  X: =960
+                  Y: =10
+            - DetalheDeposito_badgeValidadeItem:
+                Control: Badge
+                Properties:
+                  Content: =StatusValidade(ThisItem.DataValidade)
+                  Height: =28
+                  ThemeColor: =If(StatusValidade(ThisItem.DataValidade) = "Vencido", 'BadgeCanvas.ThemeColor'.Danger, StatusValidade(ThisItem.DataValidade) = "Vence em breve", 'BadgeCanvas.ThemeColor'.Warning, 'BadgeCanvas.ThemeColor'.Success)
+                  Visible: =!IsBlank(ThisItem.DataValidade)
+                  Width: =110
+                  X: =1120
+                  Y: =14
+      - DetalheDeposito_OverlayQuantidade:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varConfirmandoQuantidade
+            Width: =1366
+          Children:
+            - DetalheDeposito_boxConfirmarQuantidade:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =280
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =250
+                Children:
+                  - DetalheDeposito_lblTituloQuantidade:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Confirmar ajuste de saldo?"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - DetalheDeposito_lblMensagemQuantidade:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =140
+                        Size: =14
+                        Text: |-
+                          ="Você está alterando manualmente o saldo de """ & varNomeItemEditando & """ neste depósito: de " & varQuantidadeAnterior & " para " & varQuantidadeNova & " " & varUnidadeItemEditando & ". Essa ação ajusta o estoque diretamente e NÃO gera um registro de movimentação (diferente de Entrada, Saída ou Transferência). Use apenas para corrigir divergências de inventário."
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - DetalheDeposito_btnCancelarQuantidade:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: |-
+                          =Set(varConfirmandoQuantidade, false);
+                          Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome))
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =218
+                  - DetalheDeposito_btnConfirmarQuantidade:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorPrimary
+                        Height: =44
+                        OnSelect: |-
+                          =Patch(Saldos, varItemQuantEditando, {Quantidade: varQuantidadeNova});
+                          Set(varConfirmandoQuantidade, false);
+                          Notify("Quantidade atualizada.", NotificationType.Success)
+                        Text: ="Confirmar"
+                        Width: =198
+                        X: =238
+                        Y: =218

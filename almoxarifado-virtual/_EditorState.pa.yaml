@@ -1,0 +1,17 @@
+EditorState:
+  ScreensOrder:
+    - AcessoRestrito
+    - Home
+    - NovaEntrada
+    - NovaSaida
+    - Transferencia
+    - Catalogo
+    - DetalheItem
+    - DetalheItemHistorico
+    - Depositos
+    - DetalheDeposito
+    - EstoqueBaixo
+    - Vencimentos
+    - Historico
+    - Cadastros
+

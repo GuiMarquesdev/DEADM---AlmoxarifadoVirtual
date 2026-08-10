@@ -2,18 +2,21 @@ Screens:
   NovaSaida:
     Properties:
       Fill: =ColorBg
-      OnVisible: =Clear(colItensLancamentoSaida)
+      OnVisible: |-
+        =Clear(colItensLancamentoSaida);
+        Set(varMostrarAssinatura, false)
     Children:
-      - NovaSaida_txtItem:
-          Control: ModernTextInput
+      - NovaSaida_cboItem:
+          Control: ModernCombobox
           Properties:
-            Color: =RGBA(0, 0, 0, 1)
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
-            Placeholder: ="Digite o nome do item"
+            InputTextPlaceholder: ="Selecione o item"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colItens
             Width: =456
             X: =25
-            Y: =233
+            Y: =121
       - NovaSaida_btnConfirmar:
           Control: Button
           Properties:
@@ -26,14 +29,16 @@ Screens:
                 If(
                   IsBlank(NovaSaida_cboDeposito.Selected) || IsBlank(NovaSaida_cboSetor.Selected),
                   Notify("Selecione o depósito e o setor solicitante.", NotificationType.Error),
+                  Set(varGuiaCodigoAtual, "SAI-" & Left(GUID(), 8));
+                  Set(varGuiaDeposito, NovaSaida_cboDeposito.Selected.Nome);
+                  Set(varGuiaSetor, NovaSaida_cboSetor.Selected.Nome);
                   ForAll(
                     colItensLancamentoSaida As Linha,
                     Patch(Saldos, LookUp(Saldos, SKU = Linha.SKU && Deposito = NovaSaida_cboDeposito.Selected.Nome), {Quantidade: SaldoNoDeposito(Linha.SKU, NovaSaida_cboDeposito.Selected.Nome) - Linha.Quantidade});
-                    Patch(Movimentacoes, Defaults(Movimentacoes), {Tipo: {Value: "Saída"}, SKU: Linha.SKU, ItemNome: Linha.Nome, DepositoOrigem: NovaSaida_cboDeposito.Selected.Nome, DepositoDestino: "", Quantidade: Linha.Quantidade, Motivo: NovaSaida_txtMotivo.Text, Solicitante: NovaSaida_cboSetor.Selected.Nome, Fornecedor: "", Usuario: varUsuarioAtual, DataHora: Now()})
+                    Patch(Movimentacoes, Defaults(Movimentacoes), {Tipo: {Value: "Saída"}, SKU: Linha.SKU, ItemNome: Linha.Nome, DepositoOrigem: NovaSaida_cboDeposito.Selected.Nome, DepositoDestino: "", Quantidade: Linha.Quantidade, Motivo: NovaSaida_txtMotivo.Text, Solicitante: NovaSaida_cboSetor.Selected.Nome, Fornecedor: "", Usuario: varUsuarioAtual, DataHora: Now(), GuiaCodigo: varGuiaCodigoAtual})
                   );
                   Clear(colItensLancamentoSaida);
-                  Notify("Saída registrada com sucesso.", NotificationType.Success);
-                  Navigate(Home, ScreenTransition.None)
+                  Set(varMostrarAssinatura, true)
                 )
               )
             Text: ="Registrar Saída"
@@ -85,6 +90,7 @@ Screens:
           Control: Gallery
           Variant: Vertical
           Properties:
+            Fill: =RGBA(255, 255, 255, 1)
             Height: =269
             Items: =colItensLancamentoSaida
             TemplateSize: =48
@@ -132,16 +138,16 @@ Screens:
                 IsBlank(NovaSaida_cboDeposito.Selected),
                 Notify("Selecione o depósito de origem primeiro.", NotificationType.Error),
                 If(
-                  Trim(NovaSaida_txtItem.Text) = "" || NovaSaida_txtQuantidade.Value <= 0,
-                  Notify("Digite o nome do item e uma quantidade válida.", NotificationType.Error),
+                  IsBlank(NovaSaida_cboItem.Selected) || NovaSaida_txtQuantidade.Value <= 0,
+                  Notify("Selecione o item e uma quantidade válida.", NotificationType.Error),
                   If(
-                    CountRows(Filter(colItensLancamentoSaida, Nome = Trim(NovaSaida_txtItem.Text))) > 0,
+                    CountRows(Filter(colItensLancamentoSaida, SKU = NovaSaida_cboItem.Selected.SKU)) > 0,
                     Notify("Esse item já está na lista.", NotificationType.Error),
                     If(
-                      NovaSaida_txtQuantidade.Value > SaldoNoDeposito(Trim(NovaSaida_txtItem.Text), NovaSaida_cboDeposito.Selected.Nome),
+                      NovaSaida_txtQuantidade.Value > SaldoNoDeposito(NovaSaida_cboItem.Selected.SKU, NovaSaida_cboDeposito.Selected.Nome),
                       Notify("Saldo insuficiente neste depósito.", NotificationType.Error),
-                      Collect(colItensLancamentoSaida, {SKU: Trim(NovaSaida_txtItem.Text), Nome: Trim(NovaSaida_txtItem.Text), UnidadeMedida: "un", Quantidade: NovaSaida_txtQuantidade.Value});
-                      Reset(NovaSaida_txtItem);
+                      Collect(colItensLancamentoSaida, {SKU: NovaSaida_cboItem.Selected.SKU, Nome: NovaSaida_cboItem.Selected.Nome, UnidadeMedida: NovaSaida_cboItem.Selected.UnidadeMedida, Quantidade: NovaSaida_txtQuantidade.Value});
+                      Reset(NovaSaida_cboItem);
                       Reset(NovaSaida_txtQuantidade)
                     )
                   )
@@ -177,7 +183,7 @@ Screens:
             Height: =31
             Size: =13
             Text: |-
-              =If(Trim(NovaSaida_txtItem.Text) = "" || IsBlank(NovaSaida_cboDeposito.Selected), "", "Saldo disponível neste depósito: " & Text(SaldoNoDeposito(Trim(NovaSaida_txtItem.Text), NovaSaida_cboDeposito.Selected.Nome)))
+              =If(IsBlank(NovaSaida_cboItem.Selected) || IsBlank(NovaSaida_cboDeposito.Selected), "", "Saldo disponível neste depósito: " & Text(SaldoNoDeposito(NovaSaida_cboItem.Selected.SKU, NovaSaida_cboDeposito.Selected.Nome)))
             Width: =456
             X: =888
             Y: =718
@@ -190,7 +196,7 @@ Screens:
             Size: =14
             Text: ="Item"
             X: =25
-            Y: =204
+            Y: =85
       - NovaSaida_cboDeposito:
           Control: ModernCombobox
           Properties:
@@ -201,7 +207,7 @@ Screens:
             Items: =colDepositos
             Width: =456
             X: =25
-            Y: =145
+            Y: =222
       - NovaSaida_lblDeposito:
           Control: ModernText
           Properties:
@@ -211,7 +217,7 @@ Screens:
             Size: =14
             Text: ="Depósito de origem"
             X: =25
-            Y: =115
+            Y: =181
       - NovaSaida_TopBar:
           Control: GroupContainer
           Variant: AutoLayout
@@ -241,3 +247,105 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Size: =18
                   Text: ="Nova Saída de Material"
+      - NovaSaida_OverlayAssinatura:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varMostrarAssinatura
+            Width: =1366
+          Children:
+            - NovaSaida_boxAssinatura:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =RGBA(230, 230, 230, 1)
+                  Height: =540
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =620
+                  X: =373
+                  Y: =120
+                Children:
+                  - NovaSaida_lblTituloAssinatura:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Confirme o recebimento — Guia " & varGuiaCodigoAtual
+                        Width: =572
+                        X: =24
+                        Y: =20
+                  - NovaSaida_lblSubtituloAssinatura:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =36
+                        Size: =13
+                        Text: ="Peça para quem está retirando o material assinar no campo abaixo."
+                        Width: =572
+                        X: =24
+                        Y: =54
+                  - NovaSaida_txtDestinatarioNome:
+                      Control: ModernTextInput
+                      Properties:
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: ="Nome de quem está recebendo"
+                        Width: =572
+                        X: =24
+                        Y: =100
+                  - NovaSaida_txtDestinatarioDocumento:
+                      Control: ModernTextInput
+                      Properties:
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: ="CPF ou matrícula"
+                        Width: =572
+                        X: =24
+                        Y: =154
+                  - NovaSaida_lblAssinaturaLabel:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Assinatura"
+                        Width: =200
+                        X: =24
+                        Y: =208
+                  - NovaSaida_penAssinatura:
+                      Control: PenInput
+                      Properties:
+                        BorderColor: =ColorBorder
+                        BorderThickness: =1
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =220
+                        Width: =572
+                        X: =24
+                        Y: =232
+                  - NovaSaida_btnConfirmarAssinatura:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorPrimary
+                        Height: =44
+                        OnSelect: |-
+                          =If(
+                            Trim(NovaSaida_txtDestinatarioNome.Text) = "" || Trim(NovaSaida_txtDestinatarioDocumento.Text) = "",
+                            Notify("Informe o nome e o documento de quem está recebendo.", NotificationType.Error),
+                            Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Assinatura: NovaSaida_penAssinatura.Image, Status: {Value: "Assinado"}});
+                            Set(varMostrarAssinatura, false);
+                            Notify("Saída registrada e guia assinada com sucesso.", NotificationType.Success);
+                            Navigate(Home, ScreenTransition.None)
+                          )
+                        Text: ="Confirmar assinatura"
+                        Width: =572
+                        X: =24
+                        Y: =476

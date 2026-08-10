@@ -1,0 +1,95 @@
+Screens:
+  Vencimentos:
+    Properties:
+      Fill: =ColorBg
+      OnVisible: =Set(varSaldosVencendo, Sort(Filter(colSaldos, SaldoVencendoOuVencido(DataValidade)), DataValidade, SortOrder.Ascending))
+    Children:
+      - Vencimentos_TopBar:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =ColorPrimaryDark
+            Height: =71
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutGap: =16
+            PaddingLeft: =24
+            Width: =Parent.Width
+          Children:
+            - Vencimentos_lblAppTitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Vencimentos"
+      - Vencimentos_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            Icon: ="ArrowLeft"
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: =" Voltar"
+            Width: =164
+            X: =1170
+            Y: =15
+      - Vencimentos_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Itens vencidos ou vencendo em breve"
+            Width: =900
+            X: =35
+            Y: =95
+      - Vencimentos_lblSubheader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            Size: =14
+            Text: ="(" & CountRows(varSaldosVencendo) & ") itens precisam de atenção · considerando os próximos 30 dias"
+            Width: =700
+            X: =35
+            Y: =140
+      - Vencimentos_galAlertas:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =520
+            Items: =varSaldosVencendo
+            TemplateSize: =88
+            Width: =1302
+            X: =35
+            Y: =180
+          Children:
+            - Vencimentos_cardAlerta:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  DropShadow: =DropShadow.Semibold
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =87
+                  Image: =Blank()
+                  OnSelect: |-
+                    =Set(varDepositoSelecionado, LookUp(colDepositos, Nome = ThisItem.Deposito));
+                    Navigate(DetalheDeposito, ScreenTransition.None)
+                  Subtitle: |-
+                    ="Depósito: " & ThisItem.Deposito & " · Vence em " & Text(ThisItem.DataValidade, "dd/mm/yyyy") & " · Saldo " & Text(ThisItem.Quantidade) & " " & LookUp(colItens, SKU = ThisItem.SKU).UnidadeMedida
+                  Title: =LookUp(colItens, SKU = ThisItem.SKU).Nome
+                  Width: =1292
+            - Vencimentos_badgeAlerta:
+                Control: Badge
+                Properties:
+                  Content: =StatusValidade(ThisItem.DataValidade)
+                  Height: =28
+                  ThemeColor: =If(StatusValidade(ThisItem.DataValidade) = "Vencido", 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Warning)
+                  Width: =100
+                  X: =1173
+                  Y: =24

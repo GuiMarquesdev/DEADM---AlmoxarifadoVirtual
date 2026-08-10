@@ -5,7 +5,10 @@ Screens:
       OnVisible: |-
         =Set(varTotalItensEstoque, Sum(colSaldos, Quantidade));
         Set(varTotalItensBaixoEstoque, CountRows(Filter(colItens, ItemEstoqueBaixo(SKU))));
-        Set(varMovimentacoesHoje, CountRows(Filter(colMovimentacoes, DateValue(DataHora) = Today())))
+        Set(varMovimentacoesHoje, CountRows(Filter(colMovimentacoes, DateValue(DataHora) = Today())));
+        Set(varTotalItensVencendo, CountRows(Filter(colSaldos, SaldoVencendoOuVencido(DataValidade))));
+        Set(varValorTotalEstoque, Sum(colSaldos, Quantidade * ValorContratoItem(SKU)));
+        Set(varTotalItensCatalogo, CountRows(colItens))
     Children:
       - Home_CardsRow2:
           Control: GroupContainer
@@ -177,10 +180,10 @@ Screens:
                   HeaderImage: =Blank()
                   Height: =100
                   Image: =Blank()
-                  LayoutMinWidth: =220
+                  LayoutMinWidth: =200
                   Subtitle: ="Itens em Estoque"
                   Title: =Text(varTotalItensEstoque)
-                  Width: =220
+                  Width: =200
             - Home_cardMovimentacoesHoje:
                 Control: ModernCard
                 Properties:
@@ -190,10 +193,10 @@ Screens:
                   HeaderImage: =Blank()
                   Height: =100
                   Image: =Blank()
-                  LayoutMinWidth: =220
+                  LayoutMinWidth: =200
                   Subtitle: ="Movimentações Hoje"
                   Title: =Text(varMovimentacoesHoje)
-                  Width: =220
+                  Width: =200
             - Home_cardEstoqueBaixo:
                 Control: ModernCard
                 Properties:
@@ -203,11 +206,52 @@ Screens:
                   HeaderImage: =Blank()
                   Height: =100
                   Image: =Blank()
-                  LayoutMinWidth: =220
+                  LayoutMinWidth: =200
                   OnSelect: =Navigate(EstoqueBaixo, ScreenTransition.None)
                   Subtitle: ="Itens com Estoque Baixo"
                   Title: =Text(varTotalItensBaixoEstoque)
-                  Width: =220
+                  Width: =200
+            - Home_cardVencimentos:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =200
+                  OnSelect: =Navigate(Vencimentos, ScreenTransition.None)
+                  Subtitle: ="Vencendo ou Vencidos"
+                  Title: =Text(varTotalItensVencendo)
+                  Width: =200
+            - Home_cardValorTotalEstoque:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =200
+                  Subtitle: ="Valor Total em Estoque"
+                  Title: ="R$ " & Text(varValorTotalEstoque, "0.00")
+                  Width: =200
+            - Home_cardTotalCatalogo:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  FillPortions: =1
+                  HeaderImage: =Blank()
+                  Height: =100
+                  Image: =Blank()
+                  LayoutMinWidth: =200
+                  OnSelect: =Navigate(Catalogo, ScreenTransition.None)
+                  Subtitle: ="Itens no Catálogo"
+                  Title: =Text(varTotalItensCatalogo)
+                  Width: =200
       - Home_CardsRow1:
           Control: GroupContainer
           Variant: AutoLayout

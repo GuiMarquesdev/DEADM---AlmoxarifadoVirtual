@@ -2,7 +2,9 @@ Screens:
   EstoqueBaixo:
     Properties:
       Fill: =ColorBg
-      OnVisible: =Set(varItensBaixoEstoque, Filter(colItens, ItemEstoqueBaixo(SKU)))
+      OnVisible: |-
+        =Set(varItensBaixoEstoque, Filter(colItens, ItemEstoqueBaixo(SKU)));
+        Set(varDepositoFiltroBaixo, Blank())
     Children:
       - EstoqueBaixo_TopBar:
           Control: GroupContainer
@@ -57,16 +59,40 @@ Screens:
             Width: =700
             X: =35
             Y: =140
+      - EstoqueBaixo_cboDeposito:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =40
+            InputTextPlaceholder: ="Ver saldo num depósito específico (opcional)"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colDepositos
+            OnChange: =Set(varDepositoFiltroBaixo, If(IsBlank(Self.Selected), Blank(), Self.Selected.Nome))
+            Width: =340
+            X: =35
+            Y: =172
+      - EstoqueBaixo_btnLimparFiltroDeposito:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Secondary
+            Height: =40
+            OnSelect: |-
+              =Set(varDepositoFiltroBaixo, Blank());
+              Reset(EstoqueBaixo_cboDeposito)
+            Text: ="Limpar"
+            Width: =90
+            X: =385
+            Y: =172
       - EstoqueBaixo_galAlertas:
           Control: Gallery
           Variant: Vertical
           Properties:
-            Height: =520
+            Height: =476
             Items: =varItensBaixoEstoque
             TemplateSize: =88
             Width: =1302
             X: =35
-            Y: =180
+            Y: =224
           Children:
             - EstoqueBaixo_cardAlerta:
                 Control: ModernCard
@@ -80,9 +106,10 @@ Screens:
                   OnSelect: |-
                     =Set(varItemSelecionado, ThisItem);
                     Navigate(DetalheItem, ScreenTransition.None)
-                  Subtitle: ="Código " & ThisItem.SKU & " · Saldo " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida & " (mínimo " & Text(ThisItem.EstoqueMinimo) & ")"
+                  Subtitle: |-
+                    ="Código " & ThisItem.SKU & " · Saldo total " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida & " (mínimo " & Text(ThisItem.EstoqueMinimo) & ")" & If(!IsBlank(varDepositoFiltroBaixo), " · Em " & varDepositoFiltroBaixo & ": " & Text(SaldoNoDeposito(ThisItem.SKU, varDepositoFiltroBaixo)) & " " & ThisItem.UnidadeMedida, "")
                   Title: =ThisItem.Nome
-                  Width: =1220
+                  Width: =1000
             - EstoqueBaixo_badgeAlerta:
                 Control: Badge
                 Properties:
@@ -90,5 +117,29 @@ Screens:
                   Height: =28
                   ThemeColor: ='BadgeCanvas.ThemeColor'.Danger
                   Width: =70
-                  X: =1122
+                  X: =1020
                   Y: =24
+            - EstoqueBaixo_btnRepor:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorPrimary
+                  Height: =44
+                  Icon: ="Add"
+                  OnSelect: =Navigate(NovaEntrada, ScreenTransition.None)
+                  Text: =""
+                  Width: =44
+                  X: =1100
+                  Y: =16
+            - EstoqueBaixo_btnTransferir:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorPrimary
+                  Height: =44
+                  Icon: ="Sync"
+                  OnSelect: =Navigate(Transferencia, ScreenTransition.None)
+                  Text: =""
+                  Width: =44
+                  X: =1150
+                  Y: =16
