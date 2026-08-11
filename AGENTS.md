@@ -1,89 +1,89 @@
-# Power Platform Skills - Development Guidelines
+# Diretrizes de Desenvolvimento - Power Platform Skills
 
-This file provides guidance to AI Agents when working with code in this repository.
+Este arquivo fornece orientação para Agentes de IA ao trabalhar com código neste repositório.
 
-## What This Repo Is
+## O que é este repositório
 
-A **plugin marketplace** for Power Platform development by Microsoft. The Open Plugins marketplace manifest (`marketplace.json`) references individual plugins in `plugins/`. Each plugin has its own `AGENTS.md` with plugin-specific guidance.
+Um **marketplace de plugins** para desenvolvimento em Power Platform, mantido pela Microsoft. O manifesto do marketplace Open Plugins (`marketplace.json`) referencia plugins individuais em `plugins/`. Cada plugin tem seu próprio `AGENTS.md` com orientações específicas do plugin.
 
-## Repository Structure
+## Estrutura do Repositório
 
 ```
 power-platform-skills/
-├── marketplace.json          # Open Plugins marketplace manifest (lists all available plugins)
-├── .claude-plugin/           # Legacy manifest mirrors for existing subscriptions
+├── marketplace.json          # Manifesto do marketplace Open Plugins (lista todos os plugins disponíveis)
+├── .claude-plugin/           # Espelhos de manifesto legado para assinaturas existentes
 │   └── marketplace.json
-├── plugins/                  # Directory containing individual plugins
-│   └── <plugin-name>/        # Individual plugin (e.g., power-pages)
+├── plugins/                  # Diretório contendo os plugins individuais
+│   └── <plugin-name>/        # Plugin individual (ex.: power-pages)
 │       ├── .plugin/
-│       │   └── plugin.json   # Plugin manifest
+│       │   └── plugin.json   # Manifesto do plugin
 │       ├── .claude-plugin/
-│       │   └── plugin.json   # Legacy manifest mirror
-│       ├── AGENTS.md         # Plugin-specific development guidelines
-│       ├── agents/           # Agent persona files
-│       ├── commands/         # Command entry points
-│       ├── shared/           # Shared resources and documentation
-│       └── skills/           # Skill workflows (SKILL.md in subdirectories)
-├── shared/                   # Cross-plugin shared resources
-│   └── skills/               # Shared skill definitions
-│       └── <skill-name>/     # SKILL.template.md + workflow .md files
-├── AGENTS.md                 # Generic development guidelines (this file)
-└── README.md                 # Repository overview
+│       │   └── plugin.json   # Espelho de manifesto legado
+│       ├── AGENTS.md         # Diretrizes de desenvolvimento específicas do plugin
+│       ├── agents/           # Arquivos de persona de agente
+│       ├── commands/         # Pontos de entrada de comandos
+│       ├── shared/           # Recursos e documentação compartilhados
+│       └── skills/           # Fluxos de skills (SKILL.md em subdiretórios)
+├── shared/                   # Recursos compartilhados entre plugins
+│   └── skills/               # Definições de skills compartilhadas
+│       └── <skill-name>/     # SKILL.template.md + arquivos .md de fluxo
+├── AGENTS.md                 # Diretrizes genéricas de desenvolvimento (este arquivo)
+└── README.md                 # Visão geral do repositório
 ```
 
-## Local Development
+## Desenvolvimento Local
 
-Test a plugin locally by launching your AI agent with the plugin path:
+Teste um plugin localmente iniciando seu agente de IA com o caminho do plugin:
 
 ```bash
 claude --plugin-dir /path/to/plugins/<plugin-name>
 ```
 
-No root-level build, lint, or test commands exist. Build/test tooling lives inside each plugin.
+Não existem comandos de build, lint ou teste no nível raiz. As ferramentas de build/teste vivem dentro de cada plugin.
 
-## Plugin Conventions
+## Convenções de Plugin
 
-Each plugin follows this structure:
+Cada plugin segue esta estrutura:
 
-- `.plugin/plugin.json` — Open Plugins metadata (name, version, keywords)
-- `.claude-plugin/plugin.json` — legacy mirror of `.plugin/plugin.json` kept for existing subscriptions
-- `.mcp.json` — MCP server configuration (optional)
-- `agents/` — Agent definitions (`.md` files with YAML frontmatter)
-- `skills/` — Skill definitions, each in its own subdirectory with a `SKILL.md`
-- `scripts/` — Shared utility scripts referenced by skills and agents
-- `references/` — Shared reference documents used by multiple skills
+- `.plugin/plugin.json` — metadados do Open Plugins (nome, versão, palavras-chave)
+- `.claude-plugin/plugin.json` — espelho legado de `.plugin/plugin.json` mantido para assinaturas existentes
+- `.mcp.json` — configuração de servidor MCP (opcional)
+- `agents/` — definições de agentes (arquivos `.md` com front matter YAML)
+- `skills/` — definições de skills, cada uma em seu próprio subdiretório com um `SKILL.md`
+- `scripts/` — scripts utilitários compartilhados referenciados por skills e agentes
+- `references/` — documentos de referência compartilhados usados por múltiplas skills
 
-Skills are defined in `SKILL.md` files with YAML frontmatter (name, description, allowed-tools, model, hooks). The `allowed-tools` field must use a **comma-separated list** (e.g., `allowed-tools: Read, Write, Edit, Bash, Glob, Grep`) — not JSON array syntax (`["Read", "Write"]`) or YAML list syntax. Each skill may include validation scripts in a `scripts/` subdirectory, run as Stop hooks when the skill session ends.
+Skills são definidas em arquivos `SKILL.md` com front matter YAML (name, description, allowed-tools, model, hooks). O campo `allowed-tools` deve usar uma **lista separada por vírgulas** (ex.: `allowed-tools: Read, Write, Edit, Bash, Glob, Grep`) — não sintaxe de array JSON (`["Read", "Write"]`) nem sintaxe de lista YAML. Cada skill pode incluir scripts de validação em um subdiretório `scripts/`, executados como hooks de Stop quando a sessão da skill termina.
 
-## Cross-Plugin Shared Skills
+## Skills Compartilhadas Entre Plugins
 
-Skills that apply to all plugins live in `shared/skills/<skill-name>/`. The workflow logic is written once in a shared `.md` file, and each plugin has a thin `skills/<skill-name>/SKILL.md` that contains only the YAML frontmatter and a reference to the workflow path bundled inside that plugin at install time.
+Skills que se aplicam a todos os plugins vivem em `shared/skills/<skill-name>/`. A lógica do fluxo é escrita uma única vez em um arquivo `.md` compartilhado, e cada plugin tem um `skills/<skill-name>/SKILL.md` enxuto que contém apenas o front matter YAML e uma referência ao caminho do fluxo empacotado dentro daquele plugin no momento da instalação.
 
-**Pattern:**
-- `shared/skills/<skill-name>/<workflow>.md` — Full workflow (phases, instructions, field definitions)
-- `shared/skills/<skill-name>/SKILL.template.md` — Template SKILL.md (frontmatter + reference to workflow); supports `{{PLUGIN_NAME}}` placeholder
-- `plugins/<plugin>/skills/<skill-name>/SKILL.md` — Per-plugin wrapper generated from the template above
-- `plugins/<plugin>/skills/<skill-name>/<workflow>.md` — Copied workflow file bundled with the plugin so it works after installing only its own plugin directory
+**Padrão:**
+- `shared/skills/<skill-name>/<workflow>.md` — Fluxo completo (fases, instruções, definições de campos)
+- `shared/skills/<skill-name>/SKILL.template.md` — Template de SKILL.md (front matter + referência ao fluxo); suporta o placeholder `{{PLUGIN_NAME}}`
+- `plugins/<plugin>/skills/<skill-name>/SKILL.md` — Wrapper por plugin gerado a partir do template acima
+- `plugins/<plugin>/skills/<skill-name>/<workflow>.md` — Arquivo de fluxo copiado e empacotado com o plugin para que funcione após instalar apenas o diretório daquele plugin
 
-This keeps the skill discoverable in each plugin while preserving install-time portability. Marketplace installs copy only the plugin directory, so per-plugin wrappers must not reference repo-root `shared/` paths at runtime. Instead, point the wrapper at `${PLUGIN_ROOT}/skills/<skill-name>/<workflow>.md` and keep a physical copy of the shared workflow at that per-plugin path. Do not use Git symlinks for shared content; Windows and plugin-host installs can materialize them as plain link files. When updating a shared skill, edit the workflow file and/or `SKILL.template.md` in `shared/`, then refresh the per-plugin wrappers (frontmatter + bundled workflow reference, with `{{PLUGIN_NAME}}` substituted) and copy the workflow content into each adopting plugin. Commit the shared source and per-plugin copies together.
+Isso mantém a skill descobrível em cada plugin preservando a portabilidade no momento da instalação. Instalações via marketplace copiam apenas o diretório do plugin, então os wrappers por plugin não podem referenciar caminhos `shared/` da raiz do repositório em tempo de execução. Em vez disso, aponte o wrapper para `${PLUGIN_ROOT}/skills/<skill-name>/<workflow>.md` e mantenha uma cópia física do fluxo compartilhado nesse caminho por plugin. Não use symlinks do Git para conteúdo compartilhado; instalações no Windows e em plugin-hosts podem materializá-los como arquivos de link simples. Ao atualizar uma skill compartilhada, edite o arquivo de fluxo e/ou `SKILL.template.md` em `shared/`, depois atualize os wrappers por plugin (front matter + referência ao fluxo empacotado, com `{{PLUGIN_NAME}}` substituído) e copie o conteúdo do fluxo para cada plugin adotante. Faça commit da fonte compartilhada e das cópias por plugin juntas.
 
-## Shared Telemetry
+## Telemetria Compartilhada
 
-1DS telemetry code for all plugins lives at `shared/telemetry/`. Each adopting plugin keeps a physical copy of the library in its own tree at `plugins/<plugin>/scripts/lib/telemetry/lib`, alongside that plugin's real `ikey.json`. Do not use Git symlinks for this copy; plugin hosts may not dereference them reliably.
+O código de telemetria 1DS para todos os plugins vive em `shared/telemetry/`. Cada plugin adotante mantém uma cópia física da biblioteca em sua própria árvore, em `plugins/<plugin>/scripts/lib/telemetry/lib`, junto com o `ikey.json` real daquele plugin. Não use symlinks do Git para essa cópia; os plugin-hosts podem não os dereferenciar de forma confiável.
 
-Edit `shared/telemetry/` first, then refresh every adopting plugin's copied `scripts/lib/telemetry/lib` directory in the same change so the canonical source and bundled plugin content stay in sync.
+Edite `shared/telemetry/` primeiro, depois atualize a cópia de `scripts/lib/telemetry/lib` de cada plugin adotante na mesma mudança, para que a fonte canônica e o conteúdo empacotado no plugin permaneçam sincronizados.
 
-**Never reuse another plugin's instrumentation key or event stream.** When adopting telemetry in a new plugin, copy only the routing-agnostic library (`shared/telemetry/lib` → `plugins/<plugin>/scripts/lib/telemetry/lib`) — do **not** copy an existing adopter's real `ikey.json` (or its `resolver.js`). Each plugin's `ikey.json` carries that plugin's own instrumentation key(s), collector routing, and `event_stream_name`; start from the placeholder `shared/telemetry/ikey.json` (every region key is `PLACEHOLDER_REPLACE_BEFORE_SHIPPING` and it ships `disabled: true`) and provision a fresh, plugin-specific key before shipping. Copying a key already committed to another plugin (e.g. lifting `power-pages`'s `ikey.json` wholesale) mis-attributes the new plugin's events to the other plugin's Kusto stream and pollutes it — the copy step must bring over library code only, never another plugin's provisioned `ikey.json`/`resolver.js`.
+**Nunca reutilize a chave de instrumentação ou o event stream de outro plugin.** Ao adotar telemetria em um plugin novo, copie apenas a biblioteca agnóstica de roteamento (`shared/telemetry/lib` → `plugins/<plugin>/scripts/lib/telemetry/lib`) — **não** copie o `ikey.json` real de um adotante existente (nem seu `resolver.js`). O `ikey.json` de cada plugin carrega as chaves de instrumentação, o roteamento do coletor e o `event_stream_name` daquele plugin especificamente; comece a partir do `shared/telemetry/ikey.json` placeholder (toda chave de região é `PLACEHOLDER_REPLACE_BEFORE_SHIPPING` e vem com `disabled: true`) e provisione uma chave nova, específica do plugin, antes de lançar. Copiar uma chave já commitada em outro plugin (ex.: pegar o `ikey.json` do `power-pages` inteiro) atribui erroneamente os eventos do novo plugin ao stream Kusto do outro plugin e o polui — a etapa de cópia deve trazer apenas código de biblioteca, nunca o `ikey.json`/`resolver.js` já provisionado de outro plugin.
 
-This invariant is CI-enforced: `node scripts/validate-telemetry-ikeys.js` (wired into the `validate-repository-metadata` workflow) scans every `plugins/*/**/ikey.json`, ignores placeholder/empty values, and fails if the same instrumentation key or `event_stream_name` appears under two different plugins. A single plugin reusing one key across regions is allowed; only cross-plugin reuse fails. Run it locally after touching any plugin's `ikey.json`.
+Esse invariante é reforçado por CI: `node scripts/validate-telemetry-ikeys.js` (integrado ao workflow `validate-repository-metadata`) varre todo `plugins/*/**/ikey.json`, ignora valores placeholder/vazios, e falha se a mesma chave de instrumentação ou `event_stream_name` aparecer em dois plugins diferentes. Um único plugin reutilizando uma chave entre regiões é permitido; apenas a reutilização entre plugins falha. Execute localmente após alterar o `ikey.json` de qualquer plugin.
 
-Per-plugin iKey/collector routing is pluggable via a `resolver.js` placed next to the plugin's `ikey.json` (implementing the `resolve`/`isProvisioned` contract); the shared library ships only that contract plus a static-key fallback, not any routing logic. A per-plugin opt-out env var `POWER_PLATFORM_SKILLS_TELEMETRY_<PLUGIN>_OPTOUT` (derived as the uppercased plugin name with non-alphanumerics collapsed to `_`, suffixed `_OPTOUT`) disables transmission for automation when set to `1`/`true` (dotnet `*_TELEMETRY_OPTOUT` convention); it has the **highest precedence**, overriding both the persisted `config.json` choice and `/<plugin>:telemetry on`.
+O roteamento de iKey/coletor por plugin é conectável via um `resolver.js` colocado ao lado do `ikey.json` do plugin (implementando o contrato `resolve`/`isProvisioned`); a biblioteca compartilhada fornece apenas esse contrato mais um fallback de chave estática, não nenhuma lógica de roteamento. Uma variável de ambiente de opt-out por plugin `POWER_PLATFORM_SKILLS_TELEMETRY_<PLUGIN>_OPTOUT` (derivada como o nome do plugin em maiúsculas com caracteres não alfanuméricos colapsados para `_`, com sufixo `_OPTOUT`) desabilita a transmissão para automação quando definida como `1`/`true` (convenção dotnet `*_TELEMETRY_OPTOUT`); ela tem a **precedência mais alta**, sobrepondo tanto a escolha persistida em `config.json` quanto `/<plugin>:telemetry on`.
 
-### CI must opt out of telemetry transmission
+### CI precisa desabilitar a transmissão de telemetria (opt-out)
 
-An adopting plugin's committed `ikey.json` ships **enabled** (`disabled: false`) with a real production instrumentation key, so any process that runs a telemetry-emitting hook or script **without isolating emission** will POST a real (but fake-in-content) event to the production collector. CI runs are not real usage, and such events pollute the production telemetry stream.
+O `ikey.json` commitado de um plugin adotante já vem **habilitado** (`disabled: false`) com uma chave de instrumentação de produção real, então qualquer processo que execute um hook ou script emissor de telemetria **sem isolar a emissão** vai enviar (POST) um evento real (mas com conteúdo fictício) para o coletor de produção. Execuções de CI não são uso real, e esses eventos poluem o stream de telemetria de produção.
 
-**Therefore: every GitHub Actions job that runs the test suite — or any step that could execute a telemetry-emitting hook/script for an adopting plugin — MUST set the plugin's opt-out env var at the job (or workflow) level.** For `power-pages`:
+**Portanto: todo job do GitHub Actions que executa a suíte de testes — ou qualquer etapa que possa executar um hook/script emissor de telemetria de um plugin adotante — DEVE definir a variável de opt-out do plugin no nível do job (ou workflow).** Para `power-pages`:
 
 ```yaml
 jobs:
@@ -94,42 +94,42 @@ jobs:
         steps: ...
 ```
 
-This opt-out suppresses **transmission only** (the local diagnostic mirror is still written), so it is safe and has no effect on what the job actually tests. Tests that need to assert that emission *happens* clear the var in their own spawned-process env and route the event to a local `POWER_PLATFORM_SKILLS_FAKE_HTTPS` probe instead of the real collector — so the job-level opt-out never breaks them. Existing reference: `.github/workflows/power-pages-script-tests.yml`. When you add a new such workflow (or a new emitting step to an existing one), add this env var in the same change; treat a CI job that runs the tests without it as a production-telemetry leak.
+Esse opt-out suprime **apenas a transmissão** (o espelho de diagnóstico local ainda é gravado), então é seguro e não tem efeito sobre o que o job realmente testa. Testes que precisam verificar que a emissão *acontece* limpam a variável no ambiente do processo que eles próprios disparam e roteiam o evento para uma sonda local `POWER_PLATFORM_SKILLS_FAKE_HTTPS`, em vez do coletor real — então o opt-out no nível do job nunca os quebra. Referência existente: `.github/workflows/power-pages-script-tests.yml`. Ao adicionar um novo workflow desse tipo (ou uma nova etapa emissora a um já existente), adicione essa variável de ambiente na mesma mudança; trate um job de CI que rode os testes sem ela como um vazamento de telemetria de produção.
 
-Current adopters: `power-pages`. Others adopt on demand.
+Adotantes atuais: `power-pages`. Outros adotam sob demanda.
 
-## Legacy Marketplace Compatibility
+## Compatibilidade com Marketplace Legado
 
-Keep the root `.claude-plugin/marketplace.json` and each plugin's
-`.claude-plugin/plugin.json` as JSON mirrors of their Open Plugins counterparts.
-The shared root marketplace must stay dual-compatible while keeping per-plugin
-entries minimal: each plugin entry should include only the required `name` and
-repository-root-relative `source` fields. Keep marketplace-level `owner` and
-`metadata` because they describe the collection, but store per-plugin display/update
-metadata (description, version, license, keywords, etc.) in each `.plugin/plugin.json`
-instead of duplicating or overriding it in the marketplace index. Existing marketplace
-subscriptions may still resolve the legacy paths during auto-update, so removing or
-drifting these files can force users to reinstall. Because mirrors are committed
-files (not symlinks), update both source and legacy copies together, then run
-`node scripts/validate-legacy-compatibility.js` after metadata changes.
+Mantenha o `.claude-plugin/marketplace.json` da raiz e o `.claude-plugin/plugin.json` de cada plugin
+como espelhos JSON de suas contrapartes no Open Plugins. O marketplace compartilhado da raiz deve
+permanecer compatível com ambos os formatos, mantendo as entradas por plugin mínimas: cada entrada
+de plugin deve incluir apenas os campos obrigatórios `name` e `source` (relativo à raiz do
+repositório). Mantenha `owner` e `metadata` no nível do marketplace porque eles descrevem a coleção,
+mas armazene os metadados de exibição/atualização por plugin (description, version, license,
+keywords, etc.) no `.plugin/plugin.json` de cada plugin, em vez de duplicá-los ou sobrescrevê-los no
+índice do marketplace. Assinaturas de marketplace existentes ainda podem resolver os caminhos legados
+durante a auto-atualização, então remover ou deixar esses arquivos divergirem pode forçar os usuários
+a reinstalar. Como os espelhos são arquivos commitados (não symlinks), atualize a fonte e as cópias
+legadas juntas, depois execute `node scripts/validate-legacy-compatibility.js` após mudanças de
+metadados.
 
-## Code Conventions
+## Convenções de Código
 
-**DRY (Don't Repeat Yourself):** Never duplicate logic across files. Each plugin has shared utilities (e.g., `scripts/lib/`) and shared reference docs (e.g., `references/`). Always check for and reuse existing helpers before writing new code. When adding shared logic, put it in the plugin's shared modules — not in individual skill directories.
+**DRY (Don't Repeat Yourself):** Nunca duplique lógica entre arquivos. Cada plugin tem utilitários compartilhados (ex.: `scripts/lib/`) e documentos de referência compartilhados (ex.: `references/`). Sempre verifique se já existem helpers reutilizáveis antes de escrever código novo. Ao adicionar lógica compartilhada, coloque-a nos módulos compartilhados do plugin — não em diretórios de skills individuais.
 
-### Code comments
+### Comentários de código
 
-Most code in this repo is Node.js scripts and hooks that shell out to `pac`/`az`, call the Dataverse and Power Platform APIs, and parse loosely structured CLI output. The reasoning behind a line is rarely obvious from the line alone, so comments matter.
+A maior parte do código deste repositório é composta de scripts e hooks Node.js que chamam `pac`/`az`, fazem chamadas às APIs do Dataverse e da Power Platform, e fazem parsing de saída de CLI pouco estruturada. O raciocínio por trás de uma linha raramente é óbvio a partir da linha em si, então comentários importam.
 
-* Err on the side of over-commenting code when the reasoning is not obvious. Comments should explain **WHY** code is written a particular way; the **WHY** is the most important part.
-* Do comment non-obvious implementation details: concurrency hazards, lifecycle constraints, compatibility requirements, platform quirks, upstream PAC CLI / Dataverse workarounds, and intentional deviations from the obvious helper or API.
-* When parsing strings, logs, CLI output, OData payloads, or other loosely structured data, include a comment with an example of the raw format being parsed. Show edge cases, escaping rules, delimiters, optional fields, or malformed-but-observed inputs when they affect the parser.
-* When code follows an external standard, protocol, or Power Platform convention (Dataverse status codes, OData error shapes, telemetry field contracts), include valid links to the relevant Microsoft Learn or specification source so future readers can verify the rule and understand why the code follows it.
-* When code touches telemetry, auth tokens, or anything privacy/security-sensitive, explain the scope, the opt-in/fail-closed behavior, and **why** — not just what it does.
-* Do not add comments that simply narrate clear code, such as "set the interval" immediately before assigning an interval.
-* Keep workaround comments close to the workaround. Include an issue link when the workaround is tied to an upstream bug, and describe the condition for removing it when that is known.
+* Prefira comentar demais o código quando o raciocínio não for óbvio. Comentários devem explicar o **PORQUÊ** o código foi escrito de uma forma específica; o **PORQUÊ** é a parte mais importante.
+* Comente detalhes de implementação não óbvios: riscos de concorrência, restrições de ciclo de vida, requisitos de compatibilidade, peculiaridades de plataforma, contornos (workarounds) do PAC CLI / Dataverse, e desvios intencionais do helper ou API óbvios.
+* Ao fazer parsing de strings, logs, saída de CLI, payloads OData ou outros dados pouco estruturados, inclua um comentário com um exemplo do formato bruto sendo processado. Mostre casos extremos, regras de escape, delimitadores, campos opcionais ou entradas malformadas (mas observadas na prática) quando afetarem o parser.
+* Quando o código segue um padrão externo, protocolo ou convenção da Power Platform (códigos de status do Dataverse, formatos de erro OData, contratos de campo de telemetria), inclua links válidos para a fonte relevante no Microsoft Learn ou na especificação, para que leitores futuros possam verificar a regra e entender por que o código a segue.
+* Quando o código lida com telemetria, tokens de autenticação, ou qualquer coisa sensível à privacidade/segurança, explique o escopo, o comportamento de opt-in/fail-closed, e **por quê** — não apenas o que faz.
+* Não adicione comentários que apenas narram código óbvio, como "define o intervalo" logo antes de atribuir um intervalo.
+* Mantenha comentários de workaround próximos ao workaround. Inclua um link de issue quando o workaround estiver ligado a um bug upstream, e descreva a condição para removê-lo quando conhecida.
 
-Good comments explain the constraint or tradeoff:
+Bons comentários explicam a restrição ou o trade-off:
 
 ```javascript
 // `pac auth who` cold-starts the .NET runtime (~4s on Windows), so cache the parsed
@@ -159,7 +159,7 @@ function scrub(value) {
 }
 ```
 
-Code that follows an external standard or convention should link the source:
+Código que segue um padrão ou convenção externa deve linkar a fonte:
 
 ```javascript
 // Dataverse asyncoperations terminal states: statecode 3 (Completed) with statuscode 30
@@ -170,7 +170,7 @@ if (statecode === 3 && statuscode === 30) {
 }
 ```
 
-Keep workaround comments next to the workaround and link the tracking issue:
+Mantenha comentários de workaround perto do workaround e linke a issue de rastreamento:
 
 ```javascript
 // Workaround: `pac solution export` can exit 0 while the Dataverse async job is still
@@ -180,7 +180,7 @@ Keep workaround comments next to the workaround and link the tracking issue:
 const status = await pollAsyncOperation(asyncJobId, envUrl, token);
 ```
 
-Parsing comments should show the raw shape and important edge cases:
+Comentários de parsing devem mostrar o formato bruto e os casos extremos importantes:
 
 ```javascript
 // Parse the `pac auth who` banner, a label/value block, e.g.:
@@ -204,7 +204,7 @@ const re = new RegExp('^\\s*' + label + '\\s*:\\s*(\\S.*?)\\s*$', 'im');
 const odataError = parsed.error || parsed.Error;
 ```
 
-Avoid comments that restate the code:
+Evite comentários que apenas repetem o código:
 
 ```javascript
 // Set the interval to five seconds.
@@ -216,11 +216,11 @@ for (const finding of findings) {
 }
 ```
 
-## Maintaining This File
+## Mantendo Este Arquivo
 
-When you add new plugins or change the repository-level structure, update this file. For plugin-specific changes, update the plugin's own `AGENTS.md` (e.g., `plugins/power-pages/AGENTS.md`).
+Ao adicionar novos plugins ou alterar a estrutura no nível do repositório, atualize este arquivo. Para mudanças específicas de um plugin, atualize o `AGENTS.md` daquele plugin (ex.: `plugins/power-pages/AGENTS.md`).
 
-## External Documentation
+## Documentação Externa
 
 - <a href="https://learn.microsoft.com/en-us/power-pages/configure/create-code-sites">Power Pages Code Sites</a>
 - <a href="https://learn.microsoft.com/en-us/power-platform/developer/cli/reference/pages">PAC CLI Reference</a>
