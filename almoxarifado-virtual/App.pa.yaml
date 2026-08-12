@@ -20,11 +20,13 @@ App:
       // ShowColumns/AddColumns/DropColumns/RenameColumns não são suportadas por
       // este serviço de compilação em fórmulas nomeadas — ForAll com registro
       // literal é a alternativa que funciona.
-      colItens = ForAll(Itens, {SKU: SKU, Nome: Nome, Categoria: Categoria, UnidadeMedida: UnidadeMedida, EstoqueMinimo: EstoqueMinimo, PrecoContrato: PrecoContrato});
+      colItens = ForAll(Itens, {SKU: SKU, Nome: Nome, Categoria: Categoria, UnidadeMedida: UnidadeMedida, EstoqueMinimo: EstoqueMinimo, PrecoContrato: PrecoContrato, Descricao: Descricao});
 
-      colDepositos = ForAll(Depositos_1, {Nome: Title, Responsavel: Responsavel});
+      colDepositos = ForAll(Depositos_1, {ID: ID, Nome: Title, Responsavel: Responsavel});
 
       colSetores = ForAll(Setores, {ID: ID, Nome: Title});
+
+      colFornecedores = ForAll(Fornecedores, {ID: ID, Nome: Title, Contato: Contato, Telefone: Telefone});
 
       colSaldos = Saldos;
 

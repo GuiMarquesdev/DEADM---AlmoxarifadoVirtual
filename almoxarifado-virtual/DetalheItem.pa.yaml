@@ -121,3 +121,13 @@ Screens:
                   FieldName: ="Quantidade"
                   FieldType: ="n"
                   Order: =2
+      - DetalheItem_lblDescricao:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextSecondary
+            Size: =14
+            Text: =If(Trim(Coalesce(varItemSelecionado.Descricao, "")) = "", "Sem descrição cadastrada.", varItemSelecionado.Descricao)
+            Width: =620
+            X: =420
+            Y: =110

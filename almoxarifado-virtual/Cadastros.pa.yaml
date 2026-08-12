@@ -41,19 +41,21 @@ Screens:
                 If(
                   !IsBlank(LookUp(Itens, SKU = Trim(Cadastros_txtSKUItem.Text))),
                   Notify("Já existe um item com esse código.", NotificationType.Error),
-                  Patch(Itens, Defaults(Itens), {SKU: Trim(Cadastros_txtSKUItem.Text), Nome: Trim(Cadastros_txtNomeItem.Text), Categoria: Cadastros_cboCategoriaItem.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeItem.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoItem.Value, 0)});
+                  Patch(Itens, Defaults(Itens), {SKU: Trim(Cadastros_txtSKUItem.Text), Nome: Trim(Cadastros_txtNomeItem.Text), Categoria: Cadastros_cboCategoriaItem.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeItem.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoItem.Value, 0), PrecoContrato: Coalesce(Cadastros_txtValorEstimadoItem.Value, 0), Descricao: Trim(Cadastros_txtDescricaoItem.Text)});
                   Reset(Cadastros_txtSKUItem);
                   Reset(Cadastros_txtNomeItem);
                   Reset(Cadastros_cboCategoriaItem);
                   Reset(Cadastros_txtUnidadeItem);
                   Reset(Cadastros_txtEstoqueMinimoItem);
+                  Reset(Cadastros_txtValorEstimadoItem);
+                  Reset(Cadastros_txtDescricaoItem);
                   Notify("Item cadastrado com sucesso.", NotificationType.Success)
                 )
               )
             Text: ="Adicionar"
             Visible: =varAbaCadastro = "Itens"
             Width: =140
-            X: =866
+            X: =1021
             Y: =218
       - Cadastros_cboCategoriaItem:
           Control: ModernCombobox
@@ -76,7 +78,7 @@ Screens:
             HintText: ="Estoque mín."
             Visible: =varAbaCadastro = "Itens"
             Width: =110
-            X: =744
+            X: =753
             Y: =218
       - Cadastros_txtNomeSetor:
           Control: ModernTextInput
@@ -105,11 +107,11 @@ Screens:
               ={Value: "Itens"}
             Height: =40
             Items: |-
-              =Table({Value: "Itens"}, {Value: "Setores"})
+              =Table({Value: "Itens"}, {Value: "Setores"}, {Value: "Depósitos"}, {Value: "Fornecedores"})
             OnChange: =Set(varAbaCadastro, Self.Selected.Value)
-            Width: =320
+            Width: =578
             X: =36
-            Y: =309
+            Y: =325
       - Cadastros_txtUnidadeItem:
           Control: ModernTextInput
           Properties:
@@ -157,13 +159,13 @@ Screens:
           Control: Gallery
           Variant: Vertical
           Properties:
-            Height: =419
+            Height: =391
             Items: =colItens
             TemplateSize: =60
             Visible: =varAbaCadastro = "Itens"
-            Width: =1330
+            Width: =1291
             X: =36
-            Y: =349
+            Y: =365
           Children:
             - Cadastros_cardItemCadastro:
                 Control: ModernCard
@@ -219,7 +221,7 @@ Screens:
             Visible: =varAbaCadastro = "Setores"
             Width: =1330
             X: =36
-            Y: =349
+            Y: =365
           Children:
             - Cadastros_cardSetor:
                 Control: ModernCard
@@ -245,6 +247,239 @@ Screens:
                   Width: =44
                   X: =1227
                   Y: =6
+      - Cadastros_txtDescricaoItem:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Descrição (opcional)"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =1092
+            X: =36
+            Y: =281
+      - Cadastros_lblValorEstimadoRS:
+          Control: ModernText
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =14
+            Text: ="R$"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =36
+            X: =887
+            Y: =218
+      - Cadastros_txtValorEstimadoItem:
+          Control: ModernNumberInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            HintText: ="Valor estimado"
+            Visible: =varAbaCadastro = "Itens"
+            Width: =86
+            X: =923
+            Y: =218
+      - Cadastros_btnAdicionarDeposito:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =44
+            OnSelect: |-
+              =If(
+                Trim(Cadastros_txtNomeDeposito.Text) = "",
+                Notify("Informe o nome do depósito.", NotificationType.Error),
+                Patch(Depositos_1, Defaults(Depositos_1), {Title: Trim(Cadastros_txtNomeDeposito.Text), Responsavel: Trim(Cadastros_txtResponsavelDeposito.Text)});
+                Reset(Cadastros_txtNomeDeposito);
+                Reset(Cadastros_txtResponsavelDeposito);
+                Notify("Depósito cadastrado com sucesso.", NotificationType.Success)
+              )
+            Text: ="Adicionar"
+            Visible: =varAbaCadastro = "Depósitos"
+            Width: =140
+            X: =540
+            Y: =218
+      - Cadastros_btnAdicionarFornecedor:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =44
+            OnSelect: |-
+              =If(
+                Trim(Cadastros_txtNomeFornecedor.Text) = "",
+                Notify("Informe o nome do fornecedor.", NotificationType.Error),
+                Patch(Fornecedores, Defaults(Fornecedores), {Title: Trim(Cadastros_txtNomeFornecedor.Text), Contato: Trim(Cadastros_txtContatoFornecedor.Text), Telefone: Trim(Cadastros_txtTelefoneFornecedor.Text)});
+                Reset(Cadastros_txtNomeFornecedor);
+                Reset(Cadastros_txtContatoFornecedor);
+                Reset(Cadastros_txtTelefoneFornecedor);
+                Notify("Fornecedor cadastrado com sucesso.", NotificationType.Success)
+              )
+            Text: ="Adicionar"
+            Visible: =varAbaCadastro = "Fornecedores"
+            Width: =140
+            X: =692
+            Y: =218
+      - Cadastros_txtResponsavelDeposito:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Responsável"
+            Visible: =varAbaCadastro = "Depósitos"
+            Width: =220
+            X: =308
+            Y: =218
+      - Cadastros_txtContatoFornecedor:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Contato"
+            Visible: =varAbaCadastro = "Fornecedores"
+            Width: =220
+            X: =268
+            Y: =218
+      - Cadastros_txtNomeDeposito:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Nome do depósito"
+            Visible: =varAbaCadastro = "Depósitos"
+            Width: =260
+            X: =36
+            Y: =218
+      - Cadastros_galDepositosCadastro:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =419
+            Items: =colDepositos
+            TemplateSize: =56
+            Visible: =varAbaCadastro = "Depósitos"
+            Width: =1330
+            X: =36
+            Y: =365
+          Children:
+            - Cadastros_cardDepositoCadastro:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =56
+                  Image: =Blank()
+                  Subtitle: |-
+                    ="Responsável: " & ThisItem.Responsavel
+                  Title: =ThisItem.Nome
+                  Width: =1282
+            - Cadastros_btnExcluirDeposito:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =44
+                  Icon: ="Delete"
+                  OnSelect: |-
+                    =RemoveIf(Depositos_1, ID = ThisItem.ID);
+                    Notify("Depósito removido.", NotificationType.Success)
+                  Text: =""
+                  Width: =44
+                  X: =1227
+                  Y: =6
+      - Cadastros_txtNomeFornecedor:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Nome do fornecedor"
+            Visible: =varAbaCadastro = "Fornecedores"
+            Width: =220
+            X: =36
+            Y: =218
+      - Cadastros_txtTelefoneFornecedor:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            Placeholder: ="Telefone"
+            Visible: =varAbaCadastro = "Fornecedores"
+            Width: =180
+            X: =500
+            Y: =218
+      - Cadastros_galFornecedoresCadastro:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =419
+            Items: =colFornecedores
+            TemplateSize: =56
+            Visible: =varAbaCadastro = "Fornecedores"
+            Width: =1330
+            X: =36
+            Y: =365
+          Children:
+            - Cadastros_cardFornecedorCadastro:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =56
+                  Image: =Blank()
+                  Subtitle: |-
+                    ="Contato: " & ThisItem.Contato & " · Tel: " & ThisItem.Telefone
+                  Title: =ThisItem.Nome
+                  Width: =1282
+            - Cadastros_btnExcluirFornecedor:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =44
+                  Icon: ="Delete"
+                  OnSelect: |-
+                    =RemoveIf(Fornecedores, ID = ThisItem.ID);
+                    Notify("Fornecedor removido.", NotificationType.Success)
+                  Text: =""
+                  Width: =44
+                  X: =1227
+                  Y: =6
+      - Label3:
+          Control: Label
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Text: ="Estoque Minimo Item"
+            Width: =122
+            X: =753
+            Y: =170
+      - Label4:
+          Control: Label
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =60
+            Text: |-
+              ="Valor Estimado Item
+              "
+            Width: =111
+            X: =923
+            Y: =150
       - Cadastros_OverlayEditarItem:
           Control: GroupContainer
           Variant: ManualLayout
@@ -260,7 +495,7 @@ Screens:
                 Properties:
                   DropShadow: =DropShadow.Bold
                   Fill: =RGBA(230, 230, 230, 1)
-                  Height: =470
+                  Height: =524
                   RadiusBottomLeft: =12
                   RadiusBottomRight: =12
                   RadiusTopLeft: =12
@@ -331,9 +566,19 @@ Screens:
                         Fill: =RGBA(255, 255, 255, 1)
                         Height: =44
                         HintText: ="Preço de contrato"
+                        Width: =386
+                        X: =50
+                        Y: =280
+                  - Cadastros_txtDescricaoEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varItemEditando.Descricao
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: ="Descrição (opcional)"
                         Width: =412
                         X: =24
-                        Y: =280
+                        Y: =334
                   - Cadastros_btnCancelarEdicaoItem:
                       Control: Button
                       Properties:
@@ -343,7 +588,7 @@ Screens:
                         Text: ="Cancelar"
                         Width: =198
                         X: =24
-                        Y: =400
+                        Y: =454
                   - Cadastros_btnSalvarEdicaoItem:
                       Control: Button
                       Properties:
@@ -353,11 +598,23 @@ Screens:
                           =If(
                             Trim(Cadastros_txtNomeEditar.Text) = "",
                             Notify("Informe o nome do item.", NotificationType.Error),
-                            Patch(Itens, LookUp(Itens, SKU = varItemEditando.SKU), {Nome: Trim(Cadastros_txtNomeEditar.Text), Categoria: Cadastros_cboCategoriaEditar.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeEditar.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoEditar.Value, 0), PrecoContrato: Coalesce(Cadastros_txtPrecoContratoEditar.Value, 0)});
+                            Patch(Itens, LookUp(Itens, SKU = varItemEditando.SKU), {Nome: Trim(Cadastros_txtNomeEditar.Text), Categoria: Cadastros_cboCategoriaEditar.Selected, UnidadeMedida: Trim(Cadastros_txtUnidadeEditar.Text), EstoqueMinimo: Coalesce(Cadastros_txtEstoqueMinimoEditar.Value, 0), PrecoContrato: Coalesce(Cadastros_txtPrecoContratoEditar.Value, 0), Descricao: Trim(Cadastros_txtDescricaoEditar.Text)});
                             Set(varMostrarEdicaoItem, false);
                             Notify("Item atualizado com sucesso.", NotificationType.Success)
                           )
                         Text: ="Salvar alterações"
                         Width: =198
                         X: =238
-                        Y: =400
+                        Y: =454
+                  - Cadastros_lblPrecoContratoRS:
+                      Control: ModernText
+                      Properties:
+                        Color: =RGBA(0, 0, 0, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =44
+                        Size: =14
+                        Text: ="R$"
+                        Width: =28
+                        X: =22
+                        Y: =280

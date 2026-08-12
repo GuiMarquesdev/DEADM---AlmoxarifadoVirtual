@@ -61,8 +61,7 @@ Screens:
                 DataHora,
                 SortOrder.Descending
               )
-            Width: =1317
-            X: =25
+            Width: =1366
             Y: =288
           Children:
             - DataHora2:

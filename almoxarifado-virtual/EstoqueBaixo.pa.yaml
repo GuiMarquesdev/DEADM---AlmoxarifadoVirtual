@@ -109,7 +109,7 @@ Screens:
                   Subtitle: |-
                     ="Código " & ThisItem.SKU & " · Saldo total " & Text(ItemSaldoTotal(ThisItem.SKU)) & " " & ThisItem.UnidadeMedida & " (mínimo " & Text(ThisItem.EstoqueMinimo) & ")" & If(!IsBlank(varDepositoFiltroBaixo), " · Em " & varDepositoFiltroBaixo & ": " & Text(SaldoNoDeposito(ThisItem.SKU, varDepositoFiltroBaixo)) & " " & ThisItem.UnidadeMedida, "")
                   Title: =ThisItem.Nome
-                  Width: =1000
+                  Width: =1276
             - EstoqueBaixo_badgeAlerta:
                 Control: Badge
                 Properties:
@@ -117,7 +117,7 @@ Screens:
                   Height: =28
                   ThemeColor: ='BadgeCanvas.ThemeColor'.Danger
                   Width: =70
-                  X: =1020
+                  X: =1084
                   Y: =24
             - EstoqueBaixo_btnRepor:
                 Control: Button
@@ -129,7 +129,7 @@ Screens:
                   OnSelect: =Navigate(NovaEntrada, ScreenTransition.None)
                   Text: =""
                   Width: =44
-                  X: =1100
+                  X: =1165
                   Y: =16
             - EstoqueBaixo_btnTransferir:
                 Control: Button
@@ -137,9 +137,9 @@ Screens:
                   Appearance: ='ButtonCanvas.Appearance'.Transparent
                   FontColor: =ColorPrimary
                   Height: =44
-                  Icon: ="Sync"
+                  Icon: ="ArrowSync"
                   OnSelect: =Navigate(Transferencia, ScreenTransition.None)
                   Text: =""
                   Width: =44
-                  X: =1150
+                  X: =1209
                   Y: =16

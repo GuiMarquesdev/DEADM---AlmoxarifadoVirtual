@@ -10,7 +10,6 @@ Screens:
           Control: ModernText
           Properties:
             AutoHeight: =true
-            Color: =ColorTextPrimary
             FontWeight: =FontWeight.Semibold
             Size: =20
             Text: ="Itens armazenados"
@@ -220,3 +219,38 @@ Screens:
                         Width: =198
                         X: =238
                         Y: =218
+      - Label1:
+          Control: Label
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =25
+            Text: |-
+              ="Qunatidade
+              "
+            Width: =136
+            X: =720
+            Y: =281
+      - Label2:
+          Control: Label
+          Properties:
+            BorderColor: =RGBA(0, 0, 0, 0)
+            BorderStyle: =BorderStyle.None
+            BorderThickness: =2
+            Color: =RGBA(50, 49, 48, 1)
+            DisabledBorderColor: =RGBA(0, 0, 0, 0)
+            DisabledColor: =RGBA(161, 159, 157, 1)
+            FocusedBorderThickness: =4
+            Font: =Font.'Segoe UI'
+            FontWeight: =FontWeight.Bold
+            Height: =31
+            Text: ="Validade do Lote"
+            X: =985
+            Y: =275

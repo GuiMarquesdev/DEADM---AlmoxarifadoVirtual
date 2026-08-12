@@ -48,7 +48,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(255, 247, 158, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -75,14 +75,14 @@ Screens:
                       Control: Icon
                       Properties:
                         Height: =28
-                        Icon: ="Sync"
+                        Icon: ="ArrowSwap"
                         IconColor: =RGBA(255, 255, 255, 1)
                         Width: =28
                   - Home_cardSolicitacoes:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(215, 192, 240, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -116,7 +116,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(203, 102, 102, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -150,7 +150,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(255, 224, 178, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -292,7 +292,7 @@ Screens:
                       Properties:
                         AlignInContainer: =AlignInContainer.End
                         BorderRadius: =8
-                        Fill: =RGBA(189, 255, 212, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -322,7 +322,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(255, 209, 209, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
@@ -356,7 +356,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
-                        Fill: =RGBA(191, 218, 255, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
                         Height: =100
