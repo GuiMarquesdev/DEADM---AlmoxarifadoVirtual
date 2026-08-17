@@ -237,17 +237,6 @@ Screens:
             Width: =456
             X: =40
             Y: =386
-      - NovaEntrada_lblPrecoCustoRS:
-          Control: ModernText
-          Properties:
-            AutoHeight: =true
-            Color: =RGBA(0, 0, 0, 1)
-            FontWeight: =FontWeight.Semibold
-            Size: =14
-            Text: ="R$"
-            Width: =32
-            X: =40
-            Y: =430
       - NovaEntrada_txtPrecoCusto:
           Control: ModernNumberInput
           Properties:
@@ -301,3 +290,14 @@ Screens:
             Width: =456
             X: =40
             Y: =676
+      - NovaEntrada_lblPrecoCustoRS:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =RGBA(0, 0, 0, 1)
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+            Text: ="R$"
+            Width: =32
+            X: =40
+            Y: =430

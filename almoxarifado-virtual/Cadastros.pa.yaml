@@ -25,7 +25,7 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             Placeholder: ="Código"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =140
             X: =36
             Y: =218
@@ -53,7 +53,7 @@ Screens:
                 )
               )
             Text: ="Adicionar"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =140
             X: =1021
             Y: =218
@@ -66,7 +66,7 @@ Screens:
             ItemDisplayText: =ThisItem.Value
             Items: |-
               =Table({Value: "Informática"}, {Value: "Elétrica"}, {Value: "Papelaria"}, {Value: "EPI"}, {Value: "Ferramentas"}, {Value: "Limpeza"}, {Value: "Copa"}, {Value: "Diversos"})
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =160
             X: =420
             Y: =218
@@ -76,7 +76,7 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             HintText: ="Estoque mín."
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =110
             X: =753
             Y: =218
@@ -119,7 +119,7 @@ Screens:
             Height: =44
             Placeholder: |-
               ="Unidade (ex.: Caixa)"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =140
             X: =592
             Y: =218
@@ -140,7 +140,7 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             Placeholder: ="Nome do item"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =220
             X: =188
             Y: =218
@@ -253,30 +253,17 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             Placeholder: ="Descrição (opcional)"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =1092
             X: =36
             Y: =281
-      - Cadastros_lblValorEstimadoRS:
-          Control: ModernText
-          Properties:
-            Color: =RGBA(0, 0, 0, 1)
-            Fill: =RGBA(255, 255, 255, 1)
-            FontWeight: =FontWeight.Semibold
-            Height: =44
-            Size: =14
-            Text: ="R$"
-            Visible: =varAbaCadastro = "Itens"
-            Width: =36
-            X: =887
-            Y: =218
       - Cadastros_txtValorEstimadoItem:
           Control: ModernNumberInput
           Properties:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             HintText: ="Valor estimado"
-            Visible: =varAbaCadastro = "Itens"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =86
             X: =923
             Y: =218
@@ -458,6 +445,7 @@ Screens:
             Font: =Font.'Segoe UI'
             FontWeight: =FontWeight.Bold
             Text: ="Estoque Minimo Item"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =122
             X: =753
             Y: =170
@@ -477,6 +465,7 @@ Screens:
             Text: |-
               ="Valor Estimado Item
               "
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =111
             X: =923
             Y: =150
@@ -618,3 +607,16 @@ Screens:
                         Width: =28
                         X: =22
                         Y: =280
+      - Cadastros_lblValorEstimadoRS:
+          Control: ModernText
+          Properties:
+            Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            FontWeight: =FontWeight.Semibold
+            Height: =44
+            Size: =14
+            Text: ="R$"
+            Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
+            Width: =36
+            X: =887
+            Y: =218

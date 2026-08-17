@@ -14,6 +14,7 @@ Screens:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
+            DropShadow: =DropShadow.None
             Height: =123
             LayoutDirection: =LayoutDirection.Horizontal
             LayoutGap: =16
@@ -75,7 +76,7 @@ Screens:
                       Control: Icon
                       Properties:
                         Height: =28
-                        Icon: ="ArrowSwap"
+                        Icon: ="Cart"
                         IconColor: =RGBA(255, 255, 255, 1)
                         Width: =28
                   - Home_cardSolicitacoes:
@@ -256,6 +257,7 @@ Screens:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
+            DropShadow: =DropShadow.None
             Height: =124
             LayoutDirection: =LayoutDirection.Horizontal
             LayoutGap: =16
@@ -369,7 +371,7 @@ Screens:
           Variant: AutoLayout
           Properties:
             Fill: =ColorPrimaryDark
-            Height: =121
+            Height: =114
             LayoutDirection: =LayoutDirection.Vertical
             LayoutGap: =8
             PaddingBottom: =28
@@ -386,8 +388,7 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Height: =300
                   Size: =28
-                  Text: |-
-                    ="🏭 Almoxarifado Virtual"
+                  Text: ="Almoxarifado Virtual"
                   Width: =500
             - Home_lblHeroSubtitle:
                 Control: ModernText
@@ -395,5 +396,5 @@ Screens:
                   AutoHeight: =true
                   Color: =RGBA(255,255,255,0.85)
                   Size: =14
-                  Text: ="Controle de estoque, movimentações e solicitações"
+                  Text: ="Controle de estoque minimo, movimentações e solicitações"
                   Width: =500

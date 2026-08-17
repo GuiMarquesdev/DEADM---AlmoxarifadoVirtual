@@ -4,7 +4,8 @@ Screens:
       Fill: =ColorBg
       OnVisible: |-
         =Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome));
-        Set(varConfirmandoQuantidade, false)
+        Set(varConfirmandoQuantidade, false);
+        Set(varConfirmandoExclusaoSaldo, false)
     Children:
       - DetalheDeposito_lblItensHeader:
           Control: ModernText
@@ -122,8 +123,8 @@ Screens:
                   Height: =28
                   ThemeColor: =If(ThisItem.Quantidade < LookUp(colItens, SKU = ThisItem.SKU).EstoqueMinimo, 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
                   Width: =80
-                  X: =860
-                  Y: =14
+                  X: =1040
+                  Y: =18
             - DetalheDeposito_dtValidadeItem:
                 Control: ModernDatePicker
                 Properties:
@@ -136,7 +137,7 @@ Screens:
                     Notify("Data de validade atualizada.", NotificationType.Success)
                   Placeholder: ="Validade"
                   Width: =140
-                  X: =960
+                  X: =874
                   Y: =10
             - DetalheDeposito_badgeValidadeItem:
                 Control: Badge
@@ -148,6 +149,20 @@ Screens:
                   Width: =110
                   X: =1120
                   Y: =14
+            - DetalheDeposito_btnExcluirSaldo:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorAlert
+                  Height: =44
+                  Icon: ="Delete"
+                  OnSelect: |-
+                    =Set(varItemSaldoParaExcluir, ThisItem);
+                    Set(varConfirmandoExclusaoSaldo, true)
+                  Text: =""
+                  Width: =44
+                  X: =1260
+                  Y: =6
       - DetalheDeposito_OverlayQuantidade:
           Control: GroupContainer
           Variant: ManualLayout
@@ -252,5 +267,75 @@ Screens:
             FontWeight: =FontWeight.Bold
             Height: =31
             Text: ="Validade do Lote"
-            X: =985
-            Y: =275
+            X: =891
+            Y: =278
+      - DetalheDeposito_OverlayExcluirSaldo:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varConfirmandoExclusaoSaldo
+            Width: =1366
+          Children:
+            - DetalheDeposito_boxConfirmarExclusaoSaldo:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =230
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =280
+                Children:
+                  - DetalheDeposito_lblTituloExcluirSaldo:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Excluir este saldo?"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - DetalheDeposito_lblMensagemExcluirSaldo:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =90
+                        Size: =14
+                        Text: |-
+                          ="Isso vai remover permanentemente o registro de saldo de """ & LookUp(colItens, SKU = varItemSaldoParaExcluir.SKU).Nome & """ neste depósito (Código " & varItemSaldoParaExcluir.SKU & "). O item continua existindo no catálogo. Essa ação não pode ser desfeita."
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - DetalheDeposito_btnCancelarExclusaoSaldo:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varConfirmandoExclusaoSaldo, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =170
+                  - DetalheDeposito_btnConfirmarExclusaoSaldo:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorAlert
+                        Height: =44
+                        OnSelect: |-
+                          =RemoveIf(Saldos, ID = varItemSaldoParaExcluir.ID);
+                          Set(varConfirmandoExclusaoSaldo, false);
+                          Set(varSaldosDeposito, Filter(colSaldos, Deposito = varDepositoSelecionado.Nome));
+                          Notify("Saldo excluído.", NotificationType.Success)
+                        Text: ="Excluir mesmo assim"
+                        Width: =198
+                        X: =238
+                        Y: =170
