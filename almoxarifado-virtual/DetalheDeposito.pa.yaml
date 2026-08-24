@@ -70,7 +70,7 @@ Screens:
             OnSelect: =Navigate(Depositos, ScreenTransition.None)
             Text: =" Voltar"
             Width: =156
-            X: =1180
+            X: =1199
             Y: =16
       - DetalheDeposito_galItens:
           Control: Gallery
@@ -139,16 +139,6 @@ Screens:
                   Width: =140
                   X: =874
                   Y: =10
-            - DetalheDeposito_badgeValidadeItem:
-                Control: Badge
-                Properties:
-                  Content: =StatusValidade(ThisItem.DataValidade)
-                  Height: =28
-                  ThemeColor: =If(StatusValidade(ThisItem.DataValidade) = "Vencido", 'BadgeCanvas.ThemeColor'.Danger, StatusValidade(ThisItem.DataValidade) = "Vence em breve", 'BadgeCanvas.ThemeColor'.Warning, 'BadgeCanvas.ThemeColor'.Success)
-                  Visible: =!IsBlank(ThisItem.DataValidade)
-                  Width: =110
-                  X: =1120
-                  Y: =14
             - DetalheDeposito_btnExcluirSaldo:
                 Control: Button
                 Properties:
@@ -163,6 +153,16 @@ Screens:
                   Width: =44
                   X: =1260
                   Y: =6
+            - DetalheDeposito_badgeValidadeItem:
+                Control: Badge
+                Properties:
+                  Content: =StatusValidade(ThisItem.DataValidade)
+                  Height: =28
+                  ThemeColor: =If(StatusValidade(ThisItem.DataValidade) = "Vencido", 'BadgeCanvas.ThemeColor'.Danger, StatusValidade(ThisItem.DataValidade) = "Vence em breve", 'BadgeCanvas.ThemeColor'.Warning, 'BadgeCanvas.ThemeColor'.Success)
+                  Visible: =!IsBlank(ThisItem.DataValidade)
+                  Width: =110
+                  X: =1120
+                  Y: =14
       - DetalheDeposito_OverlayQuantidade:
           Control: GroupContainer
           Variant: ManualLayout
@@ -310,8 +310,7 @@ Screens:
                         Color: =ColorTextSecondary
                         Height: =90
                         Size: =14
-                        Text: |-
-                          ="Isso vai remover permanentemente o registro de saldo de """ & LookUp(colItens, SKU = varItemSaldoParaExcluir.SKU).Nome & """ neste depósito (Código " & varItemSaldoParaExcluir.SKU & "). O item continua existindo no catálogo. Essa ação não pode ser desfeita."
+                        Text: ="Isso vai remover permanentemente o registro de saldo de """ & LookUp(colItens, SKU = varItemSaldoParaExcluir.SKU).Nome & """ neste depósito (Código " & varItemSaldoParaExcluir.SKU & "). O item continua existindo no catálogo. Essa ação não pode ser desfeita."
                         Width: =412
                         X: =24
                         Y: =56

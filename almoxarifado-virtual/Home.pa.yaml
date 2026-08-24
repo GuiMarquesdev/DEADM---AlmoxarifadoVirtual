@@ -27,7 +27,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -61,7 +61,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -95,7 +95,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -129,7 +129,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -270,7 +270,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -306,7 +306,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -336,7 +336,7 @@ Screens:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
-                  Fill: =RGBA(0, 69, 120, 1)
+                  Fill: =RGBA(15, 42, 61, 1)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Horizontal
                   LayoutGap: =8
@@ -390,11 +390,35 @@ Screens:
                   Size: =28
                   Text: ="Almoxarifado Virtual"
                   Width: =500
-            - Home_lblHeroSubtitle:
+      - Home_lblHeroSubtitle:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =RGBA(255,255,255,0.85)
+            FontWeight: =FontWeight.Bold
+            Size: =14
+            Text: ="Controle de estoque minimo, movimentações e solicitações"
+            Width: =434
+            X: =30
+            Y: =75
+      - Home_Footer:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =RGBA(15, 42, 61, 1)
+            Height: =40
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.Center
+            Width: =Parent.Width
+            Y: =728
+          Children:
+            - Home_lblFooter:
                 Control: ModernText
                 Properties:
                   AutoHeight: =true
-                  Color: =RGBA(255,255,255,0.85)
-                  Size: =14
-                  Text: ="Controle de estoque minimo, movimentações e solicitações"
+                  Color: =RGBA(255, 255, 255, 1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =12
+                  Text: ="© 2026 DADM · Ministério Público do Estado da Bahia — Almoxarifado Virtual"
                   Width: =500

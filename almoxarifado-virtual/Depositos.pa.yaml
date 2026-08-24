@@ -1,14 +1,14 @@
 Screens:
   Depositos:
     Properties:
-      Fill: =RGBA(255, 255, 255, 1)
+      Fill: =RGBA(244, 246, 248, 1)
     Children:
       - Depositos_Content:
           Control: GroupContainer
           Variant: AutoLayout
           Properties:
-            Fill: =RGBA(244, 246, 248, 1)
-            Height: =435
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =592
             LayoutDirection: =LayoutDirection.Vertical
             LayoutGap: =20
             PaddingBottom: =32
@@ -16,7 +16,7 @@ Screens:
             PaddingRight: =32
             PaddingTop: =32
             Width: =1330
-            X: =22
+            X: =17
             Y: =120
           Children:
             - Depositos_lblHeader:

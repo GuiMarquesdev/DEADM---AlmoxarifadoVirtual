@@ -230,15 +230,6 @@ Screens:
             PaddingLeft: =24
             Width: =Parent.Width
           Children:
-            - NovaSaida_btnVoltar:
-                Control: Button
-                Properties:
-                  Appearance: ='ButtonCanvas.Appearance'.Transparent
-                  FontColor: =RGBA(255,255,255,1)
-                  Height: =40
-                  OnSelect: =Navigate(Home, ScreenTransition.None)
-                  Text: ="< Voltar"
-                  Width: =90
             - NovaSaida_lblAppTitle:
                 Control: ModernText
                 Properties:
@@ -349,3 +340,14 @@ Screens:
                         Width: =572
                         X: =24
                         Y: =476
+      - NovaSaida_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =90
+            X: =1254
+            Y: =14

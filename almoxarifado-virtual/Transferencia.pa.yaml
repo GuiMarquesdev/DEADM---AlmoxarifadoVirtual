@@ -155,15 +155,6 @@ Screens:
             PaddingLeft: =24
             Width: =Parent.Width
           Children:
-            - Transferencia_btnVoltar:
-                Control: Button
-                Properties:
-                  Appearance: ='ButtonCanvas.Appearance'.Transparent
-                  FontColor: =RGBA(255,255,255,1)
-                  Height: =40
-                  OnSelect: =Navigate(Home, ScreenTransition.None)
-                  Text: ="< Voltar"
-                  Width: =90
             - Transferencia_lblAppTitle:
                 Control: ModernText
                 Properties:
@@ -172,3 +163,14 @@ Screens:
                   FontWeight: =FontWeight.Bold
                   Size: =18
                   Text: ="Transferência entre Depósitos"
+      - Transferencia_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =90
+            X: =1231
+            Y: =14

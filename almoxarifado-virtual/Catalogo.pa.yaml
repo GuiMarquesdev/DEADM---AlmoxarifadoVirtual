@@ -78,7 +78,7 @@ Screens:
                   Height: =28
                   ThemeColor: =If(ItemEstoqueBaixo(ThisItem.SKU), 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
                   Width: =70
-                  X: =1082
+                  X: =1067
                   Y: =37
             - Catalogo_btnExcluirItem:
                 Control: Button
@@ -92,7 +92,7 @@ Screens:
                     Set(varConfirmandoExclusaoItem, true)
                   Text: =""
                   Width: =44
-                  X: =1170
+                  X: =1152
                   Y: =29
       - Catalogo_cboCategoria:
           Control: ModernCombobox
