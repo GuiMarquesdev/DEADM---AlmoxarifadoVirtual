@@ -47,8 +47,8 @@ Screens:
               Download(varGuiaImpressaoPdf)
             Text: ="Baixar / Imprimir PDF"
             Width: =220
-            X: =990
-            Y: =16
+            X: =1000
+            Y: =15
       - GuiaImpressao_Conteudo:
           Control: GroupContainer
           Variant: ManualLayout
