@@ -286,16 +286,6 @@ Screens:
                         Width: =412
                         X: =24
                         Y: =214
-                  - GuiasEmitidas_btnFecharDetalhe:
-                      Control: Button
-                      Properties:
-                        Appearance: ='ButtonCanvas.Appearance'.Secondary
-                        Height: =44
-                        OnSelect: =Set(varMostrarDetalheGuia, false)
-                        Text: ="Fechar"
-                        Width: =412
-                        X: =24
-                        Y: =450
                   - GuiasEmitidas_lblSemAssinaturaDigital:
                       Control: ModernText
                       Properties:
@@ -307,3 +297,13 @@ Screens:
                         Width: =412
                         X: =24
                         Y: =214
+                  - GuiasEmitidas_btnFecharDetalhe:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varMostrarDetalheGuia, false)
+                        Text: ="Fechar"
+                        Width: =412
+                        X: =24
+                        Y: =450
