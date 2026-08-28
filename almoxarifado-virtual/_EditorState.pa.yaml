@@ -1,16 +1,18 @@
 EditorState:
   ScreensOrder:
+    - NovaSaida
+    - DetalheItemHistorico
+    - DetalheDeposito
+    - EstoqueBaixo
+    - Cadastros
+    - GuiaImpressao
     - AcessoRestrito
     - Home
     - NovaEntrada
-    - NovaSaida
     - Transferencia
     - Catalogo
     - DetalheItem
-    - DetalheItemHistorico
     - Depositos
-    - DetalheDeposito
-    - EstoqueBaixo
     - Vencimentos
     - Historico
-    - Cadastros
+    - GuiasEmitidas

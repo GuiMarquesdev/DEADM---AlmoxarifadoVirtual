@@ -1,0 +1,309 @@
+Screens:
+  GuiasEmitidas:
+    Properties:
+      Fill: =ColorBg
+      OnVisible: |-
+        =Set(varBuscaGuia, "");
+        Set(varSetorFiltroGuia, "Todos");
+        Set(varDepositoFiltroGuia, "Todos");
+        Set(varDataInicioFiltroGuia, Blank());
+        Set(varDataFimFiltroGuia, Blank());
+        Set(varGuiaSelecionada, Blank());
+        Set(varMostrarDetalheGuia, false)
+    Children:
+      - GuiasEmitidas_NavBar:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =ColorPrimaryDark
+            Height: =83
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+            LayoutWrap: =true
+            PaddingLeft: =24
+            PaddingRight: =24
+            Width: =Parent.Width
+          Children:
+            - GuiasEmitidas_lblAppTitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Almoxarifado Virtual"
+      - GuiasEmitidas_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(Home, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =90
+            X: =1252
+            Y: =21
+      - GuiasEmitidas_lblHeader:
+          Control: ModernText
+          Properties:
+            AutoHeight: =true
+            Color: =ColorTextPrimary
+            FontWeight: =FontWeight.Bold
+            Size: =28
+            Text: ="Guias de Remessa"
+            Width: =347
+            X: =25
+            Y: =94
+      - GuiasEmitidas_lblSub:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            Height: =30
+            Size: =14
+            Text: ="Consulte guias já emitidas, com assinatura de quem recebeu, para arquivamento."
+            Width: =700
+            X: =25
+            Y: =143
+      - GuiasEmitidas_txtBusca:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varBuscaGuia, Self.Text)
+            Placeholder: ="Buscar por código ou recebedor..."
+            Width: =280
+            X: =25
+            Y: =183
+      - GuiasEmitidas_cboSetorFiltro:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Filtrar por setor (todos por padrão)"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colSetores
+            OnChange: =Set(varSetorFiltroGuia, If(IsBlank(Self.Selected), "Todos", Self.Selected.Nome))
+            Width: =260
+            X: =315
+            Y: =183
+      - GuiasEmitidas_cboDepositoFiltro:
+          Control: ModernCombobox
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            InputTextPlaceholder: ="Filtrar por depósito (todos por padrão)"
+            ItemDisplayText: =ThisItem.Nome
+            Items: =colDepositos
+            OnChange: =Set(varDepositoFiltroGuia, If(IsBlank(Self.Selected), "Todos", Self.Selected.Nome))
+            Width: =260
+            X: =585
+            Y: =183
+      - GuiasEmitidas_dtDataInicio:
+          Control: ModernDatePicker
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varDataInicioFiltroGuia, Self.SelectedDate)
+            Placeholder: ="Data início"
+            Width: =160
+            X: =855
+            Y: =183
+      - GuiasEmitidas_dtDataFim:
+          Control: ModernDatePicker
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =44
+            OnChange: =Set(varDataFimFiltroGuia, Self.SelectedDate)
+            Placeholder: ="Data fim"
+            Width: =160
+            X: =1025
+            Y: =183
+      - GuiasEmitidas_btnLimparFiltros:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Secondary
+            Height: =44
+            OnSelect: |-
+              =Set(varBuscaGuia, "");
+              Set(varSetorFiltroGuia, "Todos");
+              Set(varDepositoFiltroGuia, "Todos");
+              Set(varDataInicioFiltroGuia, Blank());
+              Set(varDataFimFiltroGuia, Blank());
+              Reset(GuiasEmitidas_txtBusca);
+              Reset(GuiasEmitidas_cboSetorFiltro);
+              Reset(GuiasEmitidas_cboDepositoFiltro);
+              Reset(GuiasEmitidas_dtDataInicio);
+              Reset(GuiasEmitidas_dtDataFim)
+            Text: ="Limpar filtros"
+            Width: =150
+            X: =1197
+            Y: =183
+      - GuiasEmitidas_galGuias:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Height: =520
+            Items: |-
+              =Sort(
+                Filter(colGuias,
+                  (varBuscaGuia = "" || varBuscaGuia in Codigo || varBuscaGuia in DestinatarioNome) &&
+                  (varSetorFiltroGuia = "Todos" || Setor = varSetorFiltroGuia) &&
+                  (varDepositoFiltroGuia = "Todos" || Deposito = varDepositoFiltroGuia) &&
+                  (IsBlank(varDataInicioFiltroGuia) || DataHora >= varDataInicioFiltroGuia) &&
+                  (IsBlank(varDataFimFiltroGuia) || DataHora <= DateAdd(varDataFimFiltroGuia, 1, TimeUnit.Days))
+                ),
+                DataHora,
+                SortOrder.Descending
+              )
+            TemplateSize: =72
+            Width: =1366
+            Y: =248
+          Children:
+            - GuiasEmitidas_cardGuia:
+                Control: ModernCard
+                Properties:
+                  BorderRadius: =8
+                  Fill: =ColorCard
+                  HeaderImage: =Blank()
+                  Height: =72
+                  Image: =Blank()
+                  OnSelect: |-
+                    =Set(varGuiaSelecionada, ThisItem);
+                    Set(varMostrarDetalheGuia, true)
+                  Subtitle: |-
+                    ="Setor: " & ThisItem.Setor & " · Depósito: " & ThisItem.Deposito & " · " & Text(ThisItem.DataHora, "dd/mm/yyyy hh:mm") & " · Recebido por: " & ThisItem.DestinatarioNome
+                  Title: =ThisItem.Codigo
+                  Width: =1318
+                  X: =20
+            - GuiasEmitidas_badgeStatus:
+                Control: Badge
+                Properties:
+                  Content: =ThisItem.Status
+                  Height: =28
+                  ThemeColor: =If(ThisItem.Status = "Assinado", 'BadgeCanvas.ThemeColor'.Success, 'BadgeCanvas.ThemeColor'.Warning)
+                  Width: =110
+                  X: =1190
+                  Y: =22
+      - GuiasEmitidas_OverlayDetalhe:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varMostrarDetalheGuia
+            Width: =1366
+          Children:
+            - GuiasEmitidas_boxDetalhe:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =520
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =140
+                Children:
+                  - GuiasEmitidas_lblTituloDetalhe:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Guia " & varGuiaSelecionada.Codigo
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - GuiasEmitidas_lblEmitidaEm:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =24
+                        Size: =14
+                        Text: ="Emitida em " & Text(varGuiaSelecionada.DataHora, "dd/mm/yyyy hh:mm")
+                        Width: =412
+                        X: =24
+                        Y: =54
+                  - GuiasEmitidas_lblDepositoSetor:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextPrimary
+                        Height: =24
+                        Size: =14
+                        Text: |-
+                          ="Depósito: " & varGuiaSelecionada.Deposito & "   ·   Setor: " & varGuiaSelecionada.Setor
+                        Width: =412
+                        X: =24
+                        Y: =86
+                  - GuiasEmitidas_lblRecebedor:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextPrimary
+                        Height: =24
+                        Size: =14
+                        Text: |-
+                          ="Recebido por: " & varGuiaSelecionada.DestinatarioNome
+                        Width: =412
+                        X: =24
+                        Y: =118
+                  - GuiasEmitidas_lblDocumento:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =24
+                        Size: =14
+                        Text: |-
+                          ="Documento: " & varGuiaSelecionada.DestinatarioDocumento
+                        Width: =412
+                        X: =24
+                        Y: =148
+                  - GuiasEmitidas_lblAssinaturaLabel:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Height: =24
+                        Size: =12
+                        Text: ="ASSINATURA"
+                        Width: =200
+                        X: =24
+                        Y: =188
+                  - GuiasEmitidas_imgAssinatura:
+                      Control: Image
+                      Properties:
+                        BorderColor: =ColorBorder
+                        BorderThickness: =1
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =220
+                        Image: =varGuiaSelecionada.Assinatura
+                        Visible: =!IsBlank(varGuiaSelecionada.Assinatura)
+                        Width: =412
+                        X: =24
+                        Y: =214
+                  - GuiasEmitidas_btnFecharDetalhe:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varMostrarDetalheGuia, false)
+                        Text: ="Fechar"
+                        Width: =412
+                        X: =24
+                        Y: =450
+                  - GuiasEmitidas_lblSemAssinaturaDigital:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =220
+                        Size: =13
+                        Text: ="Guia impressa para assinatura em papel — sem imagem digital arquivada."
+                        Visible: =IsBlank(varGuiaSelecionada.Assinatura)
+                        Width: =412
+                        X: =24
+                        Y: =214

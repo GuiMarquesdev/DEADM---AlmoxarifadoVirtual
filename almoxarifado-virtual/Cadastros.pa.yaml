@@ -263,6 +263,8 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             HintText: ="Valor estimado"
+            Precision: =DecimalPrecision.'2'
+            Step: =0.01
             Visible: =varAbaCadastro = "Itens" && !varMostrarEdicaoItem
             Width: =86
             X: =923
@@ -565,6 +567,8 @@ Screens:
                         Fill: =RGBA(255, 255, 255, 1)
                         Height: =44
                         HintText: ="Preço de contrato"
+                        Precision: =DecimalPrecision.'2'
+                        Step: =0.01
                         Width: =386
                         X: =50
                         Y: =334

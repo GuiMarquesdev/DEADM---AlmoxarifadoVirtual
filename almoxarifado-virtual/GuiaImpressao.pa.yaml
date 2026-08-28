@@ -1,0 +1,214 @@
+Screens:
+  GuiaImpressao:
+    Properties:
+      Fill: =RGBA(230, 230, 230, 1)
+      OnVisible: =Set(varItensGuiaImpressao, Filter(colMovimentacoes, GuiaCodigo = varGuiaImpressaoCodigo))
+    Children:
+      - GuiaImpressao_NavBar:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            Fill: =ColorPrimaryDark
+            Height: =71
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+            LayoutWrap: =true
+            PaddingLeft: =24
+            PaddingRight: =24
+            Width: =1366
+          Children:
+            - GuiaImpressao_lblAppTitle:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =RGBA(255,255,255,1)
+                  FontWeight: =FontWeight.Bold
+                  Size: =18
+                  Text: ="Guia pronta para impressão"
+      - GuiaImpressao_btnVoltar:
+          Control: Button
+          Properties:
+            Appearance: ='ButtonCanvas.Appearance'.Transparent
+            FontColor: =RGBA(255,255,255,1)
+            Height: =40
+            OnSelect: =Navigate(NovaSaida, ScreenTransition.None)
+            Text: ="< Voltar"
+            Width: =120
+            X: =1220
+            Y: =15
+      - GuiaImpressao_btnBaixarPdf:
+          Control: Button
+          Properties:
+            BasePaletteColor: =ColorPrimary
+            Height: =48
+            OnSelect: |-
+              =Set(varGuiaImpressaoPdf, PDF(GuiaImpressao_Conteudo));
+              Download(varGuiaImpressaoPdf)
+            Text: ="Baixar / Imprimir PDF"
+            Width: =240
+            X: =1126
+            Y: =522
+      - GuiaImpressao_Conteudo:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Bold
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =697
+            Width: =1257
+            X: =26
+            Y: =71
+          Children:
+            - GuiaImpressao_lblOrgao:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  FontWeight: =FontWeight.Semibold
+                  Height: =27
+                  Size: =12
+                  Text: ="ALMOXARIFADO VIRTUAL — DADM / MPBA"
+                  Width: =620
+                  X: =40
+                  Y: =12
+            - GuiaImpressao_lblTitulo:
+                Control: ModernText
+                Properties:
+                  AutoHeight: =true
+                  Color: =ColorTextPrimary
+                  FontWeight: =FontWeight.Bold
+                  Size: =22
+                  Text: ="Guia de Remessa de Material"
+                  Width: =620
+                  X: =40
+                  Y: =39
+            - GuiaImpressao_lblCodigo:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  Size: =13
+                  Text: |-
+                    ="Código: " & varGuiaImpressaoCodigo & "     ·     Emitida em: " & Text(Now(), "dd/mm/yyyy hh:mm")
+                  Width: =620
+                  X: =40
+                  Y: =80
+            - GuiaImpressao_lblDepositoSetor:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =38
+                  Size: =14
+                  Text: |-
+                    ="Depósito: " & varGuiaImpressaoDeposito & "     ·     Setor solicitante: " & varGuiaImpressaoSetor
+                  Width: =620
+                  X: =40
+                  Y: =112
+            - GuiaImpressao_lblItensHeader:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  FontWeight: =FontWeight.Semibold
+                  Height: =36
+                  Size: =12
+                  Text: ="ITENS DESTA SAÍDA"
+                  Width: =620
+                  X: =40
+                  Y: =150
+            - GuiaImpressao_tblItens:
+                Control: Table
+                Properties:
+                  Height: =490
+                  Items: =varItensGuiaImpressao
+                  Width: =721
+                  Y: =205
+                Children:
+                  - GuiaImpressaoItemNome:
+                      Control: TableDataField
+                      Variant: textualColumn
+                      IsLocked: true
+                      Properties:
+                        FieldDisplayName: ="Item"
+                        FieldName: ="ItemNome"
+                        FieldType: ="s"
+                        Order: =1
+                  - GuiaImpressaoSKU:
+                      Control: TableDataField
+                      Variant: textualColumn
+                      IsLocked: true
+                      Properties:
+                        FieldDisplayName: ="Código"
+                        FieldName: ="SKU"
+                        FieldType: ="s"
+                        Order: =2
+                  - GuiaImpressaoQuantidade:
+                      Control: TableDataField
+                      Variant: textualColumn
+                      IsLocked: true
+                      Properties:
+                        FieldDisplayName: ="Quantidade"
+                        FieldName: ="Quantidade"
+                        FieldType: ="n"
+                        Order: =3
+            - GuiaImpressao_lblSolicitanteHeader:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  FontWeight: =FontWeight.Semibold
+                  Height: =36
+                  Size: =12
+                  Text: ="DADOS DO SOLICITANTE"
+                  Width: =162
+                  X: =728
+                  Y: =430
+            - GuiaImpressao_lblNomeSolicitante:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =38
+                  Size: =14
+                  Text: |-
+                    ="Nome: " & If(IsBlank(varGuiaImpressaoDestinatarioNome) || varGuiaImpressaoDestinatarioNome = "", "_______________________________________", varGuiaImpressaoDestinatarioNome)
+                  Width: =313
+                  X: =728
+                  Y: =468
+            - GuiaImpressao_lblDocumentoSolicitante:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =34
+                  Size: =14
+                  Text: |-
+                    ="Documento: " & If(IsBlank(varGuiaImpressaoDestinatarioDocumento) || varGuiaImpressaoDestinatarioDocumento = "", "_______________________________", varGuiaImpressaoDestinatarioDocumento)
+                  Width: =276
+                  X: =728
+                  Y: =506
+            - GuiaImpressao_lblLinhaAssinatura:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =48
+                  Size: =16
+                  Text: ="_______________________________________________"
+                  Width: =344
+                  X: =726
+                  Y: =540
+            - GuiaImpressao_lblAssinaturaLabel:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  Height: =35
+                  Size: =12
+                  Text: ="Assinatura do solicitante"
+                  Width: =152
+                  X: =726
+                  Y: =588
+            - GuiaImpressao_lblRodape:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextSecondary
+                  Height: =36
+                  Size: =10
+                  Text: ="Documento gerado pelo Almoxarifado Virtual para arquivamento após assinatura."
+                  Width: =374
+                  X: =721
+                  Y: =623

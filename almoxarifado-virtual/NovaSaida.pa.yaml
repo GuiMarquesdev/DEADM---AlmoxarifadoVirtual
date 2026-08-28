@@ -43,8 +43,8 @@ Screens:
               )
             Text: ="Registrar Saída"
             Width: =456
-            X: =888
-            Y: =340
+            X: =848
+            Y: =685
       - NovaSaida_txtMotivo:
           Control: ModernTextInput
           Properties:
@@ -53,8 +53,8 @@ Screens:
             Placeholder: |-
               ="Ex.: Manutenção preventiva, obra setor 3..."
             Width: =456
-            X: =888
-            Y: =260
+            X: =25
+            Y: =495
       - NovaSaida_lblMotivo:
           Control: ModernText
           Properties:
@@ -63,8 +63,8 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =14
             Text: ="Motivo da retirada"
-            X: =888
-            Y: =218
+            X: =25
+            Y: =465
       - NovaSaida_cboSetor:
           Control: ModernCombobox
           Properties:
@@ -74,8 +74,8 @@ Screens:
             ItemDisplayText: =ThisItem.Nome
             Items: =colSetores
             Width: =456
-            X: =888
-            Y: =145
+            X: =25
+            Y: =410
       - NovaSaida_lblSetor:
           Control: ModernText
           Properties:
@@ -84,19 +84,19 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =14
             Text: ="Setor solicitante"
-            X: =888
-            Y: =115
+            X: =25
+            Y: =376
       - NovaSaida_galItensLista:
           Control: Gallery
           Variant: Vertical
           Properties:
             Fill: =RGBA(255, 255, 255, 1)
-            Height: =269
+            Height: =540
             Items: =colItensLancamentoSaida
             TemplateSize: =48
             Width: =700
-            X: =25
-            Y: =480
+            X: =604
+            Y: =121
           Children:
             - NovaSaida_lblItemLista:
                 Control: ModernText
@@ -126,8 +126,8 @@ Screens:
             FontWeight: =FontWeight.Semibold
             Size: =14
             Text: ="Itens desta saída (" & CountRows(colItensLancamentoSaida) & ")"
-            X: =25
-            Y: =450
+            X: =603
+            Y: =85
       - NovaSaida_btnAdicionarItem:
           Control: Button
           Properties:
@@ -156,7 +156,7 @@ Screens:
             Text: ="+ Adicionar item à lista"
             Width: =456
             X: =25
-            Y: =388
+            Y: =568
       - NovaSaida_txtQuantidade:
           Control: ModernNumberInput
           Properties:
@@ -253,7 +253,7 @@ Screens:
                 Properties:
                   DropShadow: =DropShadow.Bold
                   Fill: =RGBA(230, 230, 230, 1)
-                  Height: =540
+                  Height: =300
                   RadiusBottomLeft: =12
                   RadiusBottomRight: =12
                   RadiusTopLeft: =12
@@ -269,7 +269,7 @@ Screens:
                         Color: =ColorTextPrimary
                         FontWeight: =FontWeight.Bold
                         Size: =18
-                        Text: ="Confirme o recebimento — Guia " & varGuiaCodigoAtual
+                        Text: ="Gerar guia — " & varGuiaCodigoAtual
                         Width: =572
                         X: =24
                         Y: =20
@@ -279,7 +279,7 @@ Screens:
                         Color: =ColorTextSecondary
                         Height: =36
                         Size: =13
-                        Text: ="Peça para quem está retirando o material assinar no campo abaixo."
+                        Text: ="Informe os dados de quem está retirando o material para gerar a guia."
                         Width: =572
                         X: =24
                         Y: =54
@@ -301,28 +301,7 @@ Screens:
                         Width: =572
                         X: =24
                         Y: =154
-                  - NovaSaida_lblAssinaturaLabel:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextSecondary
-                        FontWeight: =FontWeight.Semibold
-                        Size: =13
-                        Text: ="Assinatura"
-                        Width: =200
-                        X: =24
-                        Y: =208
-                  - NovaSaida_penAssinatura:
-                      Control: PenInput
-                      Properties:
-                        BorderColor: =ColorBorder
-                        BorderThickness: =1
-                        Fill: =RGBA(255, 255, 255, 1)
-                        Height: =220
-                        Width: =572
-                        X: =24
-                        Y: =232
-                  - NovaSaida_btnConfirmarAssinatura:
+                  - NovaSaida_btnGerarPdf:
                       Control: Button
                       Properties:
                         BasePaletteColor: =ColorPrimary
@@ -331,15 +310,19 @@ Screens:
                           =If(
                             Trim(NovaSaida_txtDestinatarioNome.Text) = "" || Trim(NovaSaida_txtDestinatarioDocumento.Text) = "",
                             Notify("Informe o nome e o documento de quem está recebendo.", NotificationType.Error),
-                            Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Assinatura: NovaSaida_penAssinatura.Image, Status: {Value: "Assinado"}});
+                            Set(varGuiaImpressaoCodigo, varGuiaCodigoAtual);
+                            Set(varGuiaImpressaoDeposito, varGuiaDeposito);
+                            Set(varGuiaImpressaoSetor, varGuiaSetor);
+                            Set(varGuiaImpressaoDestinatarioNome, Trim(NovaSaida_txtDestinatarioNome.Text));
+                            Set(varGuiaImpressaoDestinatarioDocumento, Trim(NovaSaida_txtDestinatarioDocumento.Text));
+                            Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Status: {Value: "Impresso"}});
                             Set(varMostrarAssinatura, false);
-                            Notify("Saída registrada e guia assinada com sucesso.", NotificationType.Success);
-                            Navigate(Home, ScreenTransition.None)
+                            Navigate(GuiaImpressao, ScreenTransition.None)
                           )
-                        Text: ="Confirmar assinatura"
+                        Text: ="Gerar PDF para assinatura em papel"
                         Width: =572
                         X: =24
-                        Y: =476
+                        Y: =208
       - NovaSaida_btnVoltar:
           Control: Button
           Properties:

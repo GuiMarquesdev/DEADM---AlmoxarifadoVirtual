@@ -15,7 +15,7 @@ Screens:
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
-            Height: =123
+            Height: =96
             LayoutDirection: =LayoutDirection.Horizontal
             LayoutGap: =16
             LayoutWrap: =true
@@ -83,6 +83,7 @@ Screens:
                       Control: ModernCard
                       Properties:
                         BorderRadius: =8
+                        DropShadow: =DropShadow.Light
                         Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =1
                         HeaderImage: =Blank()
@@ -159,6 +160,40 @@ Screens:
                         OnSelect: =Navigate(Cadastros, ScreenTransition.None)
                         Subtitle: ="Itens, setores e catálogo"
                         Title: ="Cadastros"
+            - Home_cardGuias_Group:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  Fill: =RGBA(15, 42, 61, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinWidth: =260
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =260
+                Children:
+                  - Home_iconGuias:
+                      Control: Icon
+                      Properties:
+                        Height: =28
+                        Icon: ="DocumentSignature"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =28
+                  - Home_cardGuias:
+                      Control: ModernCard
+                      Properties:
+                        BorderRadius: =8
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =1
+                        HeaderImage: =Blank()
+                        Height: =100
+                        Image: =Blank()
+                        OnSelect: =Navigate(GuiasEmitidas, ScreenTransition.None)
+                        Subtitle: ="Consultar guias de saída assinadas"
+                        Title: ="Guias"
       - Home_StatsRow:
           Control: GroupContainer
           Variant: AutoLayout
@@ -258,7 +293,7 @@ Screens:
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
-            Height: =124
+            Height: =238
             LayoutDirection: =LayoutDirection.Horizontal
             LayoutGap: =16
             LayoutWrap: =true

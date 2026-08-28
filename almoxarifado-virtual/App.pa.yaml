@@ -30,7 +30,9 @@ App:
 
       colSaldos = Saldos;
 
-      colMovimentacoes = ForAll(Movimentacoes, {ID: ID, Tipo: Tipo.Value, SKU: SKU, ItemNome: ItemNome, DepositoOrigem: DepositoOrigem, DepositoDestino: DepositoDestino, Quantidade: Quantidade, PrecoCusto: PrecoCusto, Motivo: Motivo, Solicitante: Solicitante, Fornecedor: Fornecedor, Usuario: Usuario, DataHora: DataHora});
+      colMovimentacoes = ForAll(Movimentacoes, {ID: ID, Tipo: Tipo.Value, SKU: SKU, ItemNome: ItemNome, DepositoOrigem: DepositoOrigem, DepositoDestino: DepositoDestino, Quantidade: Quantidade, PrecoCusto: PrecoCusto, Motivo: Motivo, Solicitante: Solicitante, Fornecedor: Fornecedor, Usuario: Usuario, DataHora: DataHora, GuiaCodigo: GuiaCodigo});
+
+      colGuias = ForAll(Guias, {ID: ID, Codigo: Codigo, DataHora: DataHora, Deposito: Deposito, Setor: Setor, DestinatarioNome: DestinatarioNome, DestinatarioDocumento: DestinatarioDocumento, Assinatura: Assinatura, Status: Status.Value});
 
       // Funções auxiliares de estoque
       ItemSaldoTotal(sku: Text): Number =

@@ -235,6 +235,8 @@ Screens:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
             HintText: ="0,00"
+            Precision: =DecimalPrecision.'2'
+            Step: =0.01
             Width: =420
             X: =76
             Y: =416
@@ -284,14 +286,15 @@ Screens:
       - NovaEntrada_lblPrecoCustoRS:
           Control: ModernText
           Properties:
-            AutoHeight: =true
             Color: =RGBA(0, 0, 0, 1)
+            Fill: =RGBA(255, 255, 255, 1)
             FontWeight: =FontWeight.Semibold
+            Height: =44
             Size: =14
             Text: ="R$"
-            Width: =32
+            Width: =36
             X: =40
-            Y: =430
+            Y: =416
       - NovaEntrada_btnVoltar:
           Control: Button
           Properties:
