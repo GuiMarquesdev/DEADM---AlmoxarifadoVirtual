@@ -6,7 +6,6 @@ EditorState:
     - EstoqueBaixo
     - Cadastros
     - GuiaImpressao
-    - AcessoRestrito
     - Home
     - NovaEntrada
     - Transferencia

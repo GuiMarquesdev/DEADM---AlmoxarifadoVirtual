@@ -66,5 +66,5 @@ App:
       ValorContratoItem(sku: Text): Number =
         Coalesce(LookUp(colItens, SKU = sku).PrecoContrato, 0);
     OnStart: =Set(varUsuarioAtual, User().FullName)
-    StartScreen: =If(App.Width < 900, AcessoRestrito, Home)
+    StartScreen: =Home
     Theme: =Blank()

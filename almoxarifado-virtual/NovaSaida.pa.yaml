@@ -44,7 +44,7 @@ Screens:
             Text: ="Registrar Saída"
             Width: =456
             X: =848
-            Y: =685
+            Y: =680
       - NovaSaida_txtMotivo:
           Control: ModernTextInput
           Properties:

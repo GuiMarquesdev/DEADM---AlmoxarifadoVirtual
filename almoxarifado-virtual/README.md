@@ -43,8 +43,9 @@ explica esse fluxo em detalhe.
   fornecedores.
 - **KPIs na Home**: valor total do estoque (R$), total de itens no catálogo, saldos por status,
   atalhos para as áreas mais usadas.
-- **Restrição de acesso** (`AcessoRestrito`): o app é desktop-only — em telas estreitas
-  (`App.Width < 900`) mostra uma tela de bloqueio em vez do app.
+- **Guias de remessa** (`GuiaImpressao`, `GuiasEmitidas`): ao registrar uma saída, o app gera um
+  PDF da guia (com os itens e uma linha em branco) para colher a assinatura do solicitante em
+  papel; guias já emitidas ficam consultáveis por código, setor, depósito e período.
 
 ## Telas
 
@@ -52,20 +53,21 @@ Ordem de navegação real do app (ver `_EditorState.pa.yaml`):
 
 | # | Tela | Arquivo | Função |
 |---|------|---------|--------|
-| 1 | Acesso Restrito | `AcessoRestrito.pa.yaml` | Bloqueio para telas estreitas (mobile) |
-| 2 | Home | `Home.pa.yaml` | Dashboard com KPIs e atalhos |
-| 3 | Nova Entrada | `NovaEntrada.pa.yaml` | Registro de entrada de estoque |
-| 4 | Nova Saída | `NovaSaida.pa.yaml` | Registro de saída + guia de remessa assinada |
+| 1 | Home | `Home.pa.yaml` | Dashboard com KPIs e atalhos |
+| 2 | Nova Entrada | `NovaEntrada.pa.yaml` | Registro de entrada de estoque |
+| 3 | Nova Saída | `NovaSaida.pa.yaml` | Registro de saída + geração de guia em PDF |
+| 4 | Guia para Impressão | `GuiaImpressao.pa.yaml` | Gera e baixa o PDF da guia para assinatura em papel |
 | 5 | Transferência | `Transferencia.pa.yaml` | Transferência entre depósitos |
 | 6 | Catálogo | `Catalogo.pa.yaml` | Busca e listagem de itens |
 | 7 | Detalhe do Item | `DetalheItem.pa.yaml` | Saldo do item por depósito |
 | 8 | Histórico do Item | `DetalheItemHistorico.pa.yaml` | Movimentações de um item específico |
 | 9 | Depósitos | `Depositos.pa.yaml` | Listagem de depósitos |
-| 10 | Detalhe do Depósito | `DetalheDeposito.pa.yaml` | Saldos, ajuste manual, validade |
+| 10 | Detalhe do Depósito | `DetalheDeposito.pa.yaml` | Saldos, ajuste manual, validade, exclusão de saldo |
 | 11 | Estoque Baixo | `EstoqueBaixo.pa.yaml` | Itens abaixo do mínimo |
 | 12 | Vencimentos | `Vencimentos.pa.yaml` | Itens vencidos / a vencer |
 | 13 | Histórico | `Historico.pa.yaml` | Todas as movimentações |
-| 14 | Cadastros | `Cadastros.pa.yaml` | CRUD de itens, depósitos, setores, fornecedores |
+| 14 | Guias Emitidas | `GuiasEmitidas.pa.yaml` | Consulta de guias já emitidas |
+| 15 | Cadastros | `Cadastros.pa.yaml` | CRUD de itens, depósitos, setores, fornecedores |
 
 ## Modelo de dados
 
@@ -81,7 +83,7 @@ definidas como fórmulas nomeadas em `App.pa.yaml`:
 | `Fornecedores` | Fornecedores usados em entradas |
 | `Saldos` | Saldo por item + depósito (+ lote/validade) |
 | `Movimentacoes` | Log de entradas, saídas e transferências |
-| `Guias` | Guias de remessa: código, depósito, setor, dados do recebedor e assinatura |
+| `Guias` | Guias de remessa: código, depósito, setor, dados do solicitante e status (impresso/assinado) |
 
 Também há funções Power Fx auxiliares centralizadas em `App.pa.yaml` (ex.: `ItemSaldoTotal`,
 `SaldoNoDeposito`, `StatusValidade`, `ValorContratoItem`) para não duplicar lógica de negócio nas
@@ -93,10 +95,10 @@ telas.
 almoxarifado-virtual/
 ├── App.pa.yaml                    # Fórmulas globais, paleta de cores, coleções de dados
 ├── _EditorState.pa.yaml           # Ordem das telas no Studio
-├── AcessoRestrito.pa.yaml
 ├── Home.pa.yaml
 ├── NovaEntrada.pa.yaml
 ├── NovaSaida.pa.yaml
+├── GuiaImpressao.pa.yaml
 ├── Transferencia.pa.yaml
 ├── Catalogo.pa.yaml
 ├── DetalheItem.pa.yaml
@@ -106,6 +108,7 @@ almoxarifado-virtual/
 ├── EstoqueBaixo.pa.yaml
 ├── Vencimentos.pa.yaml
 ├── Historico.pa.yaml
+├── GuiasEmitidas.pa.yaml
 ├── Cadastros.pa.yaml
 ├── AlmoxarifadoVirtualMPBA.msapp  # Pacote compilado do app (Power Apps)
 └── AGENTS.md                      # Guia operacional para agentes de IA continuarem o projeto
