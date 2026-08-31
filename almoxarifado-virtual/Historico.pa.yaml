@@ -481,7 +481,7 @@ Screens:
                 DataHora,
                 SortOrder.Descending
               )
-            TemplateSize: =40
+            TemplateSize: =58
             Width: =1366
             Y: =290
           Children:
@@ -493,47 +493,48 @@ Screens:
                   Size: =12
                   Text: =Text(ThisItem.DataHora, "dd/mm/yyyy hh:mm")
                   Width: =115
-                  X: =18
+                  X: =1
                   Y: =4
             - Historico_lblLinhaTipo:
                 Control: ModernText
                 Properties:
+                  Align: =Align.Center
                   Color: =ColorTextPrimary
                   Height: =36
                   Size: =12
                   Text: =ThisItem.Tipo
                   Width: =80
-                  X: =138
-                  Y: =4
+                  X: =116
             - Historico_lblLinhaItem:
                 Control: ModernText
                 Properties:
                   Color: =ColorTextPrimary
-                  Height: =36
+                  Height: =54
                   Size: =12
                   Text: =ThisItem.ItemNome
-                  Width: =220
-                  X: =223
+                  Width: =217
+                  X: =217
                   Y: =4
             - Historico_lblLinhaCodigo:
                 Control: ModernText
                 Properties:
+                  Align: =Align.Center
                   Color: =ColorTextPrimary
-                  Height: =36
+                  Height: =40
                   Size: =12
                   Text: =ThisItem.SKU
                   Width: =70
-                  X: =448
-                  Y: =4
+                  X: =434
             - Historico_lblLinhaQuantidade:
                 Control: ModernText
                 Properties:
+                  Align: =Align.Center
                   Color: =ColorTextPrimary
                   Height: =36
                   Size: =12
                   Text: =Text(ThisItem.Quantidade)
                   Width: =70
-                  X: =523
+                  X: =504
                   Y: =4
             - Historico_lblLinhaDepositoOrigem:
                 Control: ModernText
