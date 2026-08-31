@@ -549,13 +549,13 @@ Screens:
             - Historico_lblLinhaDepositoDestino:
                 Control: ModernText
                 Properties:
+                  Align: =Align.Center
                   Color: =ColorTextPrimary
-                  Height: =18
+                  Height: =58
                   Size: =12
                   Text: =ThisItem.DepositoDestino
                   Width: =160
-                  X: =763
-                  Y: =11
+                  X: =737
             - Historico_lblLinhaUsuario:
                 Control: ModernText
                 Properties:
