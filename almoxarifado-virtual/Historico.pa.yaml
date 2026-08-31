@@ -446,8 +446,8 @@ Screens:
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.Bold
-                  Fill: =ColorCard
-                  Height: =430
+                  Fill: =RGBA(244, 246, 248, 1)
+                  Height: =591
                   RadiusBottomLeft: =12
                   RadiusBottomRight: =12
                   RadiusTopLeft: =12
@@ -471,12 +471,12 @@ Screens:
                       Control: ModernText
                       Properties:
                         Color: =ColorTextSecondary
-                        Height: =40
+                        Height: =52
                         Size: =13
                         Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & varRegistroHistoricoSelecionado.DepositoDestino & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
                         Width: =412
                         X: =24
-                        Y: =56
+                        Y: =51
                   - Historico_lblQuantidadeEditar:
                       Control: ModernText
                       Properties:
@@ -541,16 +541,37 @@ Screens:
                         Width: =412
                         X: =24
                         Y: =288
+                  - Historico_lblDataValidadeEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Data de validade"
+                        Width: =200
+                        X: =24
+                        Y: =342
+                  - Historico_dtDataValidadeEditar:
+                      Control: ModernDatePicker
+                      Properties:
+                        DefaultDate: =LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino).DataValidade
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Placeholder: ="Data de validade"
+                        Width: =412
+                        X: =24
+                        Y: =366
                   - Historico_lblAvisoEditarLancamento:
                       Control: ModernText
                       Properties:
                         Color: =ColorTextSecondary
-                        Height: =36
+                        Height: =57
                         Size: =11
-                        Text: ="Mudar a quantidade ajusta automaticamente o saldo atual do item nesse depósito pela diferença."
+                        Text: ="Mudar a quantidade ou a validade ajusta automaticamente o saldo atual do item nesse depósito (a validade é compartilhada por todo o saldo do item no depósito, não só por este lançamento)."
                         Width: =412
                         X: =24
-                        Y: =340
+                        Y: =420
                   - Historico_btnCancelarEditarLancamento:
                       Control: Button
                       Properties:
@@ -559,8 +580,8 @@ Screens:
                         OnSelect: =Set(varEditandoLancamento, false)
                         Text: ="Cancelar"
                         Width: =198
-                        X: =24
-                        Y: =370
+                        X: =26
+                        Y: =515
                   - Historico_btnSalvarEditarLancamento:
                       Control: Button
                       Properties:
@@ -577,7 +598,7 @@ Screens:
                               Notify("Não foi possível localizar o saldo desse item nesse depósito para ajustar. Nada foi alterado.", NotificationType.Error),
                               saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade) < 0,
                               Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
-                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade)});
+                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade), DataValidade: Historico_dtDataValidadeEditar.SelectedDate});
                               Patch(Movimentacoes, LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID), {Quantidade: novaQuantidade, PrecoCusto: Coalesce(Historico_txtPrecoCustoEditar.Value, 0), Fornecedor: Trim(Historico_txtFornecedorEditar.Text)});
                               Set(varEditandoLancamento, false);
                               Set(varRegistroHistoricoSelecionado, Blank());
@@ -587,4 +608,4 @@ Screens:
                         Text: ="Salvar alterações"
                         Width: =198
                         X: =238
-                        Y: =370
+                        Y: =515
