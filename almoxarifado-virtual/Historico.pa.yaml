@@ -75,74 +75,6 @@ Screens:
             Width: =170
             X: =1002
             Y: =153
-      - Historico_OverlayResetHistorico:
-          Control: GroupContainer
-          Variant: ManualLayout
-          Properties:
-            Fill: =RGBA(0, 0, 0, 0.45)
-            Height: =800
-            Visible: =varConfirmandoResetHistorico
-            Width: =1366
-          Children:
-            - Historico_boxConfirmarResetHistorico:
-                Control: GroupContainer
-                Variant: ManualLayout
-                Properties:
-                  DropShadow: =DropShadow.Bold
-                  Fill: =ColorCard
-                  Height: =260
-                  RadiusBottomLeft: =12
-                  RadiusBottomRight: =12
-                  RadiusTopLeft: =12
-                  RadiusTopRight: =12
-                  Width: =460
-                  X: =453
-                  Y: =260
-                Children:
-                  - Historico_lblTituloResetHistorico:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextPrimary
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Text: ="Apagar todo o histórico de movimentações?"
-                        Width: =412
-                        X: =24
-                        Y: =20
-                  - Historico_lblMensagemResetHistorico:
-                      Control: ModernText
-                      Properties:
-                        Color: =ColorTextSecondary
-                        Height: =120
-                        Size: =14
-                        Text: ="Isso vai excluir permanentemente todos os " & CountRows(colMovimentacoes) & " registros de Entrada, Saída e Transferência já feitos. Essa ação não pode ser desfeita e essa tela ficará vazia."
-                        Width: =412
-                        X: =24
-                        Y: =56
-                  - Historico_btnCancelarResetHistorico:
-                      Control: Button
-                      Properties:
-                        Appearance: ='ButtonCanvas.Appearance'.Secondary
-                        Height: =44
-                        OnSelect: =Set(varConfirmandoResetHistorico, false)
-                        Text: ="Cancelar"
-                        Width: =198
-                        X: =24
-                        Y: =200
-                  - Historico_btnConfirmarResetHistorico:
-                      Control: Button
-                      Properties:
-                        BasePaletteColor: =ColorAlert
-                        Height: =44
-                        OnSelect: |-
-                          =RemoveIf(Movimentacoes, true);
-                          Set(varConfirmandoResetHistorico, false);
-                          Notify("Histórico de movimentações apagado.", NotificationType.Success)
-                        Text: ="Apagar tudo"
-                        Width: =198
-                        X: =238
-                        Y: =200
       - Historico_cboUsuarioFiltro:
           Control: ModernCombobox
           Properties:
@@ -222,162 +154,6 @@ Screens:
             Width: =240
             X: =25
             Y: =206
-      - Historico_OverlayEditarLancamento:
-          Control: GroupContainer
-          Variant: ManualLayout
-          Properties:
-            Fill: =RGBA(0, 0, 0, 0.45)
-            Height: =800
-            Visible: =varEditandoLancamento
-            Width: =1366
-          Children:
-            - Historico_boxEditarLancamento:
-                Control: GroupContainer
-                Variant: ManualLayout
-                Properties:
-                  DropShadow: =DropShadow.Bold
-                  Fill: =ColorCard
-                  Height: =430
-                  RadiusBottomLeft: =12
-                  RadiusBottomRight: =12
-                  RadiusTopLeft: =12
-                  RadiusTopRight: =12
-                  Width: =460
-                  X: =453
-                  Y: =140
-                Children:
-                  - Historico_lblTituloEditarLancamento:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextPrimary
-                        FontWeight: =FontWeight.Bold
-                        Size: =18
-                        Text: ="Editar lançamento de Entrada"
-                        Width: =412
-                        X: =24
-                        Y: =20
-                  - Historico_lblResumoEditarLancamento:
-                      Control: ModernText
-                      Properties:
-                        Color: =ColorTextSecondary
-                        Height: =40
-                        Size: =13
-                        Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & varRegistroHistoricoSelecionado.DepositoDestino & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
-                        Width: =412
-                        X: =24
-                        Y: =56
-                  - Historico_lblQuantidadeEditar:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextSecondary
-                        FontWeight: =FontWeight.Semibold
-                        Size: =13
-                        Text: ="Quantidade"
-                        Width: =200
-                        X: =24
-                        Y: =108
-                  - Historico_txtQuantidadeEditar:
-                      Control: ModernNumberInput
-                      Properties:
-                        Default: =varRegistroHistoricoSelecionado.Quantidade
-                        Fill: =RGBA(255, 255, 255, 1)
-                        Height: =44
-                        Min: =0
-                        Width: =412
-                        X: =24
-                        Y: =132
-                  - Historico_lblPrecoCustoEditar:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextSecondary
-                        FontWeight: =FontWeight.Semibold
-                        Size: =13
-                        Text: ="Preço de custo (unitário)"
-                        Width: =200
-                        X: =24
-                        Y: =186
-                  - Historico_txtPrecoCustoEditar:
-                      Control: ModernNumberInput
-                      Properties:
-                        Default: =varRegistroHistoricoSelecionado.PrecoCusto
-                        Fill: =RGBA(255, 255, 255, 1)
-                        Height: =44
-                        Min: =0
-                        Precision: =DecimalPrecision.'2'
-                        Step: =0.01
-                        Width: =412
-                        X: =24
-                        Y: =210
-                  - Historico_lblFornecedorEditar:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =ColorTextSecondary
-                        FontWeight: =FontWeight.Semibold
-                        Size: =13
-                        Text: ="Fornecedor"
-                        Width: =200
-                        X: =24
-                        Y: =264
-                  - Historico_txtFornecedorEditar:
-                      Control: ModernTextInput
-                      Properties:
-                        Default: =varRegistroHistoricoSelecionado.Fornecedor
-                        Fill: =RGBA(255, 255, 255, 1)
-                        Height: =44
-                        Width: =412
-                        X: =24
-                        Y: =288
-                  - Historico_lblAvisoEditarLancamento:
-                      Control: ModernText
-                      Properties:
-                        Color: =ColorTextSecondary
-                        Height: =36
-                        Size: =11
-                        Text: ="Mudar a quantidade ajusta automaticamente o saldo atual do item nesse depósito pela diferença."
-                        Width: =412
-                        X: =24
-                        Y: =340
-                  - Historico_btnCancelarEditarLancamento:
-                      Control: Button
-                      Properties:
-                        Appearance: ='ButtonCanvas.Appearance'.Secondary
-                        Height: =44
-                        OnSelect: =Set(varEditandoLancamento, false)
-                        Text: ="Cancelar"
-                        Width: =198
-                        X: =24
-                        Y: =370
-                  - Historico_btnSalvarEditarLancamento:
-                      Control: Button
-                      Properties:
-                        BasePaletteColor: =ColorPrimary
-                        Height: =44
-                        OnSelect: |-
-                          =With(
-                            {
-                              novaQuantidade: Coalesce(Historico_txtQuantidadeEditar.Value, 0),
-                              saldoRelacionado: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino)
-                            },
-                            If(
-                              IsBlank(saldoRelacionado),
-                              Notify("Não foi possível localizar o saldo desse item nesse depósito para ajustar. Nada foi alterado.", NotificationType.Error),
-                              saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade) < 0,
-                              Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
-                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade)});
-                              Patch(Movimentacoes, LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID), {Quantidade: novaQuantidade, PrecoCusto: Coalesce(Historico_txtPrecoCustoEditar.Value, 0), Fornecedor: Trim(Historico_txtFornecedorEditar.Text)});
-                              Set(varEditandoLancamento, false);
-                              Set(varRegistroHistoricoSelecionado, Blank());
-                              Notify("Lançamento atualizado com sucesso.", NotificationType.Success)
-                            )
-                          )
-                        Text: ="Salvar alterações"
-                        Width: =198
-                        X: =238
-                        Y: =370
       - Historico_lblColDataHora:
           Control: ModernText
           Properties:
@@ -588,3 +364,227 @@ Screens:
                   Width: =1330
                   X: =18
                   Y: =39
+      - Historico_OverlayResetHistorico:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varConfirmandoResetHistorico
+            Width: =1366
+          Children:
+            - Historico_boxConfirmarResetHistorico:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =260
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =260
+                Children:
+                  - Historico_lblTituloResetHistorico:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Apagar todo o histórico de movimentações?"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - Historico_lblMensagemResetHistorico:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =120
+                        Size: =14
+                        Text: ="Isso vai excluir permanentemente todos os " & CountRows(colMovimentacoes) & " registros de Entrada, Saída e Transferência já feitos. Essa ação não pode ser desfeita e essa tela ficará vazia."
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - Historico_btnCancelarResetHistorico:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varConfirmandoResetHistorico, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =200
+                  - Historico_btnConfirmarResetHistorico:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorAlert
+                        Height: =44
+                        OnSelect: |-
+                          =RemoveIf(Movimentacoes, true);
+                          Set(varConfirmandoResetHistorico, false);
+                          Notify("Histórico de movimentações apagado.", NotificationType.Success)
+                        Text: ="Apagar tudo"
+                        Width: =198
+                        X: =238
+                        Y: =200
+      - Historico_OverlayEditarLancamento:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varEditandoLancamento
+            Width: =1366
+          Children:
+            - Historico_boxEditarLancamento:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =430
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =140
+                Children:
+                  - Historico_lblTituloEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Editar lançamento de Entrada"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - Historico_lblResumoEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =40
+                        Size: =13
+                        Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & varRegistroHistoricoSelecionado.DepositoDestino & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - Historico_lblQuantidadeEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Quantidade"
+                        Width: =200
+                        X: =24
+                        Y: =108
+                  - Historico_txtQuantidadeEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Quantidade
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Min: =0
+                        Width: =412
+                        X: =24
+                        Y: =132
+                  - Historico_lblPrecoCustoEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Preço de custo (unitário)"
+                        Width: =200
+                        X: =24
+                        Y: =186
+                  - Historico_txtPrecoCustoEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.PrecoCusto
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Min: =0
+                        Precision: =DecimalPrecision.'2'
+                        Step: =0.01
+                        Width: =412
+                        X: =24
+                        Y: =210
+                  - Historico_lblFornecedorEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Fornecedor"
+                        Width: =200
+                        X: =24
+                        Y: =264
+                  - Historico_txtFornecedorEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Fornecedor
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Width: =412
+                        X: =24
+                        Y: =288
+                  - Historico_lblAvisoEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =36
+                        Size: =11
+                        Text: ="Mudar a quantidade ajusta automaticamente o saldo atual do item nesse depósito pela diferença."
+                        Width: =412
+                        X: =24
+                        Y: =340
+                  - Historico_btnCancelarEditarLancamento:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varEditandoLancamento, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =370
+                  - Historico_btnSalvarEditarLancamento:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorPrimary
+                        Height: =44
+                        OnSelect: |-
+                          =With(
+                            {
+                              novaQuantidade: Coalesce(Historico_txtQuantidadeEditar.Value, 0),
+                              saldoRelacionado: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino)
+                            },
+                            If(
+                              IsBlank(saldoRelacionado),
+                              Notify("Não foi possível localizar o saldo desse item nesse depósito para ajustar. Nada foi alterado.", NotificationType.Error),
+                              saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade) < 0,
+                              Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
+                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade)});
+                              Patch(Movimentacoes, LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID), {Quantidade: novaQuantidade, PrecoCusto: Coalesce(Historico_txtPrecoCustoEditar.Value, 0), Fornecedor: Trim(Historico_txtFornecedorEditar.Text)});
+                              Set(varEditandoLancamento, false);
+                              Set(varRegistroHistoricoSelecionado, Blank());
+                              Notify("Lançamento atualizado com sucesso.", NotificationType.Success)
+                            )
+                          )
+                        Text: ="Salvar alterações"
+                        Width: =198
+                        X: =238
+                        Y: =370
