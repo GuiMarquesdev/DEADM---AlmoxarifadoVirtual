@@ -301,7 +301,7 @@ Screens:
                         Width: =572
                         X: =24
                         Y: =154
-                  - NovaSaida_btnGerarPdf:
+                  - NovaSaida_btnConfirmarGuia:
                       Control: Button
                       Properties:
                         BasePaletteColor: =ColorPrimary
@@ -310,16 +310,12 @@ Screens:
                           =If(
                             Trim(NovaSaida_txtDestinatarioNome.Text) = "" || Trim(NovaSaida_txtDestinatarioDocumento.Text) = "",
                             Notify("Informe o nome e o documento de quem está recebendo.", NotificationType.Error),
-                            Set(varGuiaImpressaoCodigo, varGuiaCodigoAtual);
-                            Set(varGuiaImpressaoDeposito, varGuiaDeposito);
-                            Set(varGuiaImpressaoSetor, varGuiaSetor);
-                            Set(varGuiaImpressaoDestinatarioNome, Trim(NovaSaida_txtDestinatarioNome.Text));
-                            Set(varGuiaImpressaoDestinatarioDocumento, Trim(NovaSaida_txtDestinatarioDocumento.Text));
-                            Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Status: {Value: "Impresso"}});
+                            Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Status: {Value: "Pendente"}});
                             Set(varMostrarAssinatura, false);
-                            Navigate(GuiaImpressao, ScreenTransition.None)
+                            Notify("Saída registrada. Guia " & varGuiaCodigoAtual & " salva.", NotificationType.Success);
+                            Navigate(Home, ScreenTransition.None)
                           )
-                        Text: ="Gerar PDF para assinatura em papel"
+                        Text: ="Confirmar"
                         Width: =572
                         X: =24
                         Y: =208

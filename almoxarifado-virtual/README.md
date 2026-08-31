@@ -43,9 +43,11 @@ explica esse fluxo em detalhe.
   fornecedores.
 - **KPIs na Home**: valor total do estoque (R$), total de itens no catálogo, saldos por status,
   atalhos para as áreas mais usadas.
-- **Guias de remessa** (`GuiaImpressao`, `GuiasEmitidas`): ao registrar uma saída, o app gera um
-  PDF da guia (com os itens e uma linha em branco) para colher a assinatura do solicitante em
-  papel; guias já emitidas ficam consultáveis por código, setor, depósito e período.
+- **Guias de remessa** (`GuiasEmitidas`): ao registrar uma saída, o app salva um registro de guia
+  (código, depósito, setor, dados do solicitante) para arquivamento; guias já registradas ficam
+  consultáveis por código, setor, depósito e período. A geração do documento em PDF (paginado,
+  seguindo o modelo oficial da DADM) está planejada via um fluxo do Power Automate com modelo do
+  Word — ver `AGENTS.md` para o desenho dessa integração.
 
 ## Telas
 
@@ -55,19 +57,18 @@ Ordem de navegação real do app (ver `_EditorState.pa.yaml`):
 |---|------|---------|--------|
 | 1 | Home | `Home.pa.yaml` | Dashboard com KPIs e atalhos |
 | 2 | Nova Entrada | `NovaEntrada.pa.yaml` | Registro de entrada de estoque |
-| 3 | Nova Saída | `NovaSaida.pa.yaml` | Registro de saída + geração de guia em PDF |
-| 4 | Guia para Impressão | `GuiaImpressao.pa.yaml` | Gera e baixa o PDF da guia para assinatura em papel |
-| 5 | Transferência | `Transferencia.pa.yaml` | Transferência entre depósitos |
-| 6 | Catálogo | `Catalogo.pa.yaml` | Busca e listagem de itens |
-| 7 | Detalhe do Item | `DetalheItem.pa.yaml` | Saldo do item por depósito |
-| 8 | Histórico do Item | `DetalheItemHistorico.pa.yaml` | Movimentações de um item específico |
-| 9 | Depósitos | `Depositos.pa.yaml` | Listagem de depósitos |
-| 10 | Detalhe do Depósito | `DetalheDeposito.pa.yaml` | Saldos, ajuste manual, validade, exclusão de saldo |
-| 11 | Estoque Baixo | `EstoqueBaixo.pa.yaml` | Itens abaixo do mínimo |
-| 12 | Vencimentos | `Vencimentos.pa.yaml` | Itens vencidos / a vencer |
-| 13 | Histórico | `Historico.pa.yaml` | Todas as movimentações |
-| 14 | Guias Emitidas | `GuiasEmitidas.pa.yaml` | Consulta de guias já emitidas |
-| 15 | Cadastros | `Cadastros.pa.yaml` | CRUD de itens, depósitos, setores, fornecedores |
+| 3 | Nova Saída | `NovaSaida.pa.yaml` | Registro de saída + registro de guia (código, solicitante) |
+| 4 | Transferência | `Transferencia.pa.yaml` | Transferência entre depósitos |
+| 5 | Catálogo | `Catalogo.pa.yaml` | Busca e listagem de itens |
+| 6 | Detalhe do Item | `DetalheItem.pa.yaml` | Saldo do item por depósito |
+| 7 | Histórico do Item | `DetalheItemHistorico.pa.yaml` | Movimentações de um item específico |
+| 8 | Depósitos | `Depositos.pa.yaml` | Listagem de depósitos |
+| 9 | Detalhe do Depósito | `DetalheDeposito.pa.yaml` | Saldos, ajuste manual, validade, exclusão de saldo |
+| 10 | Estoque Baixo | `EstoqueBaixo.pa.yaml` | Itens abaixo do mínimo |
+| 11 | Vencimentos | `Vencimentos.pa.yaml` | Itens vencidos / a vencer |
+| 12 | Histórico | `Historico.pa.yaml` | Todas as movimentações |
+| 13 | Guias Emitidas | `GuiasEmitidas.pa.yaml` | Consulta de guias já registradas |
+| 14 | Cadastros | `Cadastros.pa.yaml` | CRUD de itens, depósitos, setores, fornecedores |
 
 ## Modelo de dados
 
@@ -98,7 +99,6 @@ almoxarifado-virtual/
 ├── Home.pa.yaml
 ├── NovaEntrada.pa.yaml
 ├── NovaSaida.pa.yaml
-├── GuiaImpressao.pa.yaml
 ├── Transferencia.pa.yaml
 ├── Catalogo.pa.yaml
 ├── DetalheItem.pa.yaml

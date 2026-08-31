@@ -5,11 +5,11 @@ Screens:
       OnVisible: |-
         =Set(varTipoFiltro, "Todos");
         Set(varDepositoFiltro, "Todos");
-        Set(varUsuarioFiltro, "");
-        Set(varItemFiltro, "");
         Set(varDataInicioFiltro, Blank());
         Set(varDataFimFiltro, Blank());
-        Set(varConfirmandoResetHistorico, false)
+        Set(varConfirmandoResetHistorico, false);
+        Set(varRegistroHistoricoSelecionado, Blank());
+        Set(varEditandoLancamento, false)
     Children:
       - Historico_NavBar:
           Control: GroupContainer
@@ -44,98 +44,6 @@ Screens:
             Width: =90
             X: =1252
             Y: =21
-      - Historico_tblHistorico:
-          Control: Table
-          Properties:
-            Height: =480
-            Items: |-
-              =Sort(
-                Filter(colMovimentacoes,
-                  (varTipoFiltro = "Todos" || Tipo = varTipoFiltro) &&
-                  (varDepositoFiltro = "Todos" || DepositoOrigem = varDepositoFiltro || DepositoDestino = varDepositoFiltro) &&
-                  (varUsuarioFiltro = "" || varUsuarioFiltro in Usuario) &&
-                  (varItemFiltro = "" || varItemFiltro in ItemNome || varItemFiltro in SKU) &&
-                  (IsBlank(varDataInicioFiltro) || DataHora >= varDataInicioFiltro) &&
-                  (IsBlank(varDataFimFiltro) || DataHora <= DateAdd(varDataFimFiltro, 1, TimeUnit.Days))
-                ),
-                DataHora,
-                SortOrder.Descending
-              )
-            Width: =1366
-            Y: =288
-          Children:
-            - DataHora2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="DataHora"
-                  FieldName: ="DataHora"
-                  FieldType: ="d"
-                  Order: =1
-            - Tipo2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Tipo"
-                  FieldName: ="Tipo"
-                  FieldType: ="s"
-                  Order: =2
-            - ItemNome1:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="ItemNome"
-                  FieldName: ="ItemNome"
-                  FieldType: ="s"
-                  Order: =3
-            - SKU2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Código"
-                  FieldName: ="SKU"
-                  FieldType: ="s"
-                  Order: =4
-            - Quantidade4:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Quantidade"
-                  FieldName: ="Quantidade"
-                  FieldType: ="n"
-                  Order: =5
-            - DepositoOrigem2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="DepositoOrigem"
-                  FieldName: ="DepositoOrigem"
-                  FieldType: ="s"
-                  Order: =6
-            - DepositoDestino2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="DepositoDestino"
-                  FieldName: ="DepositoDestino"
-                  FieldType: ="s"
-                  Order: =7
-            - Usuario2:
-                Control: TableDataField
-                Variant: textualColumn
-                IsLocked: true
-                Properties:
-                  FieldDisplayName: ="Usuario"
-                  FieldName: ="Usuario"
-                  FieldType: ="s"
-                  Order: =8
       - Historico_btnLimparFiltros:
           Control: Button
           Properties:
@@ -144,20 +52,18 @@ Screens:
             OnSelect: |-
               =Set(varTipoFiltro, "Todos");
               Set(varDepositoFiltro, "Todos");
-              Set(varUsuarioFiltro, "");
-              Set(varItemFiltro, "");
               Set(varDataInicioFiltro, Blank());
               Set(varDataFimFiltro, Blank());
               Reset(Historico_cboTipo);
               Reset(Historico_cboDepositoFiltro);
-              Reset(Historico_txtUsuario);
-              Reset(Historico_txtItemFiltro);
+              Reset(Historico_cboUsuarioFiltro);
+              Reset(Historico_cboItemFiltro);
               Reset(Historico_dtDataInicio);
               Reset(Historico_dtDataFim)
             Text: ="Limpar filtros"
             Width: =150
-            X: =1180
-            Y: =220
+            X: =1192
+            Y: =153
       - Historico_btnResetarHistorico:
           Control: Button
           Properties:
@@ -168,7 +74,7 @@ Screens:
             Text: ="Resetar histórico"
             Width: =170
             X: =1002
-            Y: =220
+            Y: =153
       - Historico_OverlayResetHistorico:
           Control: GroupContainer
           Variant: ManualLayout
@@ -237,13 +143,14 @@ Screens:
                         Width: =198
                         X: =238
                         Y: =200
-      - Historico_txtUsuario:
-          Control: ModernTextInput
+      - Historico_cboUsuarioFiltro:
+          Control: ModernCombobox
           Properties:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
-            OnChange: =Set(varUsuarioFiltro, Self.Text)
-            Placeholder: ="Filtrar por usuário..."
+            InputTextPlaceholder: ="Filtrar por usuário..."
+            ItemDisplayText: =ThisItem.Value
+            Items: =Distinct(colMovimentacoes, Usuario)
             Width: =240
             X: =25
             Y: =152
@@ -281,8 +188,8 @@ Screens:
             OnChange: =Set(varDataInicioFiltro, Self.SelectedDate)
             Placeholder: ="Data início"
             Width: =180
-            X: =301
-            Y: =216
+            X: =311
+            Y: =210
       - Historico_dtDataFim:
           Control: ModernDatePicker
           Properties:
@@ -292,7 +199,7 @@ Screens:
             Placeholder: ="Data fim"
             Width: =180
             X: =614
-            Y: =216
+            Y: =203
       - Historico_lblHeader:
           Control: ModernText
           Properties:
@@ -304,13 +211,379 @@ Screens:
             Width: =404
             X: =25
             Y: =92
-      - Historico_txtItemFiltro:
-          Control: ModernTextInput
+      - Historico_cboItemFiltro:
+          Control: ModernCombobox
           Properties:
             Fill: =RGBA(255, 255, 255, 1)
             Height: =44
-            OnChange: =Set(varItemFiltro, Self.Text)
-            Placeholder: ="Filtrar por item ou código..."
+            InputTextPlaceholder: ="Filtrar por item ou código..."
+            ItemDisplayText: =ThisItem.Nome & " (" & ThisItem.SKU & ")"
+            Items: =colItens
             Width: =240
             X: =25
-            Y: =216
+            Y: =206
+      - Historico_OverlayEditarLancamento:
+          Control: GroupContainer
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 0, 0, 0.45)
+            Height: =800
+            Visible: =varEditandoLancamento
+            Width: =1366
+          Children:
+            - Historico_boxEditarLancamento:
+                Control: GroupContainer
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Bold
+                  Fill: =ColorCard
+                  Height: =430
+                  RadiusBottomLeft: =12
+                  RadiusBottomRight: =12
+                  RadiusTopLeft: =12
+                  RadiusTopRight: =12
+                  Width: =460
+                  X: =453
+                  Y: =140
+                Children:
+                  - Historico_lblTituloEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextPrimary
+                        FontWeight: =FontWeight.Bold
+                        Size: =18
+                        Text: ="Editar lançamento de Entrada"
+                        Width: =412
+                        X: =24
+                        Y: =20
+                  - Historico_lblResumoEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =40
+                        Size: =13
+                        Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & varRegistroHistoricoSelecionado.DepositoDestino & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
+                        Width: =412
+                        X: =24
+                        Y: =56
+                  - Historico_lblQuantidadeEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Quantidade"
+                        Width: =200
+                        X: =24
+                        Y: =108
+                  - Historico_txtQuantidadeEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Quantidade
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Min: =0
+                        Width: =412
+                        X: =24
+                        Y: =132
+                  - Historico_lblPrecoCustoEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Preço de custo (unitário)"
+                        Width: =200
+                        X: =24
+                        Y: =186
+                  - Historico_txtPrecoCustoEditar:
+                      Control: ModernNumberInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.PrecoCusto
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Min: =0
+                        Precision: =DecimalPrecision.'2'
+                        Step: =0.01
+                        Width: =412
+                        X: =24
+                        Y: =210
+                  - Historico_lblFornecedorEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Fornecedor"
+                        Width: =200
+                        X: =24
+                        Y: =264
+                  - Historico_txtFornecedorEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Fornecedor
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Width: =412
+                        X: =24
+                        Y: =288
+                  - Historico_lblAvisoEditarLancamento:
+                      Control: ModernText
+                      Properties:
+                        Color: =ColorTextSecondary
+                        Height: =36
+                        Size: =11
+                        Text: ="Mudar a quantidade ajusta automaticamente o saldo atual do item nesse depósito pela diferença."
+                        Width: =412
+                        X: =24
+                        Y: =340
+                  - Historico_btnCancelarEditarLancamento:
+                      Control: Button
+                      Properties:
+                        Appearance: ='ButtonCanvas.Appearance'.Secondary
+                        Height: =44
+                        OnSelect: =Set(varEditandoLancamento, false)
+                        Text: ="Cancelar"
+                        Width: =198
+                        X: =24
+                        Y: =370
+                  - Historico_btnSalvarEditarLancamento:
+                      Control: Button
+                      Properties:
+                        BasePaletteColor: =ColorPrimary
+                        Height: =44
+                        OnSelect: |-
+                          =With(
+                            {
+                              novaQuantidade: Coalesce(Historico_txtQuantidadeEditar.Value, 0),
+                              saldoRelacionado: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino)
+                            },
+                            If(
+                              IsBlank(saldoRelacionado),
+                              Notify("Não foi possível localizar o saldo desse item nesse depósito para ajustar. Nada foi alterado.", NotificationType.Error),
+                              saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade) < 0,
+                              Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
+                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade)});
+                              Patch(Movimentacoes, LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID), {Quantidade: novaQuantidade, PrecoCusto: Coalesce(Historico_txtPrecoCustoEditar.Value, 0), Fornecedor: Trim(Historico_txtFornecedorEditar.Text)});
+                              Set(varEditandoLancamento, false);
+                              Set(varRegistroHistoricoSelecionado, Blank());
+                              Notify("Lançamento atualizado com sucesso.", NotificationType.Success)
+                            )
+                          )
+                        Text: ="Salvar alterações"
+                        Width: =198
+                        X: =238
+                        Y: =370
+      - Historico_lblColDataHora:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Size: =12
+            Text: ="Data/Hora"
+            Width: =115
+            X: =18
+            Y: =260
+      - Historico_lblColTipo:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Size: =12
+            Text: ="Tipo"
+            Width: =80
+            X: =138
+            Y: =260
+      - Historico_lblColItem:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="Item"
+            Width: =220
+            X: =218
+            Y: =260
+      - Historico_lblColCodigo:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: ="Código"
+            Width: =70
+            X: =441
+            Y: =254
+      - Historico_lblColQuantidade:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Height: =26
+            Size: =12
+            Text: ="Qtde"
+            Width: =70
+            X: =523
+            Y: =260
+      - Historico_lblColDepositoOrigem:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: ="Depósito Origem"
+            Width: =160
+            X: =598
+            Y: =254
+      - Historico_lblColDepositoDestino:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: ="Depósito Destino"
+            Width: =160
+            X: =763
+            Y: =254
+      - Historico_lblColUsuario:
+          Control: ModernText
+          Properties:
+            Color: =ColorTextSecondary
+            FontWeight: =FontWeight.Semibold
+            Size: =12
+            Text: ="Usuário"
+            Width: =180
+            X: =928
+            Y: =254
+      - Historico_galHistorico:
+          Control: Gallery
+          Variant: Vertical
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =470
+            Items: |-
+              =Sort(
+                Filter(colMovimentacoes,
+                  (varTipoFiltro = "Todos" || Tipo = varTipoFiltro) &&
+                  (varDepositoFiltro = "Todos" || DepositoOrigem = varDepositoFiltro || DepositoDestino = varDepositoFiltro) &&
+                  (Historico_cboUsuarioFiltro.SearchText = "" || Historico_cboUsuarioFiltro.SearchText in Usuario) &&
+                  (Historico_cboItemFiltro.SearchText = "" || Historico_cboItemFiltro.SearchText in ItemNome || Historico_cboItemFiltro.SearchText in SKU) &&
+                  (IsBlank(varDataInicioFiltro) || DataHora >= varDataInicioFiltro) &&
+                  (IsBlank(varDataFimFiltro) || DataHora <= DateAdd(varDataFimFiltro, 1, TimeUnit.Days))
+                ),
+                DataHora,
+                SortOrder.Descending
+              )
+            TemplateSize: =40
+            Width: =1366
+            Y: =290
+          Children:
+            - Historico_lblLinhaDataHora:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =Text(ThisItem.DataHora, "dd/mm/yyyy hh:mm")
+                  Width: =115
+                  X: =18
+                  Y: =4
+            - Historico_lblLinhaTipo:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =ThisItem.Tipo
+                  Width: =80
+                  X: =138
+                  Y: =4
+            - Historico_lblLinhaItem:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =ThisItem.ItemNome
+                  Width: =220
+                  X: =223
+                  Y: =4
+            - Historico_lblLinhaCodigo:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =ThisItem.SKU
+                  Width: =70
+                  X: =448
+                  Y: =4
+            - Historico_lblLinhaQuantidade:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =Text(ThisItem.Quantidade)
+                  Width: =70
+                  X: =523
+                  Y: =4
+            - Historico_lblLinhaDepositoOrigem:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =ThisItem.DepositoOrigem
+                  Width: =160
+                  X: =598
+                  Y: =4
+            - Historico_lblLinhaDepositoDestino:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =18
+                  Size: =12
+                  Text: =ThisItem.DepositoDestino
+                  Width: =160
+                  X: =763
+                  Y: =11
+            - Historico_lblLinhaUsuario:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =36
+                  Size: =12
+                  Text: =ThisItem.Usuario
+                  Width: =195
+                  X: =928
+                  Y: =4
+            - Historico_btnEditarLinha:
+                Control: Button
+                Properties:
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  FontColor: =ColorPrimary
+                  Icon: ="Edit"
+                  OnSelect: |-
+                    =Set(varRegistroHistoricoSelecionado, ThisItem);
+                    Set(varEditandoLancamento, true)
+                  Text: =""
+                  Visible: =ThisItem.Tipo = "Entrada"
+                  Width: =36
+                  X: =1160
+                  Y: =4
+            - Historico_retLinhaDivisor:
+                Control: Rectangle
+                Properties:
+                  Fill: =ColorBorder
+                  Height: =1
+                  Width: =1330
+                  X: =18
+                  Y: =39

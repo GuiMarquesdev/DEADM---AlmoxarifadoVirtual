@@ -5,7 +5,6 @@ EditorState:
     - DetalheDeposito
     - EstoqueBaixo
     - Cadastros
-    - GuiaImpressao
     - Home
     - NovaEntrada
     - Transferencia

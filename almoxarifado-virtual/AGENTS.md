@@ -98,3 +98,29 @@ segurança — nunca ficam vazios só porque a sessão viva ficou. Recuperação
 de dados voltaram (`list_data_sources`), depois `compile_canvas` apontando pra pasta real do
 projeto local restaura tudo de uma vez. Se aparecer erro em `Property 'Theme'` com um nome não
 reconhecido, o app perdeu o recurso de tema; corrigir com `Theme: =Blank()` no `App.pa.yaml`.
+
+## Não usar `PDF()`/`Download()`/`PDFViewer` do Power Apps neste projeto
+
+Já foi tentado e abandonado: gerar um PDF de uma guia de saída usando a função experimental
+`PDF()` do Power Fx. Lições, pra não repetir o caminho:
+
+- `PDF(Container)` **não** captura o conteúdo corretamente neste tenant — o resultado é um blob
+  que não renderiza em nada (nem erro, nem conteúdo). Testado apontando tanto pra um container
+  quanto pra tela inteira, mesmo resultado.
+- `Download(PDF(...))` **nunca funcionou** e nunca foi documentado pela Microsoft como uma
+  combinação válida — dá erro "A URL passada para a função não é válida". A única forma real de
+  "baixar" um blob de `PDF()` seria um controle **Visualizador de PDF (experimental)**, que
+  também não renderizou nada neste tenant e cujo toggle de ativação nem aparece na lista de
+  recursos experimentais deste ambiente (Configurações → Atualizações → Experimental).
+- Telas de canvas são um espaço fixo de pixels — não paginam. Uma lista de itens de tamanho
+  variável (uma remessa com muitos itens) não cabe de forma confiável numa "folha" simulada
+  dentro de uma tela, e imprimir a tela via `Ctrl+P` do navegador corta as bordas (a tela é mais
+  larga que a área imprimível da página).
+- **Caminho correto pra isso**: um fluxo do **Power Automate** que recebe os dados da guia (via
+  gatilho `Power Apps (V2)`, incluindo os itens como um array serializado com `JSON()`), preenche
+  um **modelo do Word** (com um Controle de Conteúdo de Seção Repetida pra tabela de itens —
+  paginação de verdade, sem limite de linhas), converte pra PDF e salva numa biblioteca do
+  SharePoint. O app só precisa chamar o fluxo (`'NomeDoFluxo'.Run(...)`) e mostrar/abrir o link
+  do arquivo devolvido — nada de `PDF()`/`Download()`/`PDFViewer`.
+- Isso está fora do que dá pra fazer só com o MCP `canvas-authoring` (que só edita telas do app) —
+  exige autoria manual no Word e no Power Automate por fora do Studio.
