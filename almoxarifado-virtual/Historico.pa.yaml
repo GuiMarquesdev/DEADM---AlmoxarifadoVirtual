@@ -352,7 +352,6 @@ Screens:
                     =Set(varRegistroHistoricoSelecionado, ThisItem);
                     Set(varEditandoLancamento, true)
                   Text: =""
-                  Visible: =ThisItem.Tipo = "Entrada"
                   Width: =36
                   X: =1160
                   Y: =4
@@ -447,7 +446,7 @@ Screens:
                 Properties:
                   DropShadow: =DropShadow.Bold
                   Fill: =RGBA(244, 246, 248, 1)
-                  Height: =591
+                  Height: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 513, 591)
                   RadiusBottomLeft: =12
                   RadiusBottomRight: =12
                   RadiusTopLeft: =12
@@ -463,7 +462,7 @@ Screens:
                         Color: =ColorTextPrimary
                         FontWeight: =FontWeight.Bold
                         Size: =18
-                        Text: ="Editar lançamento de Entrada"
+                        Text: ="Editar lançamento de " & varRegistroHistoricoSelecionado.Tipo
                         Width: =412
                         X: =24
                         Y: =20
@@ -473,7 +472,7 @@ Screens:
                         Color: =ColorTextSecondary
                         Height: =52
                         Size: =13
-                        Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & varRegistroHistoricoSelecionado.DepositoDestino & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
+                        Text: =varRegistroHistoricoSelecionado.ItemNome & " (" & varRegistroHistoricoSelecionado.SKU & ") · " & If(varRegistroHistoricoSelecionado.Tipo = "Transferência", varRegistroHistoricoSelecionado.DepositoOrigem & " → " & varRegistroHistoricoSelecionado.DepositoDestino, If(varRegistroHistoricoSelecionado.DepositoDestino <> "", varRegistroHistoricoSelecionado.DepositoDestino, varRegistroHistoricoSelecionado.DepositoOrigem)) & " · " & Text(varRegistroHistoricoSelecionado.DataHora, "dd/mm/yyyy hh:mm")
                         Width: =412
                         X: =24
                         Y: =51
@@ -506,6 +505,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Size: =13
                         Text: ="Preço de custo (unitário)"
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Entrada"
                         Width: =200
                         X: =24
                         Y: =186
@@ -518,6 +518,29 @@ Screens:
                         Min: =0
                         Precision: =DecimalPrecision.'2'
                         Step: =0.01
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Entrada"
+                        Width: =412
+                        X: =24
+                        Y: =210
+                  - Historico_lblMotivoEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Motivo"
+                        Visible: =varRegistroHistoricoSelecionado.Tipo <> "Entrada"
+                        Width: =200
+                        X: =24
+                        Y: =186
+                  - Historico_txtMotivoEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Motivo
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Visible: =varRegistroHistoricoSelecionado.Tipo <> "Entrada"
                         Width: =412
                         X: =24
                         Y: =210
@@ -529,6 +552,7 @@ Screens:
                         FontWeight: =FontWeight.Semibold
                         Size: =13
                         Text: ="Fornecedor"
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Entrada"
                         Width: =200
                         X: =24
                         Y: =264
@@ -538,6 +562,29 @@ Screens:
                         Default: =varRegistroHistoricoSelecionado.Fornecedor
                         Fill: =RGBA(255, 255, 255, 1)
                         Height: =44
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Entrada"
+                        Width: =412
+                        X: =24
+                        Y: =288
+                  - Historico_lblSolicitanteEditar:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =ColorTextSecondary
+                        FontWeight: =FontWeight.Semibold
+                        Size: =13
+                        Text: ="Setor solicitante"
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Saída"
+                        Width: =200
+                        X: =24
+                        Y: =264
+                  - Historico_txtSolicitanteEditar:
+                      Control: ModernTextInput
+                      Properties:
+                        Default: =varRegistroHistoricoSelecionado.Solicitante
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =44
+                        Visible: =varRegistroHistoricoSelecionado.Tipo = "Saída"
                         Width: =412
                         X: =24
                         Y: =288
@@ -551,27 +598,34 @@ Screens:
                         Text: ="Data de validade"
                         Width: =200
                         X: =24
-                        Y: =342
+                        Y: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 264, 342)
                   - Historico_dtDataValidadeEditar:
                       Control: ModernDatePicker
                       Properties:
-                        DefaultDate: =LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino).DataValidade
+                        DefaultDate: =LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = If(varRegistroHistoricoSelecionado.Tipo = "Saída", varRegistroHistoricoSelecionado.DepositoOrigem, varRegistroHistoricoSelecionado.DepositoDestino)).DataValidade
                         Fill: =RGBA(255, 255, 255, 1)
                         Height: =44
                         Placeholder: ="Data de validade"
                         Width: =412
                         X: =24
-                        Y: =366
+                        Y: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 288, 366)
                   - Historico_lblAvisoEditarLancamento:
                       Control: ModernText
                       Properties:
                         Color: =ColorTextSecondary
                         Height: =57
                         Size: =11
-                        Text: ="Mudar a quantidade ou a validade ajusta automaticamente o saldo atual do item nesse depósito (a validade é compartilhada por todo o saldo do item no depósito, não só por este lançamento)."
+                        Text: |-
+                          =If(
+                            varRegistroHistoricoSelecionado.Tipo = "Entrada",
+                            "Mudar a quantidade ou a validade ajusta automaticamente o saldo atual do item nesse depósito (a validade é compartilhada por todo o saldo do item no depósito, não só por este lançamento).",
+                            varRegistroHistoricoSelecionado.Tipo = "Saída",
+                            "Mudar a quantidade ou a validade ajusta automaticamente o saldo do item no depósito de origem (a validade é compartilhada por todo o saldo do item nesse depósito, não só por este lançamento).",
+                            "Mudar a quantidade ajusta automaticamente os saldos de origem e destino da transferência; a validade ajustada aqui é a do depósito de destino."
+                          )
                         Width: =412
                         X: =24
-                        Y: =420
+                        Y: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 342, 420)
                   - Historico_btnCancelarEditarLancamento:
                       Control: Button
                       Properties:
@@ -581,7 +635,7 @@ Screens:
                         Text: ="Cancelar"
                         Width: =198
                         X: =26
-                        Y: =515
+                        Y: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 437, 515)
                   - Historico_btnSalvarEditarLancamento:
                       Control: Button
                       Properties:
@@ -590,16 +644,41 @@ Screens:
                         OnSelect: |-
                           =With(
                             {
+                              tipo: varRegistroHistoricoSelecionado.Tipo,
                               novaQuantidade: Coalesce(Historico_txtQuantidadeEditar.Value, 0),
-                              saldoRelacionado: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino)
+                              diferenca: Coalesce(Historico_txtQuantidadeEditar.Value, 0) - varRegistroHistoricoSelecionado.Quantidade,
+                              saldoOrigem: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoOrigem),
+                              saldoDestino: LookUp(Saldos, SKU = varRegistroHistoricoSelecionado.SKU && Deposito = varRegistroHistoricoSelecionado.DepositoDestino)
                             },
                             If(
-                              IsBlank(saldoRelacionado),
-                              Notify("Não foi possível localizar o saldo desse item nesse depósito para ajustar. Nada foi alterado.", NotificationType.Error),
-                              saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade) < 0,
+                              (tipo = "Entrada" || tipo = "Transferência") && IsBlank(saldoDestino),
+                              Notify("Não foi possível localizar o saldo do depósito de destino para ajustar. Nada foi alterado.", NotificationType.Error),
+                              (tipo = "Saída" || tipo = "Transferência") && IsBlank(saldoOrigem),
+                              Notify("Não foi possível localizar o saldo do depósito de origem para ajustar. Nada foi alterado.", NotificationType.Error),
+                              tipo = "Entrada" && saldoDestino.Quantidade + diferenca < 0,
                               Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
-                              Patch(Saldos, saldoRelacionado, {Quantidade: saldoRelacionado.Quantidade + (novaQuantidade - varRegistroHistoricoSelecionado.Quantidade), DataValidade: Historico_dtDataValidadeEditar.SelectedDate});
-                              Patch(Movimentacoes, LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID), {Quantidade: novaQuantidade, PrecoCusto: Coalesce(Historico_txtPrecoCustoEditar.Value, 0), Fornecedor: Trim(Historico_txtFornecedorEditar.Text)});
+                              tipo = "Saída" && saldoOrigem.Quantidade - diferenca < 0,
+                              Notify("Isso deixaria o saldo negativo. Ajuste um valor menor.", NotificationType.Error),
+                              tipo = "Transferência" && (saldoOrigem.Quantidade - diferenca < 0 || saldoDestino.Quantidade + diferenca < 0),
+                              Notify("Isso deixaria algum dos saldos envolvidos negativo. Ajuste um valor menor.", NotificationType.Error),
+                              If(tipo = "Entrada", Patch(Saldos, saldoDestino, {Quantidade: saldoDestino.Quantidade + diferenca, DataValidade: Historico_dtDataValidadeEditar.SelectedDate}));
+                              If(tipo = "Saída", Patch(Saldos, saldoOrigem, {Quantidade: saldoOrigem.Quantidade - diferenca, DataValidade: Historico_dtDataValidadeEditar.SelectedDate}));
+                              If(
+                                tipo = "Transferência",
+                                Patch(Saldos, saldoOrigem, {Quantidade: saldoOrigem.Quantidade - diferenca});
+                                Patch(Saldos, saldoDestino, {Quantidade: saldoDestino.Quantidade + diferenca, DataValidade: Historico_dtDataValidadeEditar.SelectedDate})
+                              );
+                              Patch(
+                                Movimentacoes,
+                                LookUp(Movimentacoes, ID = varRegistroHistoricoSelecionado.ID),
+                                {
+                                  Quantidade: novaQuantidade,
+                                  PrecoCusto: If(tipo = "Entrada", Coalesce(Historico_txtPrecoCustoEditar.Value, 0), varRegistroHistoricoSelecionado.PrecoCusto),
+                                  Fornecedor: If(tipo = "Entrada", Trim(Historico_txtFornecedorEditar.Text), varRegistroHistoricoSelecionado.Fornecedor),
+                                  Motivo: If(tipo = "Entrada", varRegistroHistoricoSelecionado.Motivo, Trim(Historico_txtMotivoEditar.Text)),
+                                  Solicitante: If(tipo = "Saída", Trim(Historico_txtSolicitanteEditar.Text), varRegistroHistoricoSelecionado.Solicitante)
+                                }
+                              );
                               Set(varEditandoLancamento, false);
                               Set(varRegistroHistoricoSelecionado, Blank());
                               Notify("Lançamento atualizado com sucesso.", NotificationType.Success)
@@ -608,4 +687,4 @@ Screens:
                         Text: ="Salvar alterações"
                         Width: =198
                         X: =238
-                        Y: =515
+                        Y: =If(varRegistroHistoricoSelecionado.Tipo = "Transferência", 437, 515)
