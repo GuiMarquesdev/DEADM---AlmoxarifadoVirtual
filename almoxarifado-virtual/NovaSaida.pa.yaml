@@ -22,7 +22,7 @@ Screens:
           Properties:
             BasePaletteColor: =ColorAlert
             Height: =48
-            OnSelect: |-
+            OnSelect: |
               =If(
                 CountRows(colItensLancamentoSaida) = 0,
                 Notify("Adicione pelo menos um item à lista antes de confirmar.", NotificationType.Error),
@@ -39,6 +39,7 @@ Screens:
                   );
                   Clear(colItensLancamentoSaida);
                   Set(varMostrarAssinatura, true)
+
                 )
               )
             Text: ="Registrar Saída"
@@ -243,7 +244,7 @@ Screens:
           Variant: ManualLayout
           Properties:
             Fill: =RGBA(0, 0, 0, 0.45)
-            Height: =800
+            Height: =767
             Visible: =varMostrarAssinatura
             Width: =1366
           Children:
@@ -312,7 +313,13 @@ Screens:
                             Notify("Informe o nome e o documento de quem está recebendo.", NotificationType.Error),
                             Patch(Guias, Defaults(Guias), {Codigo: varGuiaCodigoAtual, DataHora: Now(), Deposito: varGuiaDeposito, Setor: varGuiaSetor, DestinatarioNome: Trim(NovaSaida_txtDestinatarioNome.Text), DestinatarioDocumento: Trim(NovaSaida_txtDestinatarioDocumento.Text), Status: {Value: "Pendente"}});
                             Set(varMostrarAssinatura, false);
-                            Notify("Saída registrada. Guia " & varGuiaCodigoAtual & " salva.", NotificationType.Success);
+                            Notify("Saída registrada. Guia " & varGuiaCodigoAtual & " salva. Gerando PDF...", NotificationType.Success);
+                            Set(varResultadoPDF, GerarPDFGuiadeEntrega.Run(varGuiaCodigoAtual));
+                            If(
+                              !IsBlank(varResultadoPDF.linkpdf),
+                              Launch(varResultadoPDF.linkpdf),
+                              Notify("Guia salva, mas não foi possível gerar o PDF agora.", NotificationType.Warning)
+                            );
                             Navigate(Home, ScreenTransition.None)
                           )
                         Text: ="Confirmar"
