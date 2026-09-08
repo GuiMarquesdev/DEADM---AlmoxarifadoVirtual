@@ -124,3 +124,59 @@ Já foi tentado e abandonado: gerar um PDF de uma guia de saída usando a funç�
   do arquivo devolvido — nada de `PDF()`/`Download()`/`PDFViewer`.
 - Isso está fora do que dá pra fazer só com o MCP `canvas-authoring` (que só edita telas do app) —
   exige autoria manual no Word e no Power Automate por fora do Studio.
+
+## Administração do SharePoint via PnP PowerShell (atualização: isso agora é possível)
+
+A seção acima ("Mudanças de schema no SharePoint") diz que o agente não tem como criar listas ou
+colunas — isso mudou. Dá pra fazer direto via `PnP.PowerShell`, sem depender do usuário mexer no
+SharePoint manualmente. Rotina usada com sucesso em outro projeto (Terceirizados MPBA):
+
+```powershell
+Import-Module PnP.PowerShell -ErrorAction Stop
+Connect-PnPOnline -Url $siteUrl -Interactive -ClientId "9bc3ab49-b65d-410a-85ad-de819febfddc"
+```
+
+O `ClientId` acima é o "SharePoint Online Management Shell" (app multi-tenant da própria
+Microsoft, pré-consentido). Use sempre esse — o `ClientId` padrão do PnP costuma estar bloqueado
+pelo Azure AD do tenant do MPBA.
+
+**Criar coluna simples:**
+```powershell
+Add-PnPField -List "NomeDaLista" -DisplayName "Nome Exibido" -InternalName "NomeInterno" -Type Text -AddToDefaultView
+```
+
+**Criar coluna Lookup:** `Add-PnPField -LookupList/-Values` não existe nesta versão do PnP.
+Alternativa que funciona: `Add-PnPFieldFromXml` com XML CAML cru (`Type="Lookup"`,
+`List="{GUID da lista de destino}"`, `ShowField="Title"`).
+
+**Adicionar coluna a uma view existente:** `Add-PnPViewField` não existe nesta versão. Alternativa:
+ler `(Get-PnPView -List X -Identity "Nome da View").ViewFields`, concatenar o nome do campo novo em
+PowerShell, e `Set-PnPView -List X -Identity "Nome da View" -Fields $todosOsCampos`.
+
+**Atualização em massa:** `Get-PnPListItem -List X -PageSize 500` (ou 1000) pra paginar listas
+grandes, depois `Set-PnPListItem -List X -Identity $id -Values @{ Campo = $valor }` por item. Não
+tem operação de batch neste módulo — é um request por item mesmo. Para centenas de itens, rodar em
+background (`run_in_background: true` no Bash) em vez de bloquear a conversa, e esperar a
+notificação de conclusão.
+
+**Restrição de valor único bloqueando escrita:** se um campo tem `EnforceUniqueValues = $true` e
+o valor que você quer gravar já existe em outro item (situação legítima, não erro de dado), a
+escrita falha com "Este campo contém valores duplicados". Resolver com
+`Set-PnPField -List X -Identity "Campo" -Values @{ EnforceUniqueValues = $false }` antes de
+escrever, se a duplicidade for esperada — ou resolver os duplicados reais primeiro se a
+unicidade for pra valer.
+
+**Depois de qualquer mudança de schema (campo novo, `EnforceUniqueValues`, etc.), o cache do MCP
+`canvas-authoring` fica desatualizado** — `get_data_source_schema` continua sem mostrar o campo
+novo até: (1) chamar `connect()` de novo nesta sessão, **e** (2) o usuário clicar em "Atualizar" na
+fonte de dados correspondente no painel **Dados** do Studio. As duas coisas costumam ser
+necessárias juntas — só reconectar não basta, e só o usuário atualizar no Studio também não basta
+pra este lado da sessão. Confirme com `get_data_source_schema` antes de tentar `compile_canvas` de
+novo, pra não ficar testando às cegas.
+
+**Login interativo por chamada:** cada `Connect-PnPOnline -Interactive` abre um prompt de login no
+navegador — não há token em cache entre chamadas separadas do Bash neste ambiente. Espere isso
+acontecer toda vez que rodar um script PnP novo.
+
+**Onde salvar os scripts:** sempre na pasta de scratchpad temporária da sessão, nunca dentro da
+pasta do projeto — são descartáveis, só servem pra aquela operação pontual.
