@@ -108,9 +108,20 @@ Screens:
             Height: =40
             Items: |-
               =Table({Value: "Itens"}, {Value: "Setores"}, {Value: "Depósitos"}, {Value: "Fornecedores"})
-            OnChange: =Set(varAbaCadastro, Self.Selected.Value)
+            OnChange: |-
+              =Set(varAbaCadastro, Self.Selected.Value);
+              Reset(Cadastros_txtBusca)
             Width: =578
             X: =41
+            Y: =325
+      - Cadastros_txtBusca:
+          Control: ModernTextInput
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =40
+            Placeholder: ="🔍 Buscar..."
+            Width: =300
+            X: =1066
             Y: =325
       - Cadastros_txtUnidadeItem:
           Control: ModernTextInput
@@ -160,7 +171,8 @@ Screens:
           Variant: Vertical
           Properties:
             Height: =391
-            Items: =colItens
+            Items: |-
+              =Filter(colItens, Cadastros_txtBusca.Text = "" || Cadastros_txtBusca.Text in Nome || Cadastros_txtBusca.Text in SKU)
             TemplateSize: =60
             Visible: =varAbaCadastro = "Itens"
             Width: =1291
@@ -202,7 +214,7 @@ Screens:
               =If(
                 Trim(Cadastros_txtNomeSetor.Text) = "",
                 Notify("Informe o nome do setor.", NotificationType.Error),
-                Patch(Setores, Defaults(Setores), {Title: Trim(Cadastros_txtNomeSetor.Text)});
+                Patch(Setores, Defaults(Setores), {'Nome (Title)': Trim(Cadastros_txtNomeSetor.Text)});
                 Reset(Cadastros_txtNomeSetor);
                 Notify("Setor cadastrado com sucesso.", NotificationType.Success)
               )
@@ -216,7 +228,8 @@ Screens:
           Variant: Vertical
           Properties:
             Height: =419
-            Items: =colSetores
+            Items: |-
+              =Filter(colSetores, Cadastros_txtBusca.Text = "" || Cadastros_txtBusca.Text in Nome)
             TemplateSize: =56
             Visible: =varAbaCadastro = "Setores"
             Width: =1330
@@ -231,6 +244,7 @@ Screens:
                   HeaderImage: =Blank()
                   Height: =56
                   Image: =Blank()
+                  Subtitle: =""
                   Title: =ThisItem.Nome
                   Width: =1282
             - Cadastros_btnExcluirSetor:
@@ -278,7 +292,7 @@ Screens:
               =If(
                 Trim(Cadastros_txtNomeDeposito.Text) = "",
                 Notify("Informe o nome do depósito.", NotificationType.Error),
-                Patch(Depositos_1, Defaults(Depositos_1), {Title: Trim(Cadastros_txtNomeDeposito.Text), Responsavel: Trim(Cadastros_txtResponsavelDeposito.Text)});
+                Patch(Depositos_1, Defaults(Depositos_1), {'Nome (Title)': Trim(Cadastros_txtNomeDeposito.Text), Responsavel: Trim(Cadastros_txtResponsavelDeposito.Text)});
                 Reset(Cadastros_txtNomeDeposito);
                 Reset(Cadastros_txtResponsavelDeposito);
                 Notify("Depósito cadastrado com sucesso.", NotificationType.Success)
@@ -297,7 +311,7 @@ Screens:
               =If(
                 Trim(Cadastros_txtNomeFornecedor.Text) = "",
                 Notify("Informe o nome do fornecedor.", NotificationType.Error),
-                Patch(Fornecedores, Defaults(Fornecedores), {Title: Trim(Cadastros_txtNomeFornecedor.Text), Contato: Trim(Cadastros_txtContatoFornecedor.Text), Telefone: Trim(Cadastros_txtTelefoneFornecedor.Text)});
+                Patch(Fornecedores, Defaults(Fornecedores), {'Nome (Title)': Trim(Cadastros_txtNomeFornecedor.Text), Contato: Trim(Cadastros_txtContatoFornecedor.Text), Telefone: Trim(Cadastros_txtTelefoneFornecedor.Text)});
                 Reset(Cadastros_txtNomeFornecedor);
                 Reset(Cadastros_txtContatoFornecedor);
                 Reset(Cadastros_txtTelefoneFornecedor);
@@ -343,7 +357,8 @@ Screens:
           Variant: Vertical
           Properties:
             Height: =419
-            Items: =colDepositos
+            Items: |-
+              =Filter(colDepositos, Cadastros_txtBusca.Text = "" || Cadastros_txtBusca.Text in Nome)
             TemplateSize: =56
             Visible: =varAbaCadastro = "Depósitos"
             Width: =1330
@@ -401,7 +416,8 @@ Screens:
           Variant: Vertical
           Properties:
             Height: =419
-            Items: =colFornecedores
+            Items: |-
+              =Filter(colFornecedores, Cadastros_txtBusca.Text = "" || Cadastros_txtBusca.Text in Nome)
             TemplateSize: =56
             Visible: =varAbaCadastro = "Fornecedores"
             Width: =1330
