@@ -281,16 +281,6 @@ Screens:
                   Text: =ThisItem.Tipo
                   Width: =80
                   X: =116
-            - Historico_lblLinhaItem:
-                Control: ModernText
-                Properties:
-                  Color: =ColorTextPrimary
-                  Height: =54
-                  Size: =12
-                  Text: =ThisItem.ItemNome
-                  Width: =217
-                  X: =217
-                  Y: =4
             - Historico_lblLinhaCodigo:
                 Control: ModernText
                 Properties:
@@ -301,6 +291,26 @@ Screens:
                   Text: =ThisItem.SKU
                   Width: =70
                   X: =434
+            - Historico_lblLinhaDepositoDestino:
+                Control: ModernText
+                Properties:
+                  Align: =Align.Center
+                  Color: =ColorTextPrimary
+                  Height: =58
+                  Size: =12
+                  Text: =ThisItem.DepositoDestino
+                  Width: =160
+                  X: =737
+            - Historico_lblLinhaItem:
+                Control: ModernText
+                Properties:
+                  Color: =ColorTextPrimary
+                  Height: =54
+                  Size: =12
+                  Text: =ThisItem.ItemNome
+                  Width: =217
+                  X: =217
+                  Y: =4
             - Historico_lblLinhaQuantidade:
                 Control: ModernText
                 Properties:
@@ -322,16 +332,6 @@ Screens:
                   Width: =160
                   X: =598
                   Y: =4
-            - Historico_lblLinhaDepositoDestino:
-                Control: ModernText
-                Properties:
-                  Align: =Align.Center
-                  Color: =ColorTextPrimary
-                  Height: =58
-                  Size: =12
-                  Text: =ThisItem.DepositoDestino
-                  Width: =160
-                  X: =737
             - Historico_lblLinhaUsuario:
                 Control: ModernText
                 Properties:
