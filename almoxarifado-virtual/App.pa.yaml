@@ -22,11 +22,11 @@ App:
       // literal é a alternativa que funciona.
       colItens = ForAll(Itens, {SKU: SKU, Nome: Nome, Categoria: Categoria, UnidadeMedida: UnidadeMedida, EstoqueMinimo: EstoqueMinimo, PrecoContrato: PrecoContrato, Descricao: Descricao});
 
-      colDepositos = ForAll(Depositos_1, {ID: ID, Nome: Title, Responsavel: Responsavel});
+      colDepositos = ForAll(Depositos_1 As Dep, {ID: Dep.ID, Nome: Dep.'Nome (Title)', Responsavel: Dep.Responsavel, SaldoTotal: Sum(Filter(colSaldos, Deposito = Dep.'Nome (Title)'), Quantidade), EstoqueBaixo: CountRows(Filter(colItens, SaldoNoDeposito(SKU, Dep.'Nome (Title)') < EstoqueMinimo)) > 0});
 
-      colSetores = ForAll(Setores, {ID: ID, Nome: Title});
+      colSetores = ForAll(Setores, {ID: ID, Nome: 'Nome (Title)'});
 
-      colFornecedores = ForAll(Fornecedores, {ID: ID, Nome: Title, Contato: Contato, Telefone: Telefone});
+      colFornecedores = ForAll(Fornecedores, {ID: ID, Nome: 'Nome (Title)', Contato: Contato, Telefone: Telefone});
 
       colSaldos = Saldos;
 

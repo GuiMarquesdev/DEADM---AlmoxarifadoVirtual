@@ -49,15 +49,15 @@ Screens:
                           =Set(varDepositoSelecionado, ThisItem);
                           Navigate(DetalheDeposito, ScreenTransition.None)
                         Subtitle: |-
-                          ="Responsável: " & ThisItem.Responsavel & " · Saldo total: " & Text(DepositoSaldoTotal(ThisItem.Nome)) & " unidades"
+                          ="Responsável: " & ThisItem.Responsavel & " · Saldo total: " & Text(ThisItem.SaldoTotal) & " unidades"
                         Title: =ThisItem.Nome
                         Width: =1240
                   - Depositos_badgeStatus:
                       Control: Badge
                       Properties:
-                        Content: =If(CountRows(Filter(colItens, SaldoNoDeposito(SKU, ThisItem.Nome) < EstoqueMinimo)) > 0, "Atenção", "OK")
+                        Content: =If(ThisItem.EstoqueBaixo, "Atenção", "OK")
                         Height: =28
-                        ThemeColor: =If(CountRows(Filter(colItens, SaldoNoDeposito(SKU, ThisItem.Nome) < EstoqueMinimo)) > 0, 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
+                        ThemeColor: =If(ThisItem.EstoqueBaixo, 'BadgeCanvas.ThemeColor'.Danger, 'BadgeCanvas.ThemeColor'.Success)
                         Width: =70
                         X: =1155
                         Y: =26
